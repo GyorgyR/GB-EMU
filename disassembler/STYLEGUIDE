@@ -1,0 +1,118 @@
+Disclaimer: We use snake_case!
+
+1) INDENTATION
+--------------------------------------------------------------------------------
+·Use 4 spaces for indentation (no tabs)
+ Spaces are more uniform and any respectable editor can handle spaces as tabs.
+
+·Multiple statements on one line are acceptable if:
+    »The statements are logically related (e.g. one block of code)
+    »The statements are are short (e.g. 12 characters)
+
+·There is a 80 character soft limit and a 100 character hard limit
+ So if the line reaches the soft limit you can still finish the given word. No 
+ line can be longer than 100 characters in any situation.
+
+ ·Breaking long lines
+ When breaking long lines it should preserve things that are one and should 
+ be resilient to refactoring(length change). e.g.
+
+function_with_lots_of_arguments(
+                            int arg1, int arg2, int arg3 int arg4, int arg5,
+                            int arg6, int arg7);
+
+·Strings should remain on one line as long as it is possible
+
+function_with_string_param(
+"very very very very very very very very very very very very very long string");
+
+================================================================================
+
+2) BRACES AND SPACES
+--------------------------------------------------------------------------------
+·DO NOT use space after function names.
+·DO begin curly braces on a new line after functions. e.g.
+
+int this_is_a_function(int arg)
+{
+    ...
+} 
+
+·DO put spaces after control statements (e.g. if|for|while|switch|etc..)
+·DO NOT put curly braces on a new line. e.g.
+
+if (x | y) {
+    ...
+}
+
+This practice at first seems inconsistent, but it is a good way of 
+distinguishing control blocks and functions.
+
+·Generally closing brackets are on it their own on the line except if it is a 
+ continuation of the same statement (e.g. do-while, if-else)
+
+if (something) {
+    ...
+} else {
+    ...
+}
+
+·You CAN omit braces in case of one line statements if the whole control block
+ has one line statements. 
+
+if (x)
+    foo();
+else
+    foo_else();
+
+OR
+
+if (x) {
+    foo1();
+    foo2();
+} else {
+    foo3();
+}
+
+·DO use spaces before and after operators:
+  
+    x = 1 + 2;
+
+·DO NOT use spaces before/after increase and decrease operators:
+    
+    x++;
+    ++x;
+    x--;
+    --x;
+
+================================================================================
+
+3) NAMING
+--------------------------------------------------------------------------------
+· Use descriptive names, but try to keep them on point (no line long names).
+
+·You CAN use names that are self explanatory like tmp or in case of for loops i.
+ Using names like temporary_variable or loop_counter does not enhance readibility
+ but damages productivity.
+
+================================================================================
+
+4) COMMENTS
+--------------------------------------------------------------------------------
+ 
+·Comments are useful BUT they are not checked by the compiler. How do you know
+ if the comments do not lie?
+
+·Use comments to describe WHAT a block of code does and NOT HOW it does that.
+
+·Avoid comments in a function body. If it is so complex you probably should 
+ break it down and use helper functions.
+
+·Long comments are preferred like this:
+
+/*
+ * This is a long comment 
+ * Notice the stars are aligned
+ * and there is a space after them.
+ * Use punctuation, this is english not code.
+ */  
