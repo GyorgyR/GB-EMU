@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include "Processor.h"
 
 using std::cout;
 using std::endl;
@@ -32,7 +33,12 @@ int main(int argc, char *argv[])
         rom_file.close();
     } //if
 
-    while(true) {
+    //Create instruction decoder
+    Processor cpu(rom);
+
+    bool is_running = true;
+
+    while(is_running) {
         cout << "[ \u001b[34;1mGameBoy\u001b[0m ] $ ";
         std::string command;
         cin >> command;
@@ -56,7 +62,7 @@ int main(int argc, char *argv[])
 
         }else {
             cout << command;
-            exit(0);
+            is_running = false;
         }
     }
 
