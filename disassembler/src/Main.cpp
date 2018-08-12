@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include "Processor.h"
 
 using std::cout;
@@ -33,9 +34,6 @@ int main(int argc, char *argv[])
         rom_file.close();
     } //if
 
-    //Create instruction decoder
-    Processor cpu(rom);
-
     bool is_running = true;
 
     while (is_running) {
@@ -65,9 +63,16 @@ int main(int argc, char *argv[])
         else if (command == "disassemble") {
             std::string start;
             cin >> start;
-            int address = stoi(start);
+            int address;
+            if (start != "a")
+               address = strtoul(start.c_str(), NULL,  16);
+            else
+                address = 0x150;
 
-            cout << "Starting from address: " << address << endl;
+            printf("Starting from address: 0x%04X\n", address);
+
+            //Create instruction decoder
+            Processor cpu(rom);
 
             while (address > 0) {
                 address = cpu.DecodeInstr(address);

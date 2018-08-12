@@ -13,7 +13,7 @@ private:
 public:
     Processor(uint8_t* _rom);
     ~Processor();
-    uint16_t  DecodeInstr(uint16_t address);
+    int  DecodeInstr(uint16_t address);
 
 };
 

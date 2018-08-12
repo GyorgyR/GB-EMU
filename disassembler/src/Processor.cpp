@@ -1543,7 +1543,7 @@ inline int op0xFE(uint16_t address, uint8_t* rom)
     return -1;
 }
 
-uint16_t Processor::DecodeInstr(uint16_t address)
+int Processor::DecodeInstr(uint16_t address)
 {
     uint8_t op_code = rom[address];
     switch(op_code) {
