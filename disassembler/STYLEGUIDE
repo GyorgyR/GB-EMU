@@ -48,12 +48,12 @@ if (x | y) {
 This practice at first seems inconsistent, but it is a good way of 
 distinguishing control blocks and functions.
 
-·Generally closing brackets are on it their own on the line except if it is a 
- continuation of the same statement (e.g. do-while, if-else)
+·Generally closing brackets are on it their own
 
 if (something) {
     ...
-} else {
+}
+else {
     ...
 }
 
@@ -70,7 +70,8 @@ OR
 if (x) {
     foo1();
     foo2();
-} else {
+}
+else {
     foo3();
 }
 
