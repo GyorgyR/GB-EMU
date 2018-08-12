@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 
     bool is_running = true;
 
-    while(is_running) {
+    while (is_running) {
         cout << "[ \u001b[34;1mGameBoy\u001b[0m ] $ ";
         std::string command;
         cin >> command;
@@ -46,7 +46,8 @@ int main(int argc, char *argv[])
         if (command == "print-rom") {
             for (int i = 0; i < rom_file_size; ++i)
                     printf("0x%04X: 0x%02X\n", i, rom[i]);
-        } else if (command == "dump-rom") {
+        }
+        else if (command == "dump-rom") {
             std::string file;
             cin >> file;
 
@@ -60,7 +61,20 @@ int main(int argc, char *argv[])
 
             cout << "Dump done.\n";
 
-        }else {
+        }
+        else if (command == "disassemble") {
+            std::string start;
+            cin >> start;
+            int address = stoi(start);
+
+            cout << "Starting from address: " << address << endl;
+
+            while (address > 0) {
+                address = cpu.DecodeInstr(address);
+            }
+            
+        }
+        else {
             cout << command;
             is_running = false;
         }
