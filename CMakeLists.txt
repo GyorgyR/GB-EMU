@@ -3,14 +3,14 @@ project(GameBoy)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(disassembler/include)
+include_directories(emulator/include)
 
 add_executable(GameBoy
-        disassembler/bin/runner
-        disassembler/build/Main.o
-        "disassembler/data/Tetris (World).gb"
-        disassembler/src/Main.cpp
-        disassembler/LICENCE
-        disassembler/makefile
-        disassembler/README.md
-        disassembler/STYLEGUIDE)
+        emulator/bin/runner
+        emulator/build/Main.o
+        "emulator/data/Tetris (World).gb"
+        emulator/src/Main.cpp
+        emulator/LICENCE
+        emulator/makefile
+        emulator/README.md
+        emulator/STYLEGUIDE)

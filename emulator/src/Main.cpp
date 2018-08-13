@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
             printf("Starting from address: 0x%04X\n", address);
 
             //Create instruction decoder
-            Processor cpu(rom);
+            Decoder cpu(rom);
 
             while (address > 0) {
                 address = cpu.DecodeInstr(address);
