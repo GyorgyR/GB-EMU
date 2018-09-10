@@ -1,1 +1,6 @@
 *.gb
+.idea
+cmake-build-debug
+emulator/func_generator.c
+emulator/run
+emulator/somefile.txt
