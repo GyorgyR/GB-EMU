@@ -2,7 +2,10 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include "Decoder.h"
+#include "ROM.h"
 #include "Processor.h"
+#include "RegisterBank.h"
 
 using std::cout;
 using std::endl;
@@ -11,27 +14,8 @@ using std::cin;
 int main(int argc, char *argv[])
 {
     cout << "Welcome to the Game Boy ROM disassembly tool" << endl;
-    int rom_file_size = 0;
-    uint8_t* rom;
     if (argc == 2) {
-        std::ifstream rom_file(argv[1], std::ios::in | std::ios::binary);
-
-        if (!rom_file) {
-            fprintf(stderr, "Error opening file: %s\n", argv[1]);
-            exit(1);
-        }
-
-        rom_file.unsetf(std::ios::skipws);
-
-        rom_file.seekg(0, std::ios::end);
-        rom_file_size = rom_file.tellg();
-        rom_file.seekg(0, std::ios::beg);
-
-        rom = new uint8_t[rom_file_size];
-
-        rom_file.read(reinterpret_cast<char*>(rom), rom_file_size);
-
-        rom_file.close();
+        ROM rom(argv[1]);
     } //if
 
     bool is_running = true;
@@ -42,8 +26,8 @@ int main(int argc, char *argv[])
         cin >> command;
 
         if (command == "print-rom") {
-            for (int i = 0; i < rom_file_size; ++i)
-                    printf("0x%04X: 0x%02X\n", i, rom[i]);
+            for (int i = 0; i < ROM::rom_file_size; ++i)
+                    printf("0x%04X: 0x%02X\n", i, ROM::GetByteAt(i));
         }
         else if (command == "dump-rom") {
             std::string file;
@@ -52,8 +36,8 @@ int main(int argc, char *argv[])
             FILE* log;
             log = fopen(file.c_str(), "w");
 
-            for (int i = 0; i < rom_file_size; ++i)
-                fprintf(log, "0x%04X: 0x%02X\n", i, rom[i]);
+            for (int i = 0; i < ROM::rom_file_size; ++i)
+                fprintf(log, "0x%04X: 0x%02X\n", i, ROM::GetByteAt(i));
 
             fclose(log);
 
@@ -61,6 +45,7 @@ int main(int argc, char *argv[])
 
         }
         else if (command == "disassemble") {
+            /*
             std::string start;
             cin >> start;
             int address;
@@ -72,12 +57,17 @@ int main(int argc, char *argv[])
             printf("Starting from address: 0x%04X\n", address);
 
             //Create instruction decoder
-            Decoder cpu(rom);
+            Decoder cpu();
 
             while (address > 0) {
                 address = cpu.DecodeInstr(address);
             }
+             */
             
+        }
+        else if (command == "start") {
+            Processor cpu;
+            cpu.StartCPULoop();
         }
         else {
             cout << command;

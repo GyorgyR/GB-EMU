@@ -9,12 +9,11 @@
 
 class Processor {
 private:
-    uint8_t* rom;
+    int DecodeInstr(uint16_t address);
 public:
-    Processor(uint8_t* _rom);
+    Processor();
     ~Processor();
-    int  DecodeInstr(uint16_t address);
-
+    void StartCPULoop();
 };
 
 

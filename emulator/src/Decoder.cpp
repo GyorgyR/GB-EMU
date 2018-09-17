@@ -3,6 +3,7 @@
 //
 
 #include "Decoder.h"
+#include "ROM.h"
 #include <cstdio>
 
 Decoder::~Decoder()
@@ -1545,7 +1546,7 @@ inline int op0xFE(uint16_t address, uint8_t* rom)
 
 int Decoder::DecodeInstr(uint16_t address)
 {
-    uint8_t op_code = rom[address];
+    uint8_t op_code = ROM::GetByteAt(address);
     switch(op_code) {
         case 0x00: return op0x00(address, rom);
         case 0x01: return op0x01(address, rom);
@@ -1802,6 +1803,6 @@ int Decoder::DecodeInstr(uint16_t address)
         case 0xFC: return op0xFC(address, rom);
         case 0xFD: return op0xFD(address, rom);
         case 0xFE: return op0xFE(address, rom);
-
     }
+    return -1;
 }
