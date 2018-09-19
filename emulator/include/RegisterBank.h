@@ -29,6 +29,11 @@ public:
     static uint16_t BC();
     static uint16_t DE();
     static uint16_t HL();
+
+    static void AF(uint16_t value);
+    static void BC(uint16_t value);
+    static void DE(uint16_t value);
+    static void HL(uint16_t value);
 };
 
 
