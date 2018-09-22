@@ -1,5 +1,3 @@
-Disclaimer: We use snake_case!
-
 1) INDENTATION
 --------------------------------------------------------------------------------
 ·Use 4 spaces for indentation (no tabs)
@@ -19,12 +17,14 @@ Disclaimer: We use snake_case!
 
 function_with_lots_of_arguments(
                             int arg1, int arg2, int arg3 int arg4, int arg5,
-                            int arg6, int arg7);
+                            int arg6, int arg7
+                            );
 
 ·Strings should remain on one line as long as it is possible
 
 function_with_string_param(
-"very very very very very very very very very very very very very long string");
+"very very very very very very very very very very very very very long string"
+);
 
 ================================================================================
 
@@ -90,7 +90,7 @@ else {
 
 3) NAMING
 --------------------------------------------------------------------------------
-· Use descriptive names, but try to keep them on point (no line long names).
+·Use descriptive names, but try to keep them on point (no line long names).
 
 ·You CAN use names that are self explanatory like tmp or in case of for loops i.
  Using names like temporary_variable or loop_counter does not enhance readibility
