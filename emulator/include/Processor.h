@@ -7,6 +7,8 @@
 
 #include <cstdint>
 
+#include "ROM.h"
+
 class Processor {
 private:
     int DecodeInstr(uint16_t address);

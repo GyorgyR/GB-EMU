@@ -8,12 +8,14 @@
 
 class ROM {
 private:
-    static uint8_t *rom;
+    uint8_t *rom;
 public:
     ROM(const char *rom_file_path);
     ~ROM();
-    static const int rom_file_size;
-    static uint8_t GetByteAt(uint16_t address);
+
+    int rom_file_size;
+
+    uint8_t GetByteAt(uint16_t address);
 };
 
 

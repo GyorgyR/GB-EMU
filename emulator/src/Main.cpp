@@ -6,17 +6,23 @@
 #include "ROM.h"
 #include "Processor.h"
 #include "RegisterBank.h"
+#include "../include/Helper.h"
 
 using std::cout;
 using std::endl;
 using std::cin;
 
+const char *bootstrap_rom_path = "data/DMG_ROM.bin";
+
 int main(int argc, char *argv[])
 {
     cout << "Welcome to the Game Boy ROM disassembly tool" << endl;
-    if (argc == 2) {
-        ROM rom(argv[1]);
+    //Load the Bootstrap ROM
+    if (argc != 2) {
+        cout << "Usage: runner file/to/rom.gb\n";
     } //if
+    ROM bootstrap_rom(bootstrap_rom_path);
+    ROM rom(argv[1]);
 
     bool is_running = true;
 
@@ -26,18 +32,18 @@ int main(int argc, char *argv[])
         cin >> command;
 
         if (command == "print-rom") {
-            for (int i = 0; i < ROM::rom_file_size; ++i)
-                    printf("0x%04X: 0x%02X\n", i, ROM::GetByteAt(i));
-        }
-        else if (command == "dump-rom") {
+            for (int i = 0; i < rom.rom_file_size; ++i)
+                printf("0x%04X: 0x%02X\n", i, rom.GetByteAt(i));
+        } else if (command == "dump-loaded_rom") {
+            //This is not ideal, in the future ROM should implement ToString()
             std::string file;
             cin >> file;
 
             FILE* log;
             log = fopen(file.c_str(), "w");
 
-            for (int i = 0; i < ROM::rom_file_size; ++i)
-                fprintf(log, "0x%04X: 0x%02X\n", i, ROM::GetByteAt(i));
+            for (int i = 0; i < rom.rom_file_size; ++i)
+                fprintf(log, "0x%04X: 0x%02X\n", i, rom.GetByteAt(i));
 
             fclose(log);
 
@@ -66,6 +72,7 @@ int main(int argc, char *argv[])
             
         }
         else if (command == "start") {
+            Helper::LoadRom(bootstrap_rom);
             Processor cpu;
             cpu.StartCPULoop();
         }

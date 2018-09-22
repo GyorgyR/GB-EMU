@@ -3,11 +3,13 @@
 //
 
 #include "Processor.h"
-#include "ROM.h"
 #include "../include/Processor.h"
 #include "../include/RegisterBank.h"
+#include "../include/Helper.h"
 
 #include <cstdio>
+
+ROM *rom;
 
 Processor::~Processor()
 {
@@ -17,10 +19,16 @@ Processor::Processor()
 {
 }
 
+uint16_t getNextTwoBytes() {
+    uint8_t first = rom->GetByteAt(++RegisterBank::PC);
+    uint8_t second = rom->GetByteAt(++RegisterBank::PC);
+    return Helper::ConcatTwoBytes(first, second);
+}
+
 inline int op0x00()
 {
-    printf("Op not implemented: 0x00\n");
-    return -1;
+    printf("NOP\n");
+    return 1;
 }
 
 inline int op0x01()
@@ -313,8 +321,9 @@ inline int op0x30()
 
 inline int op0x31()
 {
-    printf("Op not implemented: 0x31\n");
-    return -1;
+    RegisterBank::SP = getNextTwoBytes();
+    printf("LD\tSP, 0x%04X\n", RegisterBank::SP);
+    return 1;
 }
 
 inline int op0x32()
@@ -1069,7 +1078,9 @@ inline int op0xAE()
 
 inline int op0xAF()
 {
-    printf("Op not implemented: 0xAF\n");
+    RegisterBank::A = 0;
+    RegisterBank::SetZ(true);
+    puts("XOR A");
     return -1;
 }
 
@@ -1189,8 +1200,10 @@ inline int op0xC2()
 
 inline int op0xC3()
 {
-    printf("Op not implemented: 0xC3\n");
-    return -1;
+    uint16_t address = getNextTwoBytes();
+    RegisterBank::PC = address - 1; //account for the already incremented pc
+    printf("JP\t0x%04X\n", address);
+    return 1;
 }
 
 inline int op0xC4()
@@ -1549,7 +1562,8 @@ inline int op0xFE()
 
 int Processor::DecodeInstr(uint16_t address)
 {
-    uint8_t op_code = ROM::GetByteAt(address);
+    uint8_t op_code = rom->GetByteAt(address);
+    //printf("0x%04X: 0x%02X\n", address, op_code);
     switch(op_code) {
         case 0x00: return op0x00();
         case 0x01: return op0x01();
@@ -1806,14 +1820,18 @@ int Processor::DecodeInstr(uint16_t address)
         case 0xFC: return op0xFC();
         case 0xFD: return op0xFD();
         case 0xFE: return op0xFE();
+        default:
+            return -1;
     }
     return -1;
 }
 
 void Processor::StartCPULoop()
 {
+    rom = Helper::GetLoadedRom();
     int status = 1;
     while (status > 0) {
         status = DecodeInstr(RegisterBank::PC);
+        RegisterBank::PC++;
     }
 }

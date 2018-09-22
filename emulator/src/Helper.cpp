@@ -5,6 +5,8 @@
 #include "../include/Helper.h"
 #include <cstdio>
 
+ROM Helper::loaded_rom = nullptr;
+
 uint16_t Helper::ConcatTwoBytes(uint8_t first, uint8_t second) {
     return (second << 8) + first;
 }
@@ -18,6 +20,6 @@ void Helper::LoadRom(ROM rom) {
     loaded_rom = rom;
 }
 
-ROM Helper::GetLoadedRom() {
-    return loaded_rom;
+ROM *Helper::GetLoadedRom() {
+    return &loaded_rom;
 }
