@@ -225,8 +225,9 @@ inline int op0x20()
 
 inline int op0x21()
 {
-    printf("Op not implemented: 0x21\n");
-    return -1;
+    RegisterBank::HL(getNextTwoBytes());
+    printf("LD\tHL, 0x%04X\n", RegisterBank::HL());
+    return 1;
 }
 
 inline int op0x22()
@@ -328,7 +329,8 @@ inline int op0x31()
 
 inline int op0x32()
 {
-    printf("Op not implemented: 0x32\n");
+
+    printf("LD\t[HL-], A\n");
     return -1;
 }
 
@@ -1080,8 +1082,11 @@ inline int op0xAF()
 {
     RegisterBank::A = 0;
     RegisterBank::SetZ(true);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(false);
+    RegisterBank::SetC(false);
     puts("XOR A");
-    return -1;
+    return 1;
 }
 
 inline int op0xB0()
