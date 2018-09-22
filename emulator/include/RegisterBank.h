@@ -22,8 +22,15 @@ public:
     static uint16_t SP;
     static uint16_t PC;
 
-    static bool IsZero();
-    static bool IsCarry();
+    static bool IsZSet();
+    static bool IsCSet();
+    static bool IsNSet();
+    static bool IsHSet();
+
+    static void SetZ(bool isOn);
+    static void SetC(bool isOn);
+    static void SetN(bool isOn);
+    static void SetH(bool isOn);
 
     static uint16_t AF();
     static uint16_t BC();
