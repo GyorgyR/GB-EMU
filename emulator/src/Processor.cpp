@@ -9,8 +9,6 @@
 
 #include <cstdio>
 
-ROM *rom;
-
 Processor::~Processor()
 {
 }
@@ -20,8 +18,8 @@ Processor::Processor()
 }
 
 uint16_t getNextTwoBytes() {
-    uint8_t first = rom->GetByteAt(++RegisterBank::PC);
-    uint8_t second = rom->GetByteAt(++RegisterBank::PC);
+    uint8_t first = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8_t second = RAM::ReadByteAt(++RegisterBank::PC);
     return Helper::ConcatTwoBytes(first, second);
 }
 
@@ -329,9 +327,10 @@ inline int op0x31()
 
 inline int op0x32()
 {
-
+    RAM::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
+    RegisterBank::HL(RegisterBank::HL() - 1);
     printf("LD\t[HL-], A\n");
-    return -1;
+    return 1;
 }
 
 inline int op0x33()
@@ -1565,10 +1564,10 @@ inline int op0xFE()
     return -1;
 }
 
-int Processor::DecodeInstr(uint16_t address)
+int Processor::decodeInstr(uint16_t address)
 {
-    uint8_t op_code = rom->GetByteAt(address);
-    //printf("0x%04X: 0x%02X\n", address, op_code);
+    uint8_t op_code = RAM::ReadByteAt(address);
+    printf("0x%04X: ", address);
     switch(op_code) {
         case 0x00: return op0x00();
         case 0x01: return op0x01();
@@ -1833,10 +1832,9 @@ int Processor::DecodeInstr(uint16_t address)
 
 void Processor::StartCPULoop()
 {
-    rom = Helper::GetLoadedRom();
     int status = 1;
     while (status > 0) {
-        status = DecodeInstr(RegisterBank::PC);
+        status = decodeInstr(RegisterBank::PC);
         RegisterBank::PC++;
     }
 }

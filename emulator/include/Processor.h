@@ -8,10 +8,11 @@
 #include <cstdint>
 
 #include "ROM.h"
+#include "RAM.h"
 
 class Processor {
 private:
-    int DecodeInstr(uint16_t address);
+    int decodeInstr(uint16_t address);
 public:
     Processor();
     ~Processor();
