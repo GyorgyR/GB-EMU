@@ -66,13 +66,13 @@ int main(int argc, char *argv[])
             Decoder cpu();
 
             while (address > 0) {
-                address = cpu.DecodeInstr(address);
+                address = cpu.decodeInstr(address);
             }
              */
             
         }
         else if (command == "start") {
-            Helper::LoadRom(bootstrap_rom);
+            RAM::InitRam(&bootstrap_rom);
             Processor cpu;
             cpu.StartCPULoop();
         }

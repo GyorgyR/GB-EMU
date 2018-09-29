@@ -12,9 +12,7 @@ private:
 public:
     ROM(const char *rom_file_path);
     ~ROM();
-
     int rom_file_size;
-
     uint8_t GetByteAt(uint16_t address);
 };
 
