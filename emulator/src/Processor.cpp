@@ -2,12 +2,14 @@
 // Created by gyorgy on 11/08/18.
 //
 
+#define DEBUG
+
 #include "Processor.h"
 #include "../include/Processor.h"
 #include "../include/RegisterBank.h"
 #include "../include/Helper.h"
 
-#include <cstdio>
+FILE *debugStream = fopen("cpu-run.log", "w+");
 
 Processor::~Processor()
 {
@@ -25,303 +27,311 @@ uint16_t getNextTwoBytes() {
 
 inline int op0x00()
 {
-    printf("NOP\n");
+    fprintf(debugStream, "NOP\n");
     return 1;
 }
 
 inline int op0x01()
 {
-    printf("Op not implemented: 0x01\n");
+    fprintf(debugStream, "Op not implemented: 0x01\n");
     return -1;
 }
 
 inline int op0x02()
 {
-    printf("Op not implemented: 0x02\n");
+    fprintf(debugStream, "Op not implemented: 0x02\n");
     return -1;
 }
 
 inline int op0x03()
 {
-    printf("Op not implemented: 0x03\n");
+    fprintf(debugStream, "Op not implemented: 0x03\n");
     return -1;
 }
 
 inline int op0x04()
 {
-    printf("Op not implemented: 0x04\n");
+    fprintf(debugStream, "Op not implemented: 0x04\n");
     return -1;
 }
 
 inline int op0x05()
 {
-    printf("Op not implemented: 0x05\n");
+    fprintf(debugStream, "Op not implemented: 0x05\n");
     return -1;
 }
 
 inline int op0x06()
 {
-    printf("Op not implemented: 0x06\n");
+    fprintf(debugStream, "Op not implemented: 0x06\n");
     return -1;
 }
 
 inline int op0x07()
 {
-    printf("Op not implemented: 0x07\n");
+    fprintf(debugStream, "Op not implemented: 0x07\n");
     return -1;
 }
 
 inline int op0x08()
 {
-    printf("Op not implemented: 0x08\n");
+    fprintf(debugStream, "Op not implemented: 0x08\n");
     return -1;
 }
 
 inline int op0x09()
 {
-    printf("Op not implemented: 0x09\n");
+    fprintf(debugStream, "Op not implemented: 0x09\n");
     return -1;
 }
 
 inline int op0x0A()
 {
-    printf("Op not implemented: 0x0A\n");
+    fprintf(debugStream, "Op not implemented: 0x0A\n");
     return -1;
 }
 
 inline int op0x0B()
 {
-    printf("Op not implemented: 0x0B\n");
+    fprintf(debugStream, "Op not implemented: 0x0B\n");
     return -1;
 }
 
 inline int op0x0C()
 {
-    printf("Op not implemented: 0x0C\n");
+    fprintf(debugStream, "Op not implemented: 0x0C\n");
     return -1;
 }
 
 inline int op0x0D()
 {
-    printf("Op not implemented: 0x0D\n");
+    fprintf(debugStream, "Op not implemented: 0x0D\n");
     return -1;
 }
 
 inline int op0x0E()
 {
-    printf("Op not implemented: 0x0E\n");
+    fprintf(debugStream, "Op not implemented: 0x0E\n");
     return -1;
 }
 
 inline int op0x0F()
 {
-    printf("Op not implemented: 0x0F\n");
+    fprintf(debugStream, "Op not implemented: 0x0F\n");
     return -1;
 }
 
 inline int op0x10()
 {
-    printf("Op not implemented: 0x10\n");
+    fprintf(debugStream, "Op not implemented: 0x10\n");
     return -1;
 }
 
 inline int op0x11()
 {
-    printf("Op not implemented: 0x11\n");
+    fprintf(debugStream, "Op not implemented: 0x11\n");
     return -1;
 }
 
 inline int op0x12()
 {
-    printf("Op not implemented: 0x12\n");
+    fprintf(debugStream, "Op not implemented: 0x12\n");
     return -1;
 }
 
 inline int op0x13()
 {
-    printf("Op not implemented: 0x13\n");
+    fprintf(debugStream, "Op not implemented: 0x13\n");
     return -1;
 }
 
 inline int op0x14()
 {
-    printf("Op not implemented: 0x14\n");
+    fprintf(debugStream, "Op not implemented: 0x14\n");
     return -1;
 }
 
 inline int op0x15()
 {
-    printf("Op not implemented: 0x15\n");
+    fprintf(debugStream, "Op not implemented: 0x15\n");
     return -1;
 }
 
 inline int op0x16()
 {
-    printf("Op not implemented: 0x16\n");
+    fprintf(debugStream, "Op not implemented: 0x16\n");
     return -1;
 }
 
 inline int op0x17()
 {
-    printf("Op not implemented: 0x17\n");
+    fprintf(debugStream, "Op not implemented: 0x17\n");
     return -1;
 }
 
 inline int op0x18()
 {
-    printf("Op not implemented: 0x18\n");
+    fprintf(debugStream, "Op not implemented: 0x18\n");
     return -1;
 }
 
 inline int op0x19()
 {
-    printf("Op not implemented: 0x19\n");
+    fprintf(debugStream, "Op not implemented: 0x19\n");
     return -1;
 }
 
 inline int op0x1A()
 {
-    printf("Op not implemented: 0x1A\n");
+    fprintf(debugStream, "Op not implemented: 0x1A\n");
     return -1;
 }
 
 inline int op0x1B()
 {
-    printf("Op not implemented: 0x1B\n");
+    fprintf(debugStream, "Op not implemented: 0x1B\n");
     return -1;
 }
 
 inline int op0x1C()
 {
-    printf("Op not implemented: 0x1C\n");
+    fprintf(debugStream, "Op not implemented: 0x1C\n");
     return -1;
 }
 
 inline int op0x1D()
 {
-    printf("Op not implemented: 0x1D\n");
+    fprintf(debugStream, "Op not implemented: 0x1D\n");
     return -1;
 }
 
 inline int op0x1E()
 {
-    printf("Op not implemented: 0x1E\n");
+    fprintf(debugStream, "Op not implemented: 0x1E\n");
     return -1;
 }
 
 inline int op0x1F()
 {
-    printf("Op not implemented: 0x1F\n");
+    fprintf(debugStream, "Op not implemented: 0x1F\n");
     return -1;
 }
 
 inline int op0x20()
 {
-    printf("Op not implemented: 0x20\n");
-    return -1;
+    int8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    if (!RegisterBank::IsZSet()) RegisterBank::PC += value;
+    #ifdef DEBUG
+    fprintf(debugStream, "JR NZ, [%d]\n", value);
+    #endif
+    return 1;
 }
 
 inline int op0x21()
 {
     RegisterBank::HL(getNextTwoBytes());
-    printf("LD\tHL, 0x%04X\n", RegisterBank::HL());
+    #ifdef DEBUG
+    fprintf(debugStream, "LD\tHL, 0x%04X\n", RegisterBank::HL());
+    #endif
     return 1;
 }
 
 inline int op0x22()
 {
-    printf("Op not implemented: 0x22\n");
+    fprintf(debugStream, "Op not implemented: 0x22\n");
     return -1;
 }
 
 inline int op0x23()
 {
-    printf("Op not implemented: 0x23\n");
+    fprintf(debugStream, "Op not implemented: 0x23\n");
     return -1;
 }
 
 inline int op0x24()
 {
-    printf("Op not implemented: 0x24\n");
+    fprintf(debugStream, "Op not implemented: 0x24\n");
     return -1;
 }
 
 inline int op0x25()
 {
-    printf("Op not implemented: 0x25\n");
+    fprintf(debugStream, "Op not implemented: 0x25\n");
     return -1;
 }
 
 inline int op0x26()
 {
-    printf("Op not implemented: 0x26\n");
+    fprintf(debugStream, "Op not implemented: 0x26\n");
     return -1;
 }
 
 inline int op0x27()
 {
-    printf("Op not implemented: 0x27\n");
+    fprintf(debugStream, "Op not implemented: 0x27\n");
     return -1;
 }
 
 inline int op0x28()
 {
-    printf("Op not implemented: 0x28\n");
+    fprintf(debugStream, "Op not implemented: 0x28\n");
     return -1;
 }
 
 inline int op0x29()
 {
-    printf("Op not implemented: 0x29\n");
+    fprintf(debugStream, "Op not implemented: 0x29\n");
     return -1;
 }
 
 inline int op0x2A()
 {
-    printf("Op not implemented: 0x2A\n");
+    fprintf(debugStream, "Op not implemented: 0x2A\n");
     return -1;
 }
 
 inline int op0x2B()
 {
-    printf("Op not implemented: 0x2B\n");
+    fprintf(debugStream, "Op not implemented: 0x2B\n");
     return -1;
 }
 
 inline int op0x2C()
 {
-    printf("Op not implemented: 0x2C\n");
+    fprintf(debugStream, "Op not implemented: 0x2C\n");
     return -1;
 }
 
 inline int op0x2D()
 {
-    printf("Op not implemented: 0x2D\n");
+    fprintf(debugStream, "Op not implemented: 0x2D\n");
     return -1;
 }
 
 inline int op0x2E()
 {
-    printf("Op not implemented: 0x2E\n");
+    fprintf(debugStream, "Op not implemented: 0x2E\n");
     return -1;
 }
 
 inline int op0x2F()
 {
-    printf("Op not implemented: 0x2F\n");
+    fprintf(debugStream, "Op not implemented: 0x2F\n");
     return -1;
 }
 
 inline int op0x30()
 {
-    printf("Op not implemented: 0x30\n");
+    fprintf(debugStream, "Op not implemented: 0x30\n");
     return -1;
 }
 
 inline int op0x31()
 {
     RegisterBank::SP = getNextTwoBytes();
-    printf("LD\tSP, 0x%04X\n", RegisterBank::SP);
+    #ifdef DEBUG
+    fprintf(debugStream, "LD\tSP, 0x%04X\n", RegisterBank::SP);
+    #endif
     return 1;
 }
 
@@ -329,751 +339,753 @@ inline int op0x32()
 {
     RAM::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
     RegisterBank::HL(RegisterBank::HL() - 1);
-    printf("LD\t[HL-], A\n");
+    #ifdef DEBUG
+    fprintf(debugStream, "LD\t[HL-], A\n");
+    #endif
     return 1;
 }
 
 inline int op0x33()
 {
-    printf("Op not implemented: 0x33\n");
+    fprintf(debugStream, "Op not implemented: 0x33\n");
     return -1;
 }
 
 inline int op0x34()
 {
-    printf("Op not implemented: 0x34\n");
+    fprintf(debugStream, "Op not implemented: 0x34\n");
     return -1;
 }
 
 inline int op0x35()
 {
-    printf("Op not implemented: 0x35\n");
+    fprintf(debugStream, "Op not implemented: 0x35\n");
     return -1;
 }
 
 inline int op0x36()
 {
-    printf("Op not implemented: 0x36\n");
+    fprintf(debugStream, "Op not implemented: 0x36\n");
     return -1;
 }
 
 inline int op0x37()
 {
-    printf("Op not implemented: 0x37\n");
+    fprintf(debugStream, "Op not implemented: 0x37\n");
     return -1;
 }
 
 inline int op0x38()
 {
-    printf("Op not implemented: 0x38\n");
+    fprintf(debugStream, "Op not implemented: 0x38\n");
     return -1;
 }
 
 inline int op0x39()
 {
-    printf("Op not implemented: 0x39\n");
+    fprintf(debugStream, "Op not implemented: 0x39\n");
     return -1;
 }
 
 inline int op0x3A()
 {
-    printf("Op not implemented: 0x3A\n");
+    fprintf(debugStream, "Op not implemented: 0x3A\n");
     return -1;
 }
 
 inline int op0x3B()
 {
-    printf("Op not implemented: 0x3B\n");
+    fprintf(debugStream, "Op not implemented: 0x3B\n");
     return -1;
 }
 
 inline int op0x3C()
 {
-    printf("Op not implemented: 0x3C\n");
+    fprintf(debugStream, "Op not implemented: 0x3C\n");
     return -1;
 }
 
 inline int op0x3D()
 {
-    printf("Op not implemented: 0x3D\n");
+    fprintf(debugStream, "Op not implemented: 0x3D\n");
     return -1;
 }
 
 inline int op0x3E()
 {
-    printf("Op not implemented: 0x3E\n");
+    fprintf(debugStream, "Op not implemented: 0x3E\n");
     return -1;
 }
 
 inline int op0x3F()
 {
-    printf("Op not implemented: 0x3F\n");
+    fprintf(debugStream, "Op not implemented: 0x3F\n");
     return -1;
 }
 
 inline int op0x40()
 {
-    printf("Op not implemented: 0x40\n");
+    fprintf(debugStream, "Op not implemented: 0x40\n");
     return -1;
 }
 
 inline int op0x41()
 {
-    printf("Op not implemented: 0x41\n");
+    fprintf(debugStream, "Op not implemented: 0x41\n");
     return -1;
 }
 
 inline int op0x42()
 {
-    printf("Op not implemented: 0x42\n");
+    fprintf(debugStream, "Op not implemented: 0x42\n");
     return -1;
 }
 
 inline int op0x43()
 {
-    printf("Op not implemented: 0x43\n");
+    fprintf(debugStream, "Op not implemented: 0x43\n");
     return -1;
 }
 
 inline int op0x44()
 {
-    printf("Op not implemented: 0x44\n");
+    fprintf(debugStream, "Op not implemented: 0x44\n");
     return -1;
 }
 
 inline int op0x45()
 {
-    printf("Op not implemented: 0x45\n");
+    fprintf(debugStream, "Op not implemented: 0x45\n");
     return -1;
 }
 
 inline int op0x46()
 {
-    printf("Op not implemented: 0x46\n");
+    fprintf(debugStream, "Op not implemented: 0x46\n");
     return -1;
 }
 
 inline int op0x47()
 {
-    printf("Op not implemented: 0x47\n");
+    fprintf(debugStream, "Op not implemented: 0x47\n");
     return -1;
 }
 
 inline int op0x48()
 {
-    printf("Op not implemented: 0x48\n");
+    fprintf(debugStream, "Op not implemented: 0x48\n");
     return -1;
 }
 
 inline int op0x49()
 {
-    printf("Op not implemented: 0x49\n");
+    fprintf(debugStream, "Op not implemented: 0x49\n");
     return -1;
 }
 
 inline int op0x4A()
 {
-    printf("Op not implemented: 0x4A\n");
+    fprintf(debugStream, "Op not implemented: 0x4A\n");
     return -1;
 }
 
 inline int op0x4B()
 {
-    printf("Op not implemented: 0x4B\n");
+    fprintf(debugStream, "Op not implemented: 0x4B\n");
     return -1;
 }
 
 inline int op0x4C()
 {
-    printf("Op not implemented: 0x4C\n");
+    fprintf(debugStream, "Op not implemented: 0x4C\n");
     return -1;
 }
 
 inline int op0x4D()
 {
-    printf("Op not implemented: 0x4D\n");
+    fprintf(debugStream, "Op not implemented: 0x4D\n");
     return -1;
 }
 
 inline int op0x4E()
 {
-    printf("Op not implemented: 0x4E\n");
+    fprintf(debugStream, "Op not implemented: 0x4E\n");
     return -1;
 }
 
 inline int op0x4F()
 {
-    printf("Op not implemented: 0x4F\n");
+    fprintf(debugStream, "Op not implemented: 0x4F\n");
     return -1;
 }
 
 inline int op0x50()
 {
-    printf("Op not implemented: 0x50\n");
+    fprintf(debugStream, "Op not implemented: 0x50\n");
     return -1;
 }
 
 inline int op0x51()
 {
-    printf("Op not implemented: 0x51\n");
+    fprintf(debugStream, "Op not implemented: 0x51\n");
     return -1;
 }
 
 inline int op0x52()
 {
-    printf("Op not implemented: 0x52\n");
+    fprintf(debugStream, "Op not implemented: 0x52\n");
     return -1;
 }
 
 inline int op0x53()
 {
-    printf("Op not implemented: 0x53\n");
+    fprintf(debugStream, "Op not implemented: 0x53\n");
     return -1;
 }
 
 inline int op0x54()
 {
-    printf("Op not implemented: 0x54\n");
+    fprintf(debugStream, "Op not implemented: 0x54\n");
     return -1;
 }
 
 inline int op0x55()
 {
-    printf("Op not implemented: 0x55\n");
+    fprintf(debugStream, "Op not implemented: 0x55\n");
     return -1;
 }
 
 inline int op0x56()
 {
-    printf("Op not implemented: 0x56\n");
+    fprintf(debugStream, "Op not implemented: 0x56\n");
     return -1;
 }
 
 inline int op0x57()
 {
-    printf("Op not implemented: 0x57\n");
+    fprintf(debugStream, "Op not implemented: 0x57\n");
     return -1;
 }
 
 inline int op0x58()
 {
-    printf("Op not implemented: 0x58\n");
+    fprintf(debugStream, "Op not implemented: 0x58\n");
     return -1;
 }
 
 inline int op0x59()
 {
-    printf("Op not implemented: 0x59\n");
+    fprintf(debugStream, "Op not implemented: 0x59\n");
     return -1;
 }
 
 inline int op0x5A()
 {
-    printf("Op not implemented: 0x5A\n");
+    fprintf(debugStream, "Op not implemented: 0x5A\n");
     return -1;
 }
 
 inline int op0x5B()
 {
-    printf("Op not implemented: 0x5B\n");
+    fprintf(debugStream, "Op not implemented: 0x5B\n");
     return -1;
 }
 
 inline int op0x5C()
 {
-    printf("Op not implemented: 0x5C\n");
+    fprintf(debugStream, "Op not implemented: 0x5C\n");
     return -1;
 }
 
 inline int op0x5D()
 {
-    printf("Op not implemented: 0x5D\n");
+    fprintf(debugStream, "Op not implemented: 0x5D\n");
     return -1;
 }
 
 inline int op0x5E()
 {
-    printf("Op not implemented: 0x5E\n");
+    fprintf(debugStream, "Op not implemented: 0x5E\n");
     return -1;
 }
 
 inline int op0x5F()
 {
-    printf("Op not implemented: 0x5F\n");
+    fprintf(debugStream, "Op not implemented: 0x5F\n");
     return -1;
 }
 
 inline int op0x60()
 {
-    printf("Op not implemented: 0x60\n");
+    fprintf(debugStream, "Op not implemented: 0x60\n");
     return -1;
 }
 
 inline int op0x61()
 {
-    printf("Op not implemented: 0x61\n");
+    fprintf(debugStream, "Op not implemented: 0x61\n");
     return -1;
 }
 
 inline int op0x62()
 {
-    printf("Op not implemented: 0x62\n");
+    fprintf(debugStream, "Op not implemented: 0x62\n");
     return -1;
 }
 
 inline int op0x63()
 {
-    printf("Op not implemented: 0x63\n");
+    fprintf(debugStream, "Op not implemented: 0x63\n");
     return -1;
 }
 
 inline int op0x64()
 {
-    printf("Op not implemented: 0x64\n");
+    fprintf(debugStream, "Op not implemented: 0x64\n");
     return -1;
 }
 
 inline int op0x65()
 {
-    printf("Op not implemented: 0x65\n");
+    fprintf(debugStream, "Op not implemented: 0x65\n");
     return -1;
 }
 
 inline int op0x66()
 {
-    printf("Op not implemented: 0x66\n");
+    fprintf(debugStream, "Op not implemented: 0x66\n");
     return -1;
 }
 
 inline int op0x67()
 {
-    printf("Op not implemented: 0x67\n");
+    fprintf(debugStream, "Op not implemented: 0x67\n");
     return -1;
 }
 
 inline int op0x68()
 {
-    printf("Op not implemented: 0x68\n");
+    fprintf(debugStream, "Op not implemented: 0x68\n");
     return -1;
 }
 
 inline int op0x69()
 {
-    printf("Op not implemented: 0x69\n");
+    fprintf(debugStream, "Op not implemented: 0x69\n");
     return -1;
 }
 
 inline int op0x6A()
 {
-    printf("Op not implemented: 0x6A\n");
+    fprintf(debugStream, "Op not implemented: 0x6A\n");
     return -1;
 }
 
 inline int op0x6B()
 {
-    printf("Op not implemented: 0x6B\n");
+    fprintf(debugStream, "Op not implemented: 0x6B\n");
     return -1;
 }
 
 inline int op0x6C()
 {
-    printf("Op not implemented: 0x6C\n");
+    fprintf(debugStream, "Op not implemented: 0x6C\n");
     return -1;
 }
 
 inline int op0x6D()
 {
-    printf("Op not implemented: 0x6D\n");
+    fprintf(debugStream, "Op not implemented: 0x6D\n");
     return -1;
 }
 
 inline int op0x6E()
 {
-    printf("Op not implemented: 0x6E\n");
+    fprintf(debugStream, "Op not implemented: 0x6E\n");
     return -1;
 }
 
 inline int op0x6F()
 {
-    printf("Op not implemented: 0x6F\n");
+    fprintf(debugStream, "Op not implemented: 0x6F\n");
     return -1;
 }
 
 inline int op0x70()
 {
-    printf("Op not implemented: 0x70\n");
+    fprintf(debugStream, "Op not implemented: 0x70\n");
     return -1;
 }
 
 inline int op0x71()
 {
-    printf("Op not implemented: 0x71\n");
+    fprintf(debugStream, "Op not implemented: 0x71\n");
     return -1;
 }
 
 inline int op0x72()
 {
-    printf("Op not implemented: 0x72\n");
+    fprintf(debugStream, "Op not implemented: 0x72\n");
     return -1;
 }
 
 inline int op0x73()
 {
-    printf("Op not implemented: 0x73\n");
+    fprintf(debugStream, "Op not implemented: 0x73\n");
     return -1;
 }
 
 inline int op0x74()
 {
-    printf("Op not implemented: 0x74\n");
+    fprintf(debugStream, "Op not implemented: 0x74\n");
     return -1;
 }
 
 inline int op0x75()
 {
-    printf("Op not implemented: 0x75\n");
+    fprintf(debugStream, "Op not implemented: 0x75\n");
     return -1;
 }
 
 inline int op0x76()
 {
-    printf("Op not implemented: 0x76\n");
+    fprintf(debugStream, "Op not implemented: 0x76\n");
     return -1;
 }
 
 inline int op0x77()
 {
-    printf("Op not implemented: 0x77\n");
+    fprintf(debugStream, "Op not implemented: 0x77\n");
     return -1;
 }
 
 inline int op0x78()
 {
-    printf("Op not implemented: 0x78\n");
+    fprintf(debugStream, "Op not implemented: 0x78\n");
     return -1;
 }
 
 inline int op0x79()
 {
-    printf("Op not implemented: 0x79\n");
+    fprintf(debugStream, "Op not implemented: 0x79\n");
     return -1;
 }
 
 inline int op0x7A()
 {
-    printf("Op not implemented: 0x7A\n");
+    fprintf(debugStream, "Op not implemented: 0x7A\n");
     return -1;
 }
 
 inline int op0x7B()
 {
-    printf("Op not implemented: 0x7B\n");
+    fprintf(debugStream, "Op not implemented: 0x7B\n");
     return -1;
 }
 
 inline int op0x7C()
 {
-    printf("Op not implemented: 0x7C\n");
+    fprintf(debugStream, "Op not implemented: 0x7C\n");
     return -1;
 }
 
 inline int op0x7D()
 {
-    printf("Op not implemented: 0x7D\n");
+    fprintf(debugStream, "Op not implemented: 0x7D\n");
     return -1;
 }
 
 inline int op0x7E()
 {
-    printf("Op not implemented: 0x7E\n");
+    fprintf(debugStream, "Op not implemented: 0x7E\n");
     return -1;
 }
 
 inline int op0x7F()
 {
-    printf("Op not implemented: 0x7F\n");
+    fprintf(debugStream, "Op not implemented: 0x7F\n");
     return -1;
 }
 
 inline int op0x80()
 {
-    printf("Op not implemented: 0x80\n");
+    fprintf(debugStream, "Op not implemented: 0x80\n");
     return -1;
 }
 
 inline int op0x81()
 {
-    printf("Op not implemented: 0x81\n");
+    fprintf(debugStream, "Op not implemented: 0x81\n");
     return -1;
 }
 
 inline int op0x82()
 {
-    printf("Op not implemented: 0x82\n");
+    fprintf(debugStream, "Op not implemented: 0x82\n");
     return -1;
 }
 
 inline int op0x83()
 {
-    printf("Op not implemented: 0x83\n");
+    fprintf(debugStream, "Op not implemented: 0x83\n");
     return -1;
 }
 
 inline int op0x84()
 {
-    printf("Op not implemented: 0x84\n");
+    fprintf(debugStream, "Op not implemented: 0x84\n");
     return -1;
 }
 
 inline int op0x85()
 {
-    printf("Op not implemented: 0x85\n");
+    fprintf(debugStream, "Op not implemented: 0x85\n");
     return -1;
 }
 
 inline int op0x86()
 {
-    printf("Op not implemented: 0x86\n");
+    fprintf(debugStream, "Op not implemented: 0x86\n");
     return -1;
 }
 
 inline int op0x87()
 {
-    printf("Op not implemented: 0x87\n");
+    fprintf(debugStream, "Op not implemented: 0x87\n");
     return -1;
 }
 
 inline int op0x88()
 {
-    printf("Op not implemented: 0x88\n");
+    fprintf(debugStream, "Op not implemented: 0x88\n");
     return -1;
 }
 
 inline int op0x89()
 {
-    printf("Op not implemented: 0x89\n");
+    fprintf(debugStream, "Op not implemented: 0x89\n");
     return -1;
 }
 
 inline int op0x8A()
 {
-    printf("Op not implemented: 0x8A\n");
+    fprintf(debugStream, "Op not implemented: 0x8A\n");
     return -1;
 }
 
 inline int op0x8B()
 {
-    printf("Op not implemented: 0x8B\n");
+    fprintf(debugStream, "Op not implemented: 0x8B\n");
     return -1;
 }
 
 inline int op0x8C()
 {
-    printf("Op not implemented: 0x8C\n");
+    fprintf(debugStream, "Op not implemented: 0x8C\n");
     return -1;
 }
 
 inline int op0x8D()
 {
-    printf("Op not implemented: 0x8D\n");
+    fprintf(debugStream, "Op not implemented: 0x8D\n");
     return -1;
 }
 
 inline int op0x8E()
 {
-    printf("Op not implemented: 0x8E\n");
+    fprintf(debugStream, "Op not implemented: 0x8E\n");
     return -1;
 }
 
 inline int op0x8F()
 {
-    printf("Op not implemented: 0x8F\n");
+    fprintf(debugStream, "Op not implemented: 0x8F\n");
     return -1;
 }
 
 inline int op0x90()
 {
-    printf("Op not implemented: 0x90\n");
+    fprintf(debugStream, "Op not implemented: 0x90\n");
     return -1;
 }
 
 inline int op0x91()
 {
-    printf("Op not implemented: 0x91\n");
+    fprintf(debugStream, "Op not implemented: 0x91\n");
     return -1;
 }
 
 inline int op0x92()
 {
-    printf("Op not implemented: 0x92\n");
+    fprintf(debugStream, "Op not implemented: 0x92\n");
     return -1;
 }
 
 inline int op0x93()
 {
-    printf("Op not implemented: 0x93\n");
+    fprintf(debugStream, "Op not implemented: 0x93\n");
     return -1;
 }
 
 inline int op0x94()
 {
-    printf("Op not implemented: 0x94\n");
+    fprintf(debugStream, "Op not implemented: 0x94\n");
     return -1;
 }
 
 inline int op0x95()
 {
-    printf("Op not implemented: 0x95\n");
+    fprintf(debugStream, "Op not implemented: 0x95\n");
     return -1;
 }
 
 inline int op0x96()
 {
-    printf("Op not implemented: 0x96\n");
+    fprintf(debugStream, "Op not implemented: 0x96\n");
     return -1;
 }
 
 inline int op0x97()
 {
-    printf("Op not implemented: 0x97\n");
+    fprintf(debugStream, "Op not implemented: 0x97\n");
     return -1;
 }
 
 inline int op0x98()
 {
-    printf("Op not implemented: 0x98\n");
+    fprintf(debugStream, "Op not implemented: 0x98\n");
     return -1;
 }
 
 inline int op0x99()
 {
-    printf("Op not implemented: 0x99\n");
+    fprintf(debugStream, "Op not implemented: 0x99\n");
     return -1;
 }
 
 inline int op0x9A()
 {
-    printf("Op not implemented: 0x9A\n");
+    fprintf(debugStream, "Op not implemented: 0x9A\n");
     return -1;
 }
 
 inline int op0x9B()
 {
-    printf("Op not implemented: 0x9B\n");
+    fprintf(debugStream, "Op not implemented: 0x9B\n");
     return -1;
 }
 
 inline int op0x9C()
 {
-    printf("Op not implemented: 0x9C\n");
+    fprintf(debugStream, "Op not implemented: 0x9C\n");
     return -1;
 }
 
 inline int op0x9D()
 {
-    printf("Op not implemented: 0x9D\n");
+    fprintf(debugStream, "Op not implemented: 0x9D\n");
     return -1;
 }
 
 inline int op0x9E()
 {
-    printf("Op not implemented: 0x9E\n");
+    fprintf(debugStream, "Op not implemented: 0x9E\n");
     return -1;
 }
 
 inline int op0x9F()
 {
-    printf("Op not implemented: 0x9F\n");
+    fprintf(debugStream, "Op not implemented: 0x9F\n");
     return -1;
 }
 
 inline int op0xA0()
 {
-    printf("Op not implemented: 0xA0\n");
+    fprintf(debugStream, "Op not implemented: 0xA0\n");
     return -1;
 }
 
 inline int op0xA1()
 {
-    printf("Op not implemented: 0xA1\n");
+    fprintf(debugStream, "Op not implemented: 0xA1\n");
     return -1;
 }
 
 inline int op0xA2()
 {
-    printf("Op not implemented: 0xA2\n");
+    fprintf(debugStream, "Op not implemented: 0xA2\n");
     return -1;
 }
 
 inline int op0xA3()
 {
-    printf("Op not implemented: 0xA3\n");
+    fprintf(debugStream, "Op not implemented: 0xA3\n");
     return -1;
 }
 
 inline int op0xA4()
 {
-    printf("Op not implemented: 0xA4\n");
+    fprintf(debugStream, "Op not implemented: 0xA4\n");
     return -1;
 }
 
 inline int op0xA5()
 {
-    printf("Op not implemented: 0xA5\n");
+    fprintf(debugStream, "Op not implemented: 0xA5\n");
     return -1;
 }
 
 inline int op0xA6()
 {
-    printf("Op not implemented: 0xA6\n");
+    fprintf(debugStream, "Op not implemented: 0xA6\n");
     return -1;
 }
 
 inline int op0xA7()
 {
-    printf("Op not implemented: 0xA7\n");
+    fprintf(debugStream, "Op not implemented: 0xA7\n");
     return -1;
 }
 
 inline int op0xA8()
 {
-    printf("Op not implemented: 0xA8\n");
+    fprintf(debugStream, "Op not implemented: 0xA8\n");
     return -1;
 }
 
 inline int op0xA9()
 {
-    printf("Op not implemented: 0xA9\n");
+    fprintf(debugStream, "Op not implemented: 0xA9\n");
     return -1;
 }
 
 inline int op0xAA()
 {
-    printf("Op not implemented: 0xAA\n");
+    fprintf(debugStream, "Op not implemented: 0xAA\n");
     return -1;
 }
 
 inline int op0xAB()
 {
-    printf("Op not implemented: 0xAB\n");
+    fprintf(debugStream, "Op not implemented: 0xAB\n");
     return -1;
 }
 
 inline int op0xAC()
 {
-    printf("Op not implemented: 0xAC\n");
+    fprintf(debugStream, "Op not implemented: 0xAC\n");
     return -1;
 }
 
 inline int op0xAD()
 {
-    printf("Op not implemented: 0xAD\n");
+    fprintf(debugStream, "Op not implemented: 0xAD\n");
     return -1;
 }
 
 inline int op0xAE()
 {
-    printf("Op not implemented: 0xAE\n");
+    fprintf(debugStream, "Op not implemented: 0xAE\n");
     return -1;
 }
 
@@ -1084,121 +1096,123 @@ inline int op0xAF()
     RegisterBank::SetN(false);
     RegisterBank::SetH(false);
     RegisterBank::SetC(false);
-    puts("XOR A");
+    #ifdef DEBUG
+    fprintf(debugStream, "XOR A\n");
+    #endif
     return 1;
 }
 
 inline int op0xB0()
 {
-    printf("Op not implemented: 0xB0\n");
+    fprintf(debugStream, "Op not implemented: 0xB0\n");
     return -1;
 }
 
 inline int op0xB1()
 {
-    printf("Op not implemented: 0xB1\n");
+    fprintf(debugStream, "Op not implemented: 0xB1\n");
     return -1;
 }
 
 inline int op0xB2()
 {
-    printf("Op not implemented: 0xB2\n");
+    fprintf(debugStream, "Op not implemented: 0xB2\n");
     return -1;
 }
 
 inline int op0xB3()
 {
-    printf("Op not implemented: 0xB3\n");
+    fprintf(debugStream, "Op not implemented: 0xB3\n");
     return -1;
 }
 
 inline int op0xB4()
 {
-    printf("Op not implemented: 0xB4\n");
+    fprintf(debugStream, "Op not implemented: 0xB4\n");
     return -1;
 }
 
 inline int op0xB5()
 {
-    printf("Op not implemented: 0xB5\n");
+    fprintf(debugStream, "Op not implemented: 0xB5\n");
     return -1;
 }
 
 inline int op0xB6()
 {
-    printf("Op not implemented: 0xB6\n");
+    fprintf(debugStream, "Op not implemented: 0xB6\n");
     return -1;
 }
 
 inline int op0xB7()
 {
-    printf("Op not implemented: 0xB7\n");
+    fprintf(debugStream, "Op not implemented: 0xB7\n");
     return -1;
 }
 
 inline int op0xB8()
 {
-    printf("Op not implemented: 0xB8\n");
+    fprintf(debugStream, "Op not implemented: 0xB8\n");
     return -1;
 }
 
 inline int op0xB9()
 {
-    printf("Op not implemented: 0xB9\n");
+    fprintf(debugStream, "Op not implemented: 0xB9\n");
     return -1;
 }
 
 inline int op0xBA()
 {
-    printf("Op not implemented: 0xBA\n");
+    fprintf(debugStream, "Op not implemented: 0xBA\n");
     return -1;
 }
 
 inline int op0xBB()
 {
-    printf("Op not implemented: 0xBB\n");
+    fprintf(debugStream, "Op not implemented: 0xBB\n");
     return -1;
 }
 
 inline int op0xBC()
 {
-    printf("Op not implemented: 0xBC\n");
+    fprintf(debugStream, "Op not implemented: 0xBC\n");
     return -1;
 }
 
 inline int op0xBD()
 {
-    printf("Op not implemented: 0xBD\n");
+    fprintf(debugStream, "Op not implemented: 0xBD\n");
     return -1;
 }
 
 inline int op0xBE()
 {
-    printf("Op not implemented: 0xBE\n");
+    fprintf(debugStream, "Op not implemented: 0xBE\n");
     return -1;
 }
 
 inline int op0xBF()
 {
-    printf("Op not implemented: 0xBF\n");
+    fprintf(debugStream, "Op not implemented: 0xBF\n");
     return -1;
 }
 
 inline int op0xC0()
 {
-    printf("Op not implemented: 0xC0\n");
+    fprintf(debugStream, "Op not implemented: 0xC0\n");
     return -1;
 }
 
 inline int op0xC1()
 {
-    printf("Op not implemented: 0xC1\n");
+    fprintf(debugStream, "Op not implemented: 0xC1\n");
     return -1;
 }
 
 inline int op0xC2()
 {
-    printf("Op not implemented: 0xC2\n");
+    fprintf(debugStream, "Op not implemented: 0xC2\n");
     return -1;
 }
 
@@ -1206,59 +1220,63 @@ inline int op0xC3()
 {
     uint16_t address = getNextTwoBytes();
     RegisterBank::PC = address - 1; //account for the already incremented pc
-    printf("JP\t0x%04X\n", address);
+    #ifdef DEBUG
+    fprintf(debugStream, "JP\t0x%04X\n", address);
+    #endif
     return 1;
 }
 
 inline int op0xC4()
 {
-    printf("Op not implemented: 0xC4\n");
+    fprintf(debugStream, "Op not implemented: 0xC4\n");
     return -1;
 }
 
 inline int op0xC5()
 {
-    printf("Op not implemented: 0xC5\n");
+    fprintf(debugStream, "Op not implemented: 0xC5\n");
     return -1;
 }
 
 inline int op0xC6()
 {
-    printf("Op not implemented: 0xC6\n");
+    fprintf(debugStream, "Op not implemented: 0xC6\n");
     return -1;
 }
 
 inline int op0xC7()
 {
-    printf("Op not implemented: 0xC7\n");
+    fprintf(debugStream, "Op not implemented: 0xC7\n");
     return -1;
 }
 
 inline int op0xC8()
 {
-    printf("Op not implemented: 0xC8\n");
+    fprintf(debugStream, "Op not implemented: 0xC8\n");
     return -1;
 }
 
 inline int op0xC9()
 {
-    printf("Op not implemented: 0xC9\n");
+    fprintf(debugStream, "Op not implemented: 0xC9\n");
     return -1;
 }
 
 inline int op0xCA()
 {
-    printf("Op not implemented: 0xCA\n");
+    fprintf(debugStream, "Op not implemented: 0xCA\n");
     return -1;
 }
 
 inline int cbOp0x7C()
 {
-    printf("BIT 7, H\n");
     uint8_t bitmask = 0b10000000;
     RegisterBank::SetZ((RegisterBank::H & bitmask) == 0);
     RegisterBank::SetN(false);
     RegisterBank::SetH(true);
+    #ifdef DEBUG
+    fprintf(debugStream, "BIT 7, H\n");
+    #endif
 
     return 1;
 }
@@ -1270,7 +1288,7 @@ inline int op0xCB()
         case 0x7C:
             return cbOp0x7C();
         default:
-            printf("NOT IMPLEMENTED CB Prefix(0x%02X)\n", cb_op);
+            fprintf(debugStream, "NOT IMPLEMENTED CB Prefix(0x%02X)\n", cb_op);
             break;
     }
     return -1;
@@ -1278,314 +1296,316 @@ inline int op0xCB()
 
 inline int op0xCC()
 {
-    printf("Op not implemented: 0xCC\n");
+    fprintf(debugStream, "Op not implemented: 0xCC\n");
     return -1;
 }
 
 inline int op0xCD()
 {
-    printf("Op not implemented: 0xCD\n");
+    fprintf(debugStream, "Op not implemented: 0xCD\n");
     return -1;
 }
 
 inline int op0xCE()
 {
-    printf("Op not implemented: 0xCE\n");
+    fprintf(debugStream, "Op not implemented: 0xCE\n");
     return -1;
 }
 
 inline int op0xCF()
 {
-    printf("Op not implemented: 0xCF\n");
+    fprintf(debugStream, "Op not implemented: 0xCF\n");
     return -1;
 }
 
 inline int op0xD0()
 {
-    printf("Op not implemented: 0xD0\n");
+    fprintf(debugStream, "Op not implemented: 0xD0\n");
     return -1;
 }
 
 inline int op0xD1()
 {
-    printf("Op not implemented: 0xD1\n");
+    fprintf(debugStream, "Op not implemented: 0xD1\n");
     return -1;
 }
 
 inline int op0xD2()
 {
-    printf("Op not implemented: 0xD2\n");
+    fprintf(debugStream, "Op not implemented: 0xD2\n");
     return -1;
 }
 
 inline int op0xD3()
 {
-    printf("Op not implemented: 0xD3\n");
+    fprintf(debugStream, "Op not implemented: 0xD3\n");
     return -1;
 }
 
 inline int op0xD4()
 {
-    printf("Op not implemented: 0xD4\n");
+    fprintf(debugStream, "Op not implemented: 0xD4\n");
     return -1;
 }
 
 inline int op0xD5()
 {
-    printf("Op not implemented: 0xD5\n");
+    fprintf(debugStream, "Op not implemented: 0xD5\n");
     return -1;
 }
 
 inline int op0xD6()
 {
-    printf("Op not implemented: 0xD6\n");
+    fprintf(debugStream, "Op not implemented: 0xD6\n");
     return -1;
 }
 
 inline int op0xD7()
 {
-    printf("Op not implemented: 0xD7\n");
+    fprintf(debugStream, "Op not implemented: 0xD7\n");
     return -1;
 }
 
 inline int op0xD8()
 {
-    printf("Op not implemented: 0xD8\n");
+    fprintf(debugStream, "Op not implemented: 0xD8\n");
     return -1;
 }
 
 inline int op0xD9()
 {
-    printf("Op not implemented: 0xD9\n");
+    fprintf(debugStream, "Op not implemented: 0xD9\n");
     return -1;
 }
 
 inline int op0xDA()
 {
-    printf("Op not implemented: 0xDA\n");
+    fprintf(debugStream, "Op not implemented: 0xDA\n");
     return -1;
 }
 
 inline int op0xDB()
 {
-    printf("Op not implemented: 0xDB\n");
+    fprintf(debugStream, "Op not implemented: 0xDB\n");
     return -1;
 }
 
 inline int op0xDC()
 {
-    printf("Op not implemented: 0xDC\n");
+    fprintf(debugStream, "Op not implemented: 0xDC\n");
     return -1;
 }
 
 inline int op0xDD()
 {
-    printf("Op not implemented: 0xDD\n");
+    fprintf(debugStream, "Op not implemented: 0xDD\n");
     return -1;
 }
 
 inline int op0xDE()
 {
-    printf("Op not implemented: 0xDE\n");
+    fprintf(debugStream, "Op not implemented: 0xDE\n");
     return -1;
 }
 
 inline int op0xDF()
 {
-    printf("Op not implemented: 0xDF\n");
+    fprintf(debugStream, "Op not implemented: 0xDF\n");
     return -1;
 }
 
 inline int op0xE0()
 {
-    printf("Op not implemented: 0xE0\n");
+    fprintf(debugStream, "Op not implemented: 0xE0\n");
     return -1;
 }
 
 inline int op0xE1()
 {
-    printf("Op not implemented: 0xE1\n");
+    fprintf(debugStream, "Op not implemented: 0xE1\n");
     return -1;
 }
 
 inline int op0xE2()
 {
-    printf("Op not implemented: 0xE2\n");
+    fprintf(debugStream, "Op not implemented: 0xE2\n");
     return -1;
 }
 
 inline int op0xE3()
 {
-    printf("Op not implemented: 0xE3\n");
+    fprintf(debugStream, "Op not implemented: 0xE3\n");
     return -1;
 }
 
 inline int op0xE4()
 {
-    printf("Op not implemented: 0xE4\n");
+    fprintf(debugStream, "Op not implemented: 0xE4\n");
     return -1;
 }
 
 inline int op0xE5()
 {
-    printf("Op not implemented: 0xE5\n");
+    fprintf(debugStream, "Op not implemented: 0xE5\n");
     return -1;
 }
 
 inline int op0xE6()
 {
-    printf("Op not implemented: 0xE6\n");
+    fprintf(debugStream, "Op not implemented: 0xE6\n");
     return -1;
 }
 
 inline int op0xE7()
 {
-    printf("Op not implemented: 0xE7\n");
+    fprintf(debugStream, "Op not implemented: 0xE7\n");
     return -1;
 }
 
 inline int op0xE8()
 {
-    printf("Op not implemented: 0xE8\n");
+    fprintf(debugStream, "Op not implemented: 0xE8\n");
     return -1;
 }
 
 inline int op0xE9()
 {
-    printf("Op not implemented: 0xE9\n");
+    fprintf(debugStream, "Op not implemented: 0xE9\n");
     return -1;
 }
 
 inline int op0xEA()
 {
-    printf("Op not implemented: 0xEA\n");
+    fprintf(debugStream, "Op not implemented: 0xEA\n");
     return -1;
 }
 
 inline int op0xEB()
 {
-    printf("Op not implemented: 0xEB\n");
+    fprintf(debugStream, "Op not implemented: 0xEB\n");
     return -1;
 }
 
 inline int op0xEC()
 {
-    printf("Op not implemented: 0xEC\n");
+    fprintf(debugStream, "Op not implemented: 0xEC\n");
     return -1;
 }
 
 inline int op0xED()
 {
-    printf("Op not implemented: 0xED\n");
+    fprintf(debugStream, "Op not implemented: 0xED\n");
     return -1;
 }
 
 inline int op0xEE()
 {
-    printf("Op not implemented: 0xEE\n");
+    fprintf(debugStream, "Op not implemented: 0xEE\n");
     return -1;
 }
 
 inline int op0xEF()
 {
-    printf("Op not implemented: 0xEF\n");
+    fprintf(debugStream, "Op not implemented: 0xEF\n");
     return -1;
 }
 
 inline int op0xF0()
 {
-    printf("Op not implemented: 0xF0\n");
+    fprintf(debugStream, "Op not implemented: 0xF0\n");
     return -1;
 }
 
 inline int op0xF1()
 {
-    printf("Op not implemented: 0xF1\n");
+    fprintf(debugStream, "Op not implemented: 0xF1\n");
     return -1;
 }
 
 inline int op0xF2()
 {
-    printf("Op not implemented: 0xF2\n");
+    fprintf(debugStream, "Op not implemented: 0xF2\n");
     return -1;
 }
 
 inline int op0xF3()
 {
-    printf("Op not implemented: 0xF3\n");
+    fprintf(debugStream, "Op not implemented: 0xF3\n");
     return -1;
 }
 
 inline int op0xF4()
 {
-    printf("Op not implemented: 0xF4\n");
+    fprintf(debugStream, "Op not implemented: 0xF4\n");
     return -1;
 }
 
 inline int op0xF5()
 {
-    printf("Op not implemented: 0xF5\n");
+    fprintf(debugStream, "Op not implemented: 0xF5\n");
     return -1;
 }
 
 inline int op0xF6()
 {
-    printf("Op not implemented: 0xF6\n");
+    fprintf(debugStream, "Op not implemented: 0xF6\n");
     return -1;
 }
 
 inline int op0xF7()
 {
-    printf("Op not implemented: 0xF7\n");
+    fprintf(debugStream, "Op not implemented: 0xF7\n");
     return -1;
 }
 
 inline int op0xF8()
 {
-    printf("Op not implemented: 0xF8\n");
+    fprintf(debugStream, "Op not implemented: 0xF8\n");
     return -1;
 }
 
 inline int op0xF9()
 {
-    printf("Op not implemented: 0xF9\n");
+    fprintf(debugStream, "Op not implemented: 0xF9\n");
     return -1;
 }
 
 inline int op0xFA()
 {
-    printf("Op not implemented: 0xFA\n");
+    fprintf(debugStream, "Op not implemented: 0xFA\n");
     return -1;
 }
 
 inline int op0xFB()
 {
-    printf("Op not implemented: 0xFB\n");
+    fprintf(debugStream, "Op not implemented: 0xFB\n");
     return -1;
 }
 
 inline int op0xFC()
 {
-    printf("Op not implemented: 0xFC\n");
+    fprintf(debugStream, "Op not implemented: 0xFC\n");
     return -1;
 }
 
 inline int op0xFD()
 {
-    printf("Op not implemented: 0xFD\n");
+    fprintf(debugStream, "Op not implemented: 0xFD\n");
     return -1;
 }
 
 inline int op0xFE()
 {
-    printf("Op not implemented: 0xFE\n");
+    fprintf(debugStream, "Op not implemented: 0xFE\n");
     return -1;
 }
 
 int Processor::decodeInstr(uint16_t address)
 {
     uint8_t op_code = RAM::ReadByteAt(address);
-    printf("0x%04X: ", address);
+    #ifdef DEBUG
+    fprintf(debugStream, "0x%04X: ", address);
+    #endif
     switch(op_code) {
         case 0x00: return op0x00();
         case 0x01: return op0x01();
@@ -1854,5 +1874,8 @@ void Processor::StartCPULoop()
     while (status > 0) {
         status = decodeInstr(RegisterBank::PC);
         RegisterBank::PC++;
+        #ifdef DEBUG
+        fflush(debugStream);
+        #endif
     }
 }

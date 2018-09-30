@@ -7,3 +7,6 @@ bin/*
 
 # Ignore log files
 *.log
+
+# Random files used during development for various purposes
+tetris_rom.txt
