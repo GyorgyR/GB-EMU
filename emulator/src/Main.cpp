@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
         }
         else if (command == "start") {
             RAM::InitRam(&bootstrap_rom);
+            RAM::SetDebugStream(fopen("ram-log.txt", "w+"));
             Processor cpu;
             cpu.StartCPULoop();
         }

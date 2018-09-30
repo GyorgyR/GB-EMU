@@ -2,15 +2,15 @@
 // Created by gyorgy on 29/09/18.
 //
 
-//#define DEBUG
+#define DEBUG
 
-#include <cstdio>
 #include <cstdlib>
 
 #include "../include/RAM.h"
 
-ROM *RAM::loaded_rom = nullptr;
+ROM *RAM::loadedRom = nullptr;
 uint8_t RAM::vram[8192];
+FILE *RAM::debugStream = stdout;
 
 RAM::RAM()
 {
@@ -24,30 +24,30 @@ uint8_t RAM::ReadByteAt(uint16_t address)
 {
     uint8_t ret_val = -1;
 #ifdef DEBUG
-    printf("Read at: 0x%04X", address);
+    fprintf(debugStream, "Read at: 0x%04X", address);
 #endif
     switch (address) {
         case 0x0 ... 0x3FFF: {
 #ifdef DEBUG
-            puts(" (ROM Bank 0)");
+            fprintf(debugStream, " (ROM Bank 0)\n");
+            fflush(debugStream);
 #endif
-            ret_val = loaded_rom->GetByteAt(address);
+            ret_val = loadedRom->GetByteAt(address);
             break;
         }
         case 0x4000 ... 0x7FFF: {
 #ifdef DEBUG
-            puts("(ROM Bank n)");
+            fprintf(debugStream, "(ROM Bank n)\n");
+            fflush(debugStream);
 #endif
             goto UNIMPLEMENTED;
             break;
         }
         case 0x8000 ... 0x9FFF: {
-#ifdef DEBUG
-            puts(" (VRAM)");
-#endif
             int internal_address = address - 0x8000;
 #ifdef DEBUG
-            printf("address: %d", internal_address);
+            fprintf(debugStream, " (VRAM@%d)\n", internal_address);
+            fflush(debugStream);
 #endif
             goto UNIMPLEMENTED;
             break;
@@ -63,14 +63,15 @@ uint8_t RAM::ReadByteAt(uint16_t address)
 bool RAM::WriteByteAt(uint16_t address, uint8_t value)
 {
 #ifdef DEBUG
-    printf("Write at: 0x%04X, value: 0x%02X", address, value);
+    fprintf(debugStream, "Write at: 0x%04X, value: 0x%02X", address, value);
 #endif
     bool success = false;
     switch (address) {
         case 0x8000 ... 0x9FFF: {
             int internal_address = address - 0x8000;
 #ifdef DEBUG
-            printf(" (VRAM @%d)\n", internal_address);
+            fprintf(debugStream, " (VRAM @%d)\n", internal_address);
+            fflush(debugStream);
 #endif
             vram[internal_address] = value;
             success = true;
@@ -86,5 +87,10 @@ bool RAM::WriteByteAt(uint16_t address, uint8_t value)
 
 void RAM::InitRam(ROM *rom)
 {
-    loaded_rom = rom;
+    loadedRom = rom;
+}
+
+void RAM::SetDebugStream(FILE *stream)
+{
+    debugStream = stream;
 }

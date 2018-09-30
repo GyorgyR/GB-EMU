@@ -5,4 +5,5 @@ emulator/func_generator.c
 emulator/run
 emulator/somefile.txt
 emulator/tetris_rom.txt
+emulator/ram-log.txt
 tools/
