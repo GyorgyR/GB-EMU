@@ -9,7 +9,7 @@
 #include "../include/RegisterBank.h"
 #include "../include/Helper.h"
 
-FILE *debugStream = fopen("cpu-run.log", "w+");
+FILE *debugStream = stdout; //fopen("cpu-run.log", "w+");
 
 Processor::~Processor()
 {

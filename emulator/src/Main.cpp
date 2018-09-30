@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include "Decoder.h"
 #include "ROM.h"
 #include "Processor.h"
 #include "RegisterBank.h"
@@ -16,14 +15,20 @@ const char *bootstrap_rom_path = "data/DMG_ROM.bin";
 
 int main(int argc, char *argv[])
 {
-    cout << "Welcome to the Game Boy ROM disassembly tool" << endl;
+    cout << "\u001b[32;1m -- Welcome to the Game Boy ROM disassembly tool --\u001b[0m" << endl;
     //Load the Bootstrap ROM
     if (argc != 2) {
         cout << "Usage: runner file/to/rom.gb\n";
+        exit(1);
     } //if
     ROM bootstrap_rom(bootstrap_rom_path);
-    ROM rom(argv[1]);
+    //ROM rom(argv[1]);
+    RAM::InitRam(&bootstrap_rom);
+    RAM::SetDebugStream(fopen("ram-run.log", "w+"));
+    Processor cpu;
+    cpu.StartCPULoop();
 
+    /*
     bool is_running = true;
 
     while (is_running) {
@@ -51,7 +56,6 @@ int main(int argc, char *argv[])
 
         }
         else if (command == "disassemble") {
-            /*
             std::string start;
             cin >> start;
             int address;
@@ -68,8 +72,7 @@ int main(int argc, char *argv[])
             while (address > 0) {
                 address = cpu.decodeInstr(address);
             }
-             */
-            
+
         }
         else if (command == "start") {
             RAM::InitRam(&bootstrap_rom);
@@ -82,5 +85,6 @@ int main(int argc, char *argv[])
             is_running = false;
         }
     }
+    */
 
 } //main
