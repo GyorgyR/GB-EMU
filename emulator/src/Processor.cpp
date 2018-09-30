@@ -1252,9 +1252,27 @@ inline int op0xCA()
     return -1;
 }
 
+inline int cbOp0x7C()
+{
+    printf("BIT 7, H\n");
+    uint8_t bitmask = 0b10000000;
+    RegisterBank::SetZ((RegisterBank::H & bitmask) == 0);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(true);
+
+    return 1;
+}
+
 inline int op0xCB()
 {
-    printf("Op not implemented: 0xCB\n");
+    uint8_t cb_op = RAM::ReadByteAt(++RegisterBank::PC);
+    switch (cb_op) {
+        case 0x7C:
+            return cbOp0x7C();
+        default:
+            printf("NOT IMPLEMENTED CB Prefix(0x%02X)\n", cb_op);
+            break;
+    }
     return -1;
 }
 
