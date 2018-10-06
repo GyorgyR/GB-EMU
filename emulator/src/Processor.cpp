@@ -57,14 +57,16 @@ inline int op0x04()
 
 inline int op0x05()
 {
-    fprintf(debugStream, "Op not implemented: 0x05\n");
-    return -1;
+    --RegisterBank::B;
+    fprintf(debugStream, "DEC\tB\n");
+    return 4;
 }
 
 inline int op0x06()
 {
-    fprintf(debugStream, "Op not implemented: 0x06\n");
-    return -1;
+    RegisterBank::B = RAM::ReadByteAt(++RegisterBank::PC);
+    fprintf(debugStream, "LD\tB, 0x%02\n", RegisterBank::B);
+    return 8;
 }
 
 inline int op0x07()
@@ -99,8 +101,15 @@ inline int op0x0B()
 
 inline int op0x0C()
 {
-    fprintf(debugStream, "Op not implemented: 0x0C\n");
-    return -1;
+    RegisterBank::SetH((RegisterBank::C & 0b1111) == 0b1111);
+
+    ++RegisterBank::C;
+
+    RegisterBank::SetZ(RegisterBank::C == 0);
+    RegisterBank::SetN(false);
+
+    fprintf(debugStream, "INC\tC\n");
+    return 4;
 }
 
 inline int op0x0D()
@@ -111,8 +120,9 @@ inline int op0x0D()
 
 inline int op0x0E()
 {
-    fprintf(debugStream, "Op not implemented: 0x0E\n");
-    return -1;
+    RegisterBank::C = RAM::ReadByteAt(++RegisterBank::PC);
+    fprintf(debugStream, "LD\tC,0x%02X\n", RegisterBank::C);
+    return 8;
 }
 
 inline int op0x0F()
@@ -129,8 +139,9 @@ inline int op0x10()
 
 inline int op0x11()
 {
-    fprintf(debugStream, "Op not implemented: 0x11\n");
-    return -1;
+    RegisterBank::DE(getNextTwoBytes());
+    fprintf(debugStream, "LD\tDE, 0x%04X\n", RegisterBank::DE());
+    return 12;
 }
 
 inline int op0x12()
@@ -141,8 +152,9 @@ inline int op0x12()
 
 inline int op0x13()
 {
-    fprintf(debugStream, "Op not implemented: 0x13\n");
-    return -1;
+    RegisterBank::DE(RegisterBank::DE() + 1);
+    fprintf(debugStream, "INC\tDE\n");
+    return 8;
 }
 
 inline int op0x14()
@@ -165,8 +177,15 @@ inline int op0x16()
 
 inline int op0x17()
 {
-    fprintf(debugStream, "Op not implemented: 0x17\n");
-    return -1;
+    uint8_t bitmask = 0b10000000;
+    RegisterBank::SetC(RegisterBank::A & bitmask);
+    RegisterBank::A <<= 1;
+    RegisterBank::SetZ(!RegisterBank::A);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(false);
+
+    fprintf(debugStream, "RLA\n");
+    return 4;
 }
 
 inline int op0x18()
@@ -183,8 +202,9 @@ inline int op0x19()
 
 inline int op0x1A()
 {
-    fprintf(debugStream, "Op not implemented: 0x1A\n");
-    return -1;
+    RegisterBank::A = RegisterBank::DE();
+    fprintf(debugStream, "LD\tA, DE ??\n");
+    return 8;
 }
 
 inline int op0x1B()
@@ -219,12 +239,16 @@ inline int op0x1F()
 
 inline int op0x20()
 {
+    int cycles = 8;
     int8_t value = RAM::ReadByteAt(++RegisterBank::PC);
-    if (!RegisterBank::IsZSet()) RegisterBank::PC += value;
+    if (!RegisterBank::IsZSet()) {
+        RegisterBank::PC += value;
+        cycles += 4;
+    }
     #ifdef DEBUG
-    fprintf(debugStream, "JR NZ, [%d]\n", value);
+    fprintf(debugStream, "JR\tNZ, [%d]\n", value);
     #endif
-    return 1;
+    return cycles;
 }
 
 inline int op0x21()
@@ -233,19 +257,22 @@ inline int op0x21()
     #ifdef DEBUG
     fprintf(debugStream, "LD\tHL, 0x%04X\n", RegisterBank::HL());
     #endif
-    return 1;
+    return 12;
 }
 
 inline int op0x22()
 {
-    fprintf(debugStream, "Op not implemented: 0x22\n");
-    return -1;
+    RAM::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
+    RegisterBank::HL(RegisterBank::HL() + 1);
+    fprintf(debugStream, "LD\t[HL++], A\n");
+    return 8;
 }
 
 inline int op0x23()
 {
-    fprintf(debugStream, "Op not implemented: 0x23\n");
-    return -1;
+    RegisterBank::HL(RegisterBank::HL() + 1);
+    fprintf(debugStream, "INC\tHL\n");
+    return 8;
 }
 
 inline int op0x24()
@@ -332,7 +359,7 @@ inline int op0x31()
     #ifdef DEBUG
     fprintf(debugStream, "LD\tSP, 0x%04X\n", RegisterBank::SP);
     #endif
-    return 1;
+    return 12;
 }
 
 inline int op0x32()
@@ -342,7 +369,7 @@ inline int op0x32()
     #ifdef DEBUG
     fprintf(debugStream, "LD\t[HL-], A\n");
     #endif
-    return 1;
+    return 8;
 }
 
 inline int op0x33()
@@ -413,8 +440,9 @@ inline int op0x3D()
 
 inline int op0x3E()
 {
-    fprintf(debugStream, "Op not implemented: 0x3E\n");
-    return -1;
+    RegisterBank::A = RAM::ReadByteAt(++RegisterBank::PC);
+    fprintf(debugStream, "LD\tA, 0x%02X\n", RegisterBank::A);
+    return 8;
 }
 
 inline int op0x3F()
@@ -515,8 +543,9 @@ inline int op0x4E()
 
 inline int op0x4F()
 {
-    fprintf(debugStream, "Op not implemented: 0x4F\n");
-    return -1;
+    RegisterBank::C = RegisterBank::A;
+    fprintf(debugStream, "LD\tC, A\n");
+    return 4;
 }
 
 inline int op0x50()
@@ -755,8 +784,9 @@ inline int op0x76()
 
 inline int op0x77()
 {
-    fprintf(debugStream, "Op not implemented: 0x77\n");
-    return -1;
+    RegisterBank::HL(RegisterBank::A);
+    fprintf(debugStream, "LD\tHL, A\n");
+    return 8;
 }
 
 inline int op0x78()
@@ -779,8 +809,9 @@ inline int op0x7A()
 
 inline int op0x7B()
 {
-    fprintf(debugStream, "Op not implemented: 0x7B\n");
-    return -1;
+    RegisterBank::A = RegisterBank::E;
+    fprintf(debugStream, "LD\tA, E\n");
+    return 4;
 }
 
 inline int op0x7C()
@@ -935,14 +966,36 @@ inline int op0x94()
 
 inline int op0x95()
 {
-    fprintf(debugStream, "Op not implemented: 0x95\n");
-    return -1;
+    RegisterBank::SetC(RegisterBank::A >= RegisterBank::L);
+    uint8_t bitmask = 0b1111;
+    uint8_t lowerA = RegisterBank::A & bitmask;
+    uint8_t lowerL = RegisterBank::L & bitmask;
+    RegisterBank::SetH(lowerA >= lowerL);
+
+    RegisterBank::A -= RegisterBank::L;
+
+    RegisterBank::SetZ(RegisterBank::A == 0);
+    RegisterBank::SetN(true);
+
+    fprintf(debugStream, "SUB\tL\n");
+    return 4;
 }
 
 inline int op0x96()
 {
-    fprintf(debugStream, "Op not implemented: 0x96\n");
-    return -1;
+    RegisterBank::SetC(RegisterBank::A >= RegisterBank::HL());
+    uint8_t bitmask = 0b1111;
+    uint16_t lowerA = RegisterBank::A & bitmask;
+    uint16_t lowerHL = RegisterBank::HL() & bitmask;
+    RegisterBank::SetH(lowerA >= lowerHL);
+
+    RegisterBank::A -= RegisterBank::HL();
+
+    RegisterBank::SetZ(RegisterBank::A == 0);
+    RegisterBank::SetN(true);
+
+    fprintf(debugStream, "SUB\tHL\n");
+    return 8;
 }
 
 inline int op0x97()
@@ -1099,7 +1152,7 @@ inline int op0xAF()
     #ifdef DEBUG
     fprintf(debugStream, "XOR A\n");
     #endif
-    return 1;
+    return 4;
 }
 
 inline int op0xB0()
@@ -1206,8 +1259,10 @@ inline int op0xC0()
 
 inline int op0xC1()
 {
-    fprintf(debugStream, "Op not implemented: 0xC1\n");
-    return -1;
+    RegisterBank::C = RAM::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::B = RAM::ReadByteAt(++RegisterBank::SP);
+    fprintf(debugStream, "POP\tBC(0x%04X)\n", RegisterBank::BC());
+    return 12;
 }
 
 inline int op0xC2()
@@ -1223,7 +1278,7 @@ inline int op0xC3()
     #ifdef DEBUG
     fprintf(debugStream, "JP\t0x%04X\n", address);
     #endif
-    return 1;
+    return 16;
 }
 
 inline int op0xC4()
@@ -1234,8 +1289,10 @@ inline int op0xC4()
 
 inline int op0xC5()
 {
-    fprintf(debugStream, "Op not implemented: 0xC5\n");
-    return -1;
+    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::B);
+    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::C);
+    fprintf(debugStream, "PUSH\tBC(0x%04X)\n", RegisterBank::BC());
+    return 16;
 }
 
 inline int op0xC6()
@@ -1258,14 +1315,32 @@ inline int op0xC8()
 
 inline int op0xC9()
 {
-    fprintf(debugStream, "Op not implemented: 0xC9\n");
-    return -1;
+    uint16_t address = RAM::ReadByteAt(++RegisterBank::SP) << 8;
+    address += RAM::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::PC = address - 1; //offset the one that gets added.
+    fprintf(debugStream, "RET(0x%04X)\n", address);
+    return 16;
 }
 
 inline int op0xCA()
 {
     fprintf(debugStream, "Op not implemented: 0xCA\n");
     return -1;
+}
+
+inline int cbOp0x11()
+{
+    uint8_t bitmask = 0b10000000;
+    RegisterBank::SetC(RegisterBank::C & bitmask);
+    RegisterBank::C <<= 1;
+    RegisterBank::SetZ(!RegisterBank::C);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(false);
+    #ifdef DEBUG
+    fprintf(debugStream, "RL\tC\n");
+    #endif
+
+    return 8;
 }
 
 inline int cbOp0x7C()
@@ -1275,18 +1350,18 @@ inline int cbOp0x7C()
     RegisterBank::SetN(false);
     RegisterBank::SetH(true);
     #ifdef DEBUG
-    fprintf(debugStream, "BIT 7, H\n");
+    fprintf(debugStream, "BIT\t7, H\n");
     #endif
 
-    return 1;
+    return 8;
 }
 
 inline int op0xCB()
 {
     uint8_t cb_op = RAM::ReadByteAt(++RegisterBank::PC);
     switch (cb_op) {
-        case 0x7C:
-            return cbOp0x7C();
+        case 0x11: return cbOp0x11();
+        case 0x7C: return cbOp0x7C();
         default:
             fprintf(debugStream, "NOT IMPLEMENTED CB Prefix(0x%02X)\n", cb_op);
             break;
@@ -1302,8 +1377,14 @@ inline int op0xCC()
 
 inline int op0xCD()
 {
-    fprintf(debugStream, "Op not implemented: 0xCD\n");
-    return -1;
+    uint16_t funcAddr = getNextTwoBytes();
+
+    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::PC + 1);
+    RAM::WriteByteAt(RegisterBank::SP--, (RegisterBank::PC + 1) >> 8);
+
+    RegisterBank::PC = funcAddr - 1; //offset the increment that's gonna happen
+    fprintf(debugStream, "CALL\t0x%04X\n", funcAddr);
+    return 24;
 }
 
 inline int op0xCE()
@@ -1326,8 +1407,10 @@ inline int op0xD0()
 
 inline int op0xD1()
 {
-    fprintf(debugStream, "Op not implemented: 0xD1\n");
-    return -1;
+    RegisterBank::E = RAM::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::D = RAM::ReadByteAt(++RegisterBank::SP);
+    fprintf(debugStream, "POP\tDE(0x%04X)\n", RegisterBank::DE());
+    return 12;
 }
 
 inline int op0xD2()
@@ -1350,8 +1433,10 @@ inline int op0xD4()
 
 inline int op0xD5()
 {
-    fprintf(debugStream, "Op not implemented: 0xD5\n");
-    return -1;
+    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::D);
+    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::E);
+    fprintf(debugStream, "PUSH\tDE(0x%04X)\n", RegisterBank::DE());
+    return 16;
 }
 
 inline int op0xD6()
@@ -1416,20 +1501,25 @@ inline int op0xDF()
 
 inline int op0xE0()
 {
-    fprintf(debugStream, "Op not implemented: 0xE0\n");
-    return -1;
+    uint16_t immediate = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
+    RAM::WriteByteAt(immediate, RegisterBank::A);
+    fprintf(debugStream, "LDH\t[0x%02X], A\n", immediate);
+    return 12;
 }
 
 inline int op0xE1()
 {
-    fprintf(debugStream, "Op not implemented: 0xE1\n");
-    return -1;
+    RegisterBank::H = RAM::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::L = RAM::ReadByteAt(++RegisterBank::SP);
+    fprintf(debugStream, "POP\tHL(0x%04X)\n", RegisterBank::HL());
+    return 12;
 }
 
 inline int op0xE2()
 {
-    fprintf(debugStream, "Op not implemented: 0xE2\n");
-    return -1;
+    RAM::WriteByteAt(0xFF00 + RegisterBank::C, RegisterBank::A);
+    fprintf(debugStream, "LD\t[C], A\n");
+    return 8;
 }
 
 inline int op0xE3()
@@ -1446,8 +1536,10 @@ inline int op0xE4()
 
 inline int op0xE5()
 {
-    fprintf(debugStream, "Op not implemented: 0xE5\n");
-    return -1;
+    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::L);
+    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::H);
+    fprintf(debugStream, "PUSH\tHL(0x%04X)\n", RegisterBank::HL());
+    return 16;
 }
 
 inline int op0xE6()
@@ -1518,8 +1610,10 @@ inline int op0xF0()
 
 inline int op0xF1()
 {
-    fprintf(debugStream, "Op not implemented: 0xF1\n");
-    return -1;
+    RegisterBank::A = RAM::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::F = RAM::ReadByteAt(++RegisterBank::SP);
+    fprintf(debugStream, "POP\tAF(0x%04X)\n", RegisterBank::AF());
+    return 12;
 }
 
 inline int op0xF2()
@@ -1542,8 +1636,10 @@ inline int op0xF4()
 
 inline int op0xF5()
 {
-    fprintf(debugStream, "Op not implemented: 0xF5\n");
-    return -1;
+    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::F);
+    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::A);
+    fprintf(debugStream, "PUSH\tAF(0x%04X)\n", RegisterBank::AF());
+    return 16;
 }
 
 inline int op0xF6()
@@ -1596,7 +1692,20 @@ inline int op0xFD()
 
 inline int op0xFE()
 {
-    fprintf(debugStream, "Op not implemented: 0xFE\n");
+    uint8_t immediate = RAM::ReadByteAt(++RegisterBank::PC);
+
+    RegisterBank::SetZ(RegisterBank::A == immediate);
+    RegisterBank::SetN(true);
+    RegisterBank::SetH((RegisterBank::A & 0b1111) >= (immediate & 0b1111));
+    RegisterBank::SetC(RegisterBank::A >= immediate);
+
+    fprintf(debugStream, "CP\t0x%02X\n");
+    return 8;
+}
+
+inline int op0xFF()
+{
+    fprintf(debugStream, "Op not implemented: 0xFF\n");
     return -1;
 }
 
@@ -1862,6 +1971,7 @@ int Processor::decodeInstr(uint16_t address)
         case 0xFC: return op0xFC();
         case 0xFD: return op0xFD();
         case 0xFE: return op0xFE();
+        case 0xFF: return op0xFF();
         default:
             return -1;
     }
