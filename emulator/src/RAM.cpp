@@ -7,9 +7,12 @@
 #include <cstdlib>
 
 #include "../include/RAM.h"
+#include "../include/SoundGenerator.h"
+#include "../include/VideoRegisters.h"
 
 ROM *RAM::loadedRom = nullptr;
 uint8_t RAM::vram[8192];
+uint8_t RAM::stack[0x7F];
 FILE *RAM::debugStream = stdout;
 
 RAM::RAM()
@@ -22,66 +25,120 @@ RAM::~RAM()
 
 uint8_t RAM::ReadByteAt(uint16_t address)
 {
-    uint8_t ret_val = -1;
-#ifdef DEBUG
+    uint8_t retVal = -1;
+    #ifdef DEBUG
     fprintf(debugStream, "Read at: 0x%04X", address);
-#endif
+    #endif
     switch (address) {
         case 0x0 ... 0x3FFF: {
-#ifdef DEBUG
-            fprintf(debugStream, " (ROM Bank 0)\n");
-            fflush(debugStream);
-#endif
-            ret_val = loadedRom->GetByteAt(address);
+            #ifdef DEBUG
+            fprintf(debugStream, " (ROM Bank 0)");
+            #endif
+            retVal = loadedRom->GetByteAt(address);
             break;
         }
         case 0x4000 ... 0x7FFF: {
-#ifdef DEBUG
-            fprintf(debugStream, "(ROM Bank n)\n");
-            fflush(debugStream);
-#endif
+            #ifdef DEBUG
+            fprintf(debugStream, "(ROM Bank n)");
+            #endif
             goto UNIMPLEMENTED;
             break;
         }
         case 0x8000 ... 0x9FFF: {
-            int internal_address = address - 0x8000;
-#ifdef DEBUG
-            fprintf(debugStream, " (VRAM@%d)\n", internal_address);
-            fflush(debugStream);
-#endif
+            int internalAddress = address - 0x8000;
+            #ifdef DEBUG
+            fprintf(debugStream, " (VRAM@%d)", internalAddress);
+            #endif
             goto UNIMPLEMENTED;
             break;
         }
+        case 0xFF80 ... 0xFFFE: {
+            int internalAddr = address - 0xFF80;
+            #ifdef DEBUG
+            fprintf(debugStream, " (Stack@%d)", internalAddr);
+            #endif
+            retVal = stack[internalAddr];
+            break;
+        }
         UNIMPLEMENTED:
-        default:
-            printf(" (Unimplemented range: 0x%04X)\n", address);
+        default:printf(" (Unimplemented read range: 0x%04X)\n", address);
             exit(1);
     }
-    return ret_val;
+    #ifdef DEBUG
+    fprintf(debugStream, " value: 0x%02X\n", retVal);
+    fflush(debugStream);
+    #endif
+    return retVal;
 }
 
 bool RAM::WriteByteAt(uint16_t address, uint8_t value)
 {
-#ifdef DEBUG
-    fprintf(debugStream, "Write at: 0x%04X, value: 0x%02X", address, value);
-#endif
+    #ifdef DEBUG
+    fprintf(debugStream, "Write at: 0x%04X", address);
+    #endif
     bool success = false;
     switch (address) {
         case 0x8000 ... 0x9FFF: {
-            int internal_address = address - 0x8000;
-#ifdef DEBUG
-            fprintf(debugStream, " (VRAM @%d)\n", internal_address);
-            fflush(debugStream);
-#endif
-            vram[internal_address] = value;
+            int internalAddress = address - 0x8000;
+            #ifdef DEBUG
+            fprintf(debugStream, " (VRAM @%d)", internalAddress);
+            #endif
+            vram[internalAddress] = value;
+            success = true;
+            break;
+        }
+        case 0xFF11: {
+            #ifdef DEBUG
+            fprintf(debugStream, " (Channel1 Wave Pattern)");
+            #endif
+            success = SoundGenerator::ChannelWavePattern(value);
+            break;
+        }
+        case 0xFF12: {
+            #ifdef DEBUG
+            fprintf(debugStream, " (Channel1 Volume Envelope)");
+            #endif
+            success = SoundGenerator::Channel1VolumeEnvelope(value);
+            break;
+        }
+        case 0xFF25: {
+            #ifdef DEBUG
+            fprintf(debugStream, " (Selection of Sound output terminal)");
+            #endif
+            success = SoundGenerator::SoundOutTerminal(value);
+            break;
+        }
+        case 0xFF26: {
+            #ifdef DEBUG
+            fprintf(debugStream, " (Sound on/off)");
+            #endif
+            success = SoundGenerator::SoundOnOff(value);
+            break;
+        }
+        case 0xFF47: {
+            #ifdef DEBUG
+            fprintf(debugStream, " (Video BG Palette)");
+            #endif
+            success = VideoRegisters::BGPaletteData(value);
+            break;
+        }
+        case 0xFF80 ... 0xFFFE: {
+            int internalAddr = address - 0xFF80;
+            #ifdef DEBUG
+            fprintf(debugStream, " (Stack@%d)", internalAddr);
+            #endif
+            stack[internalAddr] = value;
             success = true;
             break;
         }
         UNIMPLEMENTED:
-        default:
-            printf(" (Unimplemented range: 0x%04X)\n", address);
+        default:printf(" (Unimplemented write range: 0x%04X)\n", address);
             exit(1);
     }
+    #ifdef DEBUG
+    fprintf(debugStream, " value: 0x%02X\n", value);
+    fflush(debugStream);
+    #endif
     return success;
 }
 

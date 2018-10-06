@@ -14,13 +14,14 @@ class RAM
 private:
     static ROM *loadedRom;
     static uint8_t vram[];
-    static FILE *debugStream;
+    static uint8_t stack[];
+
     RAM();
+    static FILE *debugStream;
     ~RAM();
 
 public:
     static void InitRam(ROM *rom);
-
     static void SetDebugStream(FILE *stream);
     static uint8_t ReadByteAt(uint16_t address);
     static bool WriteByteAt(uint16_t address, uint8_t value);
