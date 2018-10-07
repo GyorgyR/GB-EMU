@@ -4,5 +4,5 @@ project(gb-emulator)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-add_custom_target(test-emulator COMMAND make -C ${gb-disassembler_SOURCE_DIR}
+add_custom_target(test-emulator COMMAND make -C ${gb-emulator_SOURCE_DIR}
                                     CLION_EXE_DIR=${PROJECT_BINARY_DIR})
