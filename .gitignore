@@ -1,5 +1,0 @@
-*.gb
-.idea
-cmake-build-debug
-tools/
-doc

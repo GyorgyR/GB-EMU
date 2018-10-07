@@ -86,16 +86,16 @@ void RegisterBank::SetZ(bool isOn) {
 }
 
 void RegisterBank::SetC(bool isOn) {
+    if (isOn) RegisterBank::F |= 0b00010000;
+    else RegisterBank::F &= 0b11101111;
+}
+
+void RegisterBank::SetN(bool isOn) {
     if (isOn) RegisterBank::F |= 0b01000000;
     else RegisterBank::F &= 0b10111111;
 }
 
-void RegisterBank::SetN(bool isOn) {
+void RegisterBank::SetH(bool isOn) {
     if (isOn) RegisterBank::F |= 0b00100000;
     else RegisterBank::F &= 0b11011111;
-}
-
-void RegisterBank::SetH(bool isOn) {
-    if (isOn) RegisterBank::F |= 0b00010000;
-    else RegisterBank::F &= 0b11101111;
 }
