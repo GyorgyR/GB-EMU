@@ -7,18 +7,26 @@
 
 #include <utility>
 #include <cstdint>
+#include <fstream>
 
 #include "ROM.h"
 
+using std::ofstream;
+
 class Helper {
 private:
-    static ROM loaded_rom;
+    Helper();
+
+    ~Helper();
+
+    static ofstream debugLog;
 public:
     static uint16_t ConcatTwoBytes(uint8_t first, uint8_t second);
     static std::pair<uint8_t, uint8_t> DivideIntoTwoBytes(uint16_t value);
-    static void LoadRom(ROM rom);
 
-    static ROM *GetLoadedRom();
+    static void InitLogger();
+
+    static void Log(const std::string message);
 };
 
 
