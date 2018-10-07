@@ -4,6 +4,7 @@ lib/*
 
 # Ignore any executables
 bin/*
+*.bin
 
 # Ignore log files
 *.log
