@@ -10,6 +10,7 @@
 using std::cout;
 using std::endl;
 using std::cin;
+using std::ofstream;
 
 const char *bootstrap_rom_path = "data/DMG_ROM.bin";
 
@@ -21,9 +22,18 @@ int main(int argc, char *argv[])
         cout << "Usage: runner file/to/rom.gb\n";
         exit(1);
     } //if
+    //Init main debug file
+    Helper::InitLogger();
+
+    Helper::Log("%s", "Open bootstrap ROM");
     ROM bootstrap_rom(bootstrap_rom_path);
-    //ROM rom(argv[1]);
-    RAM::InitRam(&bootstrap_rom);
+    RAM::InitBootRom(&bootstrap_rom);
+
+    Helper::Log("Open game ROM");
+    ROM rom(argv[1]);
+    RAM::InitRam(&rom);
+
+    Helper::Log("Set up ram module");
     RAM::SetDebugStream(fopen("ram-run.log", "w+"));
     Processor cpu;
     cpu.StartCPULoop();

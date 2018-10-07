@@ -22,7 +22,7 @@ Processor::Processor()
 uint16_t getNextTwoBytes() {
     uint8_t first = RAM::ReadByteAt(++RegisterBank::PC);
     uint8_t second = RAM::ReadByteAt(++RegisterBank::PC);
-    return Helper::ConcatTwoBytes(first, second);
+    return Helper::ConcatTwoBytes(second, first);
 }
 
 inline int op0x00()
@@ -65,7 +65,7 @@ inline int op0x05()
 inline int op0x06()
 {
     RegisterBank::B = RAM::ReadByteAt(++RegisterBank::PC);
-    fprintf(debugStream, "LD\tB, 0x%02\n", RegisterBank::B);
+    fprintf(debugStream, "LD\tB, 0x%02X\n", RegisterBank::B);
     return 8;
 }
 
@@ -153,7 +153,7 @@ inline int op0x12()
 inline int op0x13()
 {
     RegisterBank::DE(RegisterBank::DE() + 1);
-    fprintf(debugStream, "INC\tDE\n");
+    fprintf(debugStream, "INC\tDE(0x%04X)\n", RegisterBank::DE());
     return 8;
 }
 
@@ -202,8 +202,8 @@ inline int op0x19()
 
 inline int op0x1A()
 {
-    RegisterBank::A = RegisterBank::DE();
-    fprintf(debugStream, "LD\tA, DE ??\n");
+    RegisterBank::A = RAM::ReadByteAt(RegisterBank::DE());
+    fprintf(debugStream, "LD\tA, [DE]\n");
     return 8;
 }
 
@@ -367,7 +367,7 @@ inline int op0x32()
     RAM::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
     RegisterBank::HL(RegisterBank::HL() - 1);
     #ifdef DEBUG
-    fprintf(debugStream, "LD\t[HL-], A\n");
+    fprintf(debugStream, "LD\t[HL--](0x%04X), A\n", RegisterBank::HL());
     #endif
     return 8;
 }
@@ -1318,7 +1318,7 @@ inline int op0xC9()
     uint16_t address = RAM::ReadByteAt(++RegisterBank::SP) << 8;
     address += RAM::ReadByteAt(++RegisterBank::SP);
     RegisterBank::PC = address - 1; //offset the one that gets added.
-    fprintf(debugStream, "RET(0x%04X)\n", address);
+    fprintf(debugStream, "RET\t(0x%04X)\n", address);
     return 16;
 }
 
@@ -1699,7 +1699,7 @@ inline int op0xFE()
     RegisterBank::SetH((RegisterBank::A & 0b1111) >= (immediate & 0b1111));
     RegisterBank::SetC(RegisterBank::A >= immediate);
 
-    fprintf(debugStream, "CP\t0x%02X\n");
+    fprintf(debugStream, "CP\t0x%02X (0x%02X)\n", immediate, RegisterBank::A);
     return 8;
 }
 
@@ -1980,6 +1980,7 @@ int Processor::decodeInstr(uint16_t address)
 
 void Processor::StartCPULoop()
 {
+    Helper::Log("Start CPU loop");
     int status = 1;
     while (status > 0) {
         status = decodeInstr(RegisterBank::PC);
