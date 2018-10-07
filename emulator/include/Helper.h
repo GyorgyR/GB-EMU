@@ -19,19 +19,20 @@ private:
 
     ~Helper();
 
-    static ofstream debugLog;
-    static ofstream ramLog;
-    static ofstream cpuLog;
+    static FILE *debugLog;
+    static FILE *ramLog;
+    static FILE *cpuLog;
 public:
     static uint16_t ConcatTwoBytes(uint8_t first, uint8_t second);
     static std::pair<uint8_t, uint8_t> DivideIntoTwoBytes(uint16_t value);
 
     static void InitLogger();
-    static void Log(const std::string message);
 
-    static void CPULog(const std::string message);
+    static void Log(const char *message, ...);
 
-    static void RAMLog(const std::string message);
+    static void CPULog(const char *message, ...);
+
+    static void RAMLog(const char *message, ...);
 };
 
 

@@ -5,12 +5,13 @@
 #define DEBUG
 
 #include <cstdio>
+#include <cstdarg>
 
 #include "../include/Helper.h"
 
-ofstream Helper::debugLog;
-ofstream Helper::ramLog;
-ofstream Helper::cpuLog;
+FILE *Helper::debugLog;
+FILE *Helper::ramLog;
+FILE *Helper::cpuLog;
 
 uint16_t Helper::ConcatTwoBytes(uint8_t first, uint8_t second) {
     return (first << 8) + second;
@@ -34,39 +35,51 @@ Helper::~Helper()
 void Helper::InitLogger()
 {
     #ifdef DEBUG
-    debugLog.open("logs/debug.log", std::ios::out | std::ios::trunc);
-    ramLog.open("logs/ram.debug.log", std::ios::out | std::ios::trunc);
-    cpuLog.open("logs/cpu.debug.log", std::ios::out | std::ios::trunc);
+    debugLog = fopen("logs/debug.log", "w+");
+    ramLog = fopen("logs/ram.debug.log", "w+");
+    cpuLog = fopen("logs/cpu.debug.log", "w+");
     #else
     return
     #endif
 }
 
-void Helper::Log(const std::string message)
+void Helper::Log(const char *message, ...)
 {
     #ifdef DEBUG
-    debugLog << message << std::endl;
-    debugLog.flush();
+    va_list args;
+    va_start(args, message);
+    vfprintf(debugLog, message, args);
+    va_end(args);
+    fprintf(debugLog, "\n");
+    fflush(debugLog);
     #else
     return;
     #endif
 }
 
-void Helper::CPULog(const std::string message)
+void Helper::CPULog(const char *message, ...)
 {
     #ifdef DEBUG
-    cpuLog << message << std::endl;
-    cpuLog.flush();
+    va_list args;
+    va_start(args, message);
+    vfprintf(cpuLog, message, args);
+    va_end(args);
+    fprintf(cpuLog, "\n");
+    fflush(cpuLog);
     #else
     return;
     #endif
 }
 
-void Helper::RAMLog(const std::string message)
+void Helper::RAMLog(const char *message, ...)
 {
     #ifdef DEBUG
-    ramLog << message << std::endl;
-    ramLog.flush();
+    va_list args;
+    va_start(args, message);
+    vfprintf(ramLog, message, args);
+    va_end(args);
+    fprintf(ramLog, "\n");
+    fflush(ramLog);
     #else
     return
     #endif
