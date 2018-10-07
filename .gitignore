@@ -1,0 +1,6 @@
+cmake*
+doc
+disassembler
+*.gb
+tools
+.idea
