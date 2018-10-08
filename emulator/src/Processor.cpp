@@ -3,6 +3,7 @@
 //
 
 #define DEBUG
+#define REGISTERS
 
 #include "Processor.h"
 #include "../include/Processor.h"
@@ -57,7 +58,13 @@ inline int op0x04()
 
 inline int op0x05()
 {
+    RegisterBank::SetH((RegisterBank::B & 0b1111) != 0b1111);
+
     --RegisterBank::B;
+
+    RegisterBank::SetZ(RegisterBank::B == 0);
+    RegisterBank::SetN(true);
+
     fprintf(debugStream, "DEC\tB\n");
     return 4;
 }
@@ -177,14 +184,17 @@ inline int op0x16()
 
 inline int op0x17()
 {
-    uint8_t bitmask = 0b10000000;
-    RegisterBank::SetC(RegisterBank::A & bitmask);
+    bool wasCarrySet = RegisterBank::IsCSet();
+    RegisterBank::SetC(RegisterBank::A & 0b10000000);
+
     RegisterBank::A <<= 1;
-    RegisterBank::SetZ(!RegisterBank::A);
+    if (wasCarrySet) ++RegisterBank::A;
+
+    RegisterBank::SetZ(RegisterBank::A == 0);
     RegisterBank::SetN(false);
     RegisterBank::SetH(false);
 
-    fprintf(debugStream, "RLA\n");
+    fprintf(debugStream, "RLA sets carry: %s\n", RegisterBank::IsCSet() ? "true" : "false");
     return 4;
 }
 
@@ -1330,14 +1340,19 @@ inline int op0xCA()
 
 inline int cbOp0x11()
 {
-    uint8_t bitmask = 0b10000000;
-    RegisterBank::SetC(RegisterBank::C & bitmask);
+    bool wasCarrySet = RegisterBank::IsCSet();
+
+    RegisterBank::SetC(RegisterBank::C & 0b10000000);
+
     RegisterBank::C <<= 1;
+    if (wasCarrySet) ++RegisterBank::C;
+
     RegisterBank::SetZ(!RegisterBank::C);
     RegisterBank::SetN(false);
     RegisterBank::SetH(false);
+
     #ifdef DEBUG
-    fprintf(debugStream, "RL\tC\n");
+    fprintf(debugStream, "RL\tC sets carry: %s\n", RegisterBank::IsCSet() ? "true" : "false");
     #endif
 
     return 8;
@@ -1986,6 +2001,16 @@ void Processor::StartCPULoop()
         status = decodeInstr(RegisterBank::PC);
         RegisterBank::PC++;
         #ifdef DEBUG
+        #ifdef REGISTERS
+        fprintf(
+                debugStream,
+                "\t[A: 0x%02X] [B: 0x%02X] [C: 0x%02X]\n",
+                RegisterBank::A,
+                RegisterBank::B,
+                RegisterBank::C
+        );
+
+        #endif
         fflush(debugStream);
         #endif
     }

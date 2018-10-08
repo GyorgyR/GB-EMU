@@ -1,5 +1,6 @@
-*.gb
-.idea
-cmake-build-debug
-tools/
+cmake*
 doc
+disassembler
+*.gb
+tools
+.idea
