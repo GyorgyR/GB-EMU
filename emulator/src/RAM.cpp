@@ -126,6 +126,13 @@ bool RAM::WriteByteAt(uint16_t address, uint8_t value)
             success = SoundGenerator::SoundOnOff(value);
             break;
         }
+        case 0xFF40: {
+            #ifdef DEBUG
+            fprintf(debugStream, " [LCDControl]");
+            #endif
+            success = VideoRegisters::LCDControl(value);
+            break;
+        }
         case 0xFF42: {
             #ifdef DEBUG
             fprintf(debugStream, " [ScrollPosY]");

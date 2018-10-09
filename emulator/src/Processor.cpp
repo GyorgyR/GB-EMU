@@ -121,8 +121,14 @@ inline int op0x0C()
 
 inline int op0x0D()
 {
-    fprintf(debugStream, "Op not implemented: 0x0D\n");
-    return -1;
+    RegisterBank::SetH((RegisterBank::C & 0b1111) != 0b1111);
+    --RegisterBank::C;
+
+    RegisterBank::SetZ(RegisterBank::C == 0);
+    RegisterBank::SetN(true);
+
+    Helper::CPULog("DEC\tC");
+    return 4;
 }
 
 inline int op0x0E()
@@ -200,8 +206,10 @@ inline int op0x17()
 
 inline int op0x18()
 {
-    fprintf(debugStream, "Op not implemented: 0x18\n");
-    return -1;
+    int8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    RegisterBank::PC += value;
+    Helper::CPULog("JR\t%d", value);
+    return 12;
 }
 
 inline int op0x19()
@@ -256,7 +264,7 @@ inline int op0x20()
         cycles += 4;
     }
     #ifdef DEBUG
-    fprintf(debugStream, "JR\tNZ, [%d]\n", value);
+    fprintf(debugStream, "JR\tNZ, %d\n", value);
     #endif
     return cycles;
 }
@@ -311,8 +319,15 @@ inline int op0x27()
 
 inline int op0x28()
 {
-    fprintf(debugStream, "Op not implemented: 0x28\n");
-    return -1;
+    int cycles = 8;
+    int8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    if (RegisterBank::IsZSet())
+    {
+        RegisterBank::PC += value;
+        cycles += 4;
+    }
+    Helper::CPULog("JR\tZ, %d", value);
+    return cycles;
 }
 
 inline int op0x29()
@@ -347,8 +362,10 @@ inline int op0x2D()
 
 inline int op0x2E()
 {
-    fprintf(debugStream, "Op not implemented: 0x2E\n");
-    return -1;
+    uint8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    RegisterBank::L = value;
+    Helper::CPULog("LD\tL, 0x%02X", value);
+    return 8;
 }
 
 inline int op0x2F()
@@ -420,8 +437,16 @@ inline int op0x38()
 
 inline int op0x39()
 {
-    fprintf(debugStream, "Op not implemented: 0x39\n");
-    return -1;
+    uint16_t halfBitmask = 0b111111111111;
+    uint32_t result = RegisterBank::HL() + RegisterBank::SP;
+    uint16_t halfResult = (RegisterBank::HL() & halfBitmask) + (RegisterBank::SP + halfBitmask);
+    RegisterBank::HL(result);
+
+    RegisterBank::SetN(false);
+    RegisterBank::SetC(result & (UINT16_MAX + 1));
+    RegisterBank::SetH(halfResult & (halfBitmask + 1));
+    Helper::CPULog("ADD\tHL, SP");
+    return -8;
 }
 
 inline int op0x3A()
@@ -609,8 +634,9 @@ inline int op0x56()
 
 inline int op0x57()
 {
-    fprintf(debugStream, "Op not implemented: 0x57\n");
-    return -1;
+    RegisterBank::D = RegisterBank::A;
+    Helper::CPULog("LD\tD, A");
+    return 4;
 }
 
 inline int op0x58()
@@ -705,8 +731,9 @@ inline int op0x66()
 
 inline int op0x67()
 {
-    fprintf(debugStream, "Op not implemented: 0x67\n");
-    return -1;
+    RegisterBank::H = RegisterBank::A;
+    Helper::CPULog("LD\tH, A");
+    return 4;
 }
 
 inline int op0x68()

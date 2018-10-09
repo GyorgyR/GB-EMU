@@ -16,6 +16,7 @@ private:
 
     static uint8_t BGPaletteDataReg;
     static uint8_t ScrollPosYReg;
+    static uint8_t LCDControlReg;
 
 public:
     static uint8_t BGPaletteData();
@@ -23,6 +24,9 @@ public:
 
     static uint8_t ScrollPosY();
     static bool    ScollPosY(uint8_t value);
+
+    static uint8_t LCDControl();
+    static bool    LCDControl(uint8_t value);
 };
 
 
