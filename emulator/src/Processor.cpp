@@ -52,8 +52,14 @@ inline int op0x03()
 
 inline int op0x04()
 {
-    fprintf(debugStream, "Op not implemented: 0x04\n");
-    return -1;
+    RegisterBank::SetH((RegisterBank::B & 0b1111) == 0b1111);
+    ++RegisterBank::B;
+
+    RegisterBank::SetZ(RegisterBank::B == 0);
+    RegisterBank::SetN(false);
+
+    Helper::CPULog("INC\tB");
+    return 4;
 }
 
 inline int op0x05()
@@ -245,8 +251,10 @@ inline int op0x1D()
 
 inline int op0x1E()
 {
-    fprintf(debugStream, "Op not implemented: 0x1E\n");
-    return -1;
+    uint8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    RegisterBank::E = value;
+    Helper::CPULog("LD\tE, 0x%02X", value);
+    return 8;
 }
 
 inline int op0x1F()
@@ -1656,8 +1664,10 @@ inline int op0xEF()
 
 inline int op0xF0()
 {
-    fprintf(debugStream, "Op not implemented: 0xF0\n");
-    return -1;
+    uint16_t address = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
+    RegisterBank::A = RAM::ReadByteAt(address);
+    Helper::CPULog("LD\tA, [0x%04X]", address);
+    return 12;
 }
 
 inline int op0xF1()
