@@ -138,6 +138,8 @@ bool RAM::WriteByteAt(uint16_t address, uint8_t value)
             #endif
             activeBootPage = &loadedRom;
             success = true;
+            puts("Successfully reached end of boot rom");
+            exit(0);
             break;
         }
         case 0xFF80 ... 0xFFFE: {

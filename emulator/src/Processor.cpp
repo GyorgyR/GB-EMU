@@ -444,8 +444,15 @@ inline int op0x3C()
 
 inline int op0x3D()
 {
-    fprintf(debugStream, "Op not implemented: 0x3D\n");
-    return -1;
+    RegisterBank::SetH((RegisterBank::A & 0b1111) != 0b1111);
+
+    --RegisterBank::A;
+
+    RegisterBank::SetZ(RegisterBank::A == 0);
+    RegisterBank::SetN(true);
+
+    Helper::CPULog("DEC\tA");
+    return 4;
 }
 
 inline int op0x3E()
@@ -1583,8 +1590,11 @@ inline int op0xE9()
 
 inline int op0xEA()
 {
-    fprintf(debugStream, "Op not implemented: 0xEA\n");
-    return -1;
+    uint16_t address = getNextTwoBytes();
+    RAM::WriteByteAt(address, RegisterBank::A);
+
+    Helper::CPULog("LD\t[0x%04X], A", address);
+    return 16;
 }
 
 inline int op0xEB()
