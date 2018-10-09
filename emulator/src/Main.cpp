@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     } //if
     //Init main debug file
     Helper::InitLogger();
+    Helper::SetCPULogStream(stdout);
 
     Helper::Log("%s", "Open bootstrap ROM");
     ROM bootstrap_rom(bootstrap_rom_path);

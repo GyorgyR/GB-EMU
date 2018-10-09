@@ -7,11 +7,9 @@
 
 #include <utility>
 #include <cstdint>
-#include <fstream>
+#include <cstdio>
 
 #include "ROM.h"
-
-using std::ofstream;
 
 class Helper {
 private:
@@ -29,7 +27,7 @@ public:
     static void InitLogger();
 
     static void Log(const char *message, ...);
-
+    static void SetCPULogStream(FILE *stream);
     static void CPULog(const char *message, ...);
 
     static void RAMLog(const char *message, ...);

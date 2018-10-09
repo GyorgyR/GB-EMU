@@ -57,6 +57,11 @@ void Helper::Log(const char *message, ...)
     #endif
 }
 
+void Helper::SetCPULogStream(FILE *stream)
+{
+    cpuLog = stream;
+}
+
 void Helper::CPULog(const char *message, ...)
 {
     #ifdef DEBUG
