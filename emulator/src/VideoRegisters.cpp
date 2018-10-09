@@ -5,6 +5,7 @@
 #include "../include/VideoRegisters.h"
 
 uint8_t VideoRegisters::BGPaletteDataReg = 0;
+uint8_t VideoRegisters::ScrollPosYReg = 0;
 
 VideoRegisters::VideoRegisters()
 {
@@ -27,4 +28,13 @@ bool VideoRegisters::BGPaletteData(uint8_t value)
     return true;
 }
 
+uint8_t VideoRegisters::ScrollPosY()
+{
+    return ScrollPosYReg;
+}
 
+bool VideoRegisters::ScollPosY(uint8_t value)
+{
+    ScrollPosYReg = value;
+    return true;
+}

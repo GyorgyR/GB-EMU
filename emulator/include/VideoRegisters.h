@@ -12,14 +12,17 @@ class VideoRegisters
 private:
     //Make class static and non-instantiable
     VideoRegisters();
-
     ~VideoRegisters();
 
     static uint8_t BGPaletteDataReg;
+    static uint8_t ScrollPosYReg;
+
 public:
     static uint8_t BGPaletteData();
+    static bool    BGPaletteData(uint8_t value);
 
-    static bool BGPaletteData(uint8_t value);
+    static uint8_t ScrollPosY();
+    static bool    ScollPosY(uint8_t value);
 };
 
 

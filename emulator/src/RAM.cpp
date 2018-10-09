@@ -9,6 +9,7 @@
 #include "../include/RAM.h"
 #include "../include/SoundGenerator.h"
 #include "../include/VideoRegisters.h"
+#include "../include/Helper.h"
 
 ROM *RAM::loadedRom = nullptr;
 ROM *RAM::bootRom = nullptr;
@@ -123,6 +124,13 @@ bool RAM::WriteByteAt(uint16_t address, uint8_t value)
             fprintf(debugStream, " [Sound on/off]");
             #endif
             success = SoundGenerator::SoundOnOff(value);
+            break;
+        }
+        case 0xFF42: {
+            #ifdef DEBUG
+            fprintf(debugStream, " [ScrollPosY]");
+            #endif
+            success = VideoRegisters::ScollPosY(value);
             break;
         }
         case 0xFF47: {
