@@ -83,7 +83,6 @@ void Helper::RAMLog(const char *message, ...)
     va_start(args, message);
     vfprintf(ramLog, message, args);
     va_end(args);
-    fprintf(ramLog, "\n");
     fflush(ramLog);
     #else
     return

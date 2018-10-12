@@ -6,6 +6,7 @@
 #include "Processor.h"
 #include "RegisterBank.h"
 #include "../include/Helper.h"
+#include "../include/Window.h"
 
 using std::cout;
 using std::endl;
@@ -30,12 +31,14 @@ int main(int argc, char *argv[])
     ROM bootstrap_rom(bootstrap_rom_path);
     RAM::InitBootRom(&bootstrap_rom);
 
+    Helper::Log("Open Window");
+    Window window;
+
     Helper::Log("Open game ROM");
     ROM rom(argv[1]);
     RAM::InitRam(&rom);
 
     Helper::Log("Set up ram module");
-    RAM::SetDebugStream(fopen("ram-run.log", "w+"));
     Processor cpu;
     cpu.StartCPULoop();
 
