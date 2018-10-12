@@ -140,11 +140,6 @@ void RAM::InitRam(ROM *rom)
     loadedRom = rom;
 }
 
-void RAM::SetDebugStream(FILE *stream)
-{
-    debugStream = stream;
-}
-
 void RAM::InitBootRom(ROM *boot)
 {
     bootRom = boot;
