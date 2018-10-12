@@ -1402,7 +1402,7 @@ inline int cbOp0x11()
 
 inline int cbOp0x7C()
 {
-    RegisterBank::SetZ(Helper::IsBitSet(H, 7));
+    RegisterBank::SetZ(Helper::IsBitSet(RegisterBank::H, 7));
     RegisterBank::SetN(false);
     RegisterBank::SetH(true);
     #ifdef DEBUG
