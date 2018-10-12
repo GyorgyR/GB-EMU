@@ -1,6 +1,7 @@
 # Ignore the build and lib dirs
 build
 lib/*
+include/SDL2 #used for autocomplete
 
 # Ignore any executables
 bin/*
