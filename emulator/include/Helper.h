@@ -24,6 +24,8 @@ public:
     static uint16_t ConcatTwoBytes(uint8_t first, uint8_t second);
     static std::pair<uint8_t, uint8_t> DivideIntoTwoBytes(uint16_t value);
 
+    static bool IsBitSet(uint16_t bits, uint16_t bitPos);
+
     static void InitLogger();
 
     static void Log(const char *message, ...);

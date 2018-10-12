@@ -20,20 +20,20 @@ uint16_t RegisterBank::PC = 0;
 
 bool RegisterBank::IsZSet()
 {
-    return 0b10000000 & F;
+    return Helper::IsBitSet(F, 7);
 }
 
 bool RegisterBank::IsNSet() {
-    return 0b01000000 & F;
+    return Helper::IsBitSet(F, 6);
 }
 
 bool RegisterBank::IsHSet() {
-    return 0b00100000 & F;
+    return Helper::IsBitSet(F, 5);
 }
 
 bool RegisterBank::IsCSet()
 {
-    return 0b00010000 & F;
+    return Helper::IsBitSet(F, 4);
 }
 
 uint16_t RegisterBank::AF()

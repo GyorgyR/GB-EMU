@@ -89,3 +89,9 @@ void Helper::RAMLog(const char *message, ...)
     return
     #endif
 }
+
+bool Helper::IsBitSet(uint16_t bits, uint16_t bitPos)
+{
+    uint16_t bitmask = 1 << bitPos;
+    return bits & bitmask;
+}

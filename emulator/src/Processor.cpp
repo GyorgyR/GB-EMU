@@ -1402,8 +1402,7 @@ inline int cbOp0x11()
 
 inline int cbOp0x7C()
 {
-    uint8_t bitmask = 0b10000000;
-    RegisterBank::SetZ((RegisterBank::H & bitmask) == 0);
+    RegisterBank::SetZ(Helper::IsBitSet(H, 7));
     RegisterBank::SetN(false);
     RegisterBank::SetH(true);
     #ifdef DEBUG
