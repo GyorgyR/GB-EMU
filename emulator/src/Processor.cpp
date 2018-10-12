@@ -5,6 +5,9 @@
 #define DEBUG
 #define REGISTERS
 
+#define INSTPERSEC 4194304
+#define FPS 60
+
 #include "Processor.h"
 #include "../include/Processor.h"
 #include "../include/RegisterBank.h"
@@ -2043,21 +2046,23 @@ void Processor::StartCPULoop()
 {
     Helper::Log("Start CPU loop");
     int status = 1;
+    int cycles = 0;
     while (status > 0) {
-        status = decodeInstr(RegisterBank::PC);
-        RegisterBank::PC++;
-        #ifdef DEBUG
-        #ifdef REGISTERS
-        fprintf(
-                debugStream,
-                "\t[A: 0x%02X] [B: 0x%02X] [C: 0x%02X]\n",
-                RegisterBank::A,
-                RegisterBank::B,
-                RegisterBank::C
-        );
+        while (cycles < (INSTPERSEC / FPS)) {
+            status = decodeInstr(RegisterBank::PC);
+            cycles += status;
+            RegisterBank::PC++;
 
-        #endif
-        fflush(debugStream);
-        #endif
+            #ifdef REGISTERS
+            Helper::CPULog(
+                    "\t[A: 0x%02X] [B: 0x%02X] [C: 0x%02X]\n",
+                    RegisterBank::A,
+                    RegisterBank::B,
+                    RegisterBank::C
+            );
+
+            #endif
+        }
+        cycles = 0;
     }
 }
