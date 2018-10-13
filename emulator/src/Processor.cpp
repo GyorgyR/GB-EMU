@@ -3,7 +3,7 @@
 //
 
 #define DEBUG
-#define REGISTERS
+#undef REGISTERS
 
 #define INSTPERSEC 4194304
 #define FPS 60
@@ -12,6 +12,8 @@
 #include "../include/Processor.h"
 #include "../include/RegisterBank.h"
 #include "../include/Helper.h"
+#include "../include/PPU.h"
+#include "../include/Types.h"
 
 FILE *debugStream = stdout;
 
@@ -23,9 +25,10 @@ Processor::Processor()
 {
 }
 
-uint16_t getNextTwoBytes() {
-    uint8_t first = RAM::ReadByteAt(++RegisterBank::PC);
-    uint8_t second = RAM::ReadByteAt(++RegisterBank::PC);
+uint16 getNextTwoBytes()
+{
+    uint8 first = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 second = RAM::ReadByteAt(++RegisterBank::PC);
     return Helper::ConcatTwoBytes(second, first);
 }
 
@@ -67,7 +70,7 @@ inline int op0x04()
 
 inline int op0x05()
 {
-    RegisterBank::SetH((RegisterBank::B & 0b1111) != 0b1111);
+    RegisterBank::SetH((RegisterBank::B & 0b000) != 0b000);
 
     --RegisterBank::B;
 
@@ -130,7 +133,7 @@ inline int op0x0C()
 
 inline int op0x0D()
 {
-    RegisterBank::SetH((RegisterBank::C & 0b1111) != 0b1111);
+    RegisterBank::SetH((RegisterBank::C & 0b000) != 0b000);
     --RegisterBank::C;
 
     RegisterBank::SetZ(RegisterBank::C == 0);
@@ -143,7 +146,7 @@ inline int op0x0D()
 inline int op0x0E()
 {
     RegisterBank::C = RAM::ReadByteAt(++RegisterBank::PC);
-    fprintf(debugStream, "LD\tC,0x%02X\n", RegisterBank::C);
+    fprintf(debugStream, "LD\tC, 0x%02X\n", RegisterBank::C);
     return 8;
 }
 
@@ -248,13 +251,19 @@ inline int op0x1C()
 
 inline int op0x1D()
 {
-    fprintf(debugStream, "Op not implemented: 0x1D\n");
-    return -1;
+    RegisterBank::SetH((RegisterBank::E & 0b000) != 0b000);
+    --RegisterBank::E;
+
+    RegisterBank::SetZ(RegisterBank::E == 0);
+    RegisterBank::SetN(true);
+
+    Helper::CPULog("DEC\tE");
+    return 4;
 }
 
 inline int op0x1E()
 {
-    uint8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
     RegisterBank::E = value;
     Helper::CPULog("LD\tE, 0x%02X", value);
     return 8;
@@ -306,8 +315,15 @@ inline int op0x23()
 
 inline int op0x24()
 {
-    fprintf(debugStream, "Op not implemented: 0x24\n");
-    return -1;
+    RegisterBank::SetH((RegisterBank::H & 0b111) == 0b111);
+
+    ++RegisterBank::H;
+
+    RegisterBank::SetZ(RegisterBank::H == 0);
+    RegisterBank::SetN(false);
+
+    Helper::CPULog("INC\tH");
+    return 4;
 }
 
 inline int op0x25()
@@ -373,7 +389,7 @@ inline int op0x2D()
 
 inline int op0x2E()
 {
-    uint8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
     RegisterBank::L = value;
     Helper::CPULog("LD\tL, 0x%02X", value);
     return 8;
@@ -448,9 +464,9 @@ inline int op0x38()
 
 inline int op0x39()
 {
-    uint16_t halfBitmask = 0b111111111111;
+    uint16 halfBitmask = 0b111111111111;
     uint32_t result = RegisterBank::HL() + RegisterBank::SP;
-    uint16_t halfResult = (RegisterBank::HL() & halfBitmask) + (RegisterBank::SP + halfBitmask);
+    uint16 halfResult = (RegisterBank::HL() & halfBitmask) + (RegisterBank::SP + halfBitmask);
     RegisterBank::HL(result);
 
     RegisterBank::SetN(false);
@@ -480,7 +496,7 @@ inline int op0x3C()
 
 inline int op0x3D()
 {
-    RegisterBank::SetH((RegisterBank::A & 0b1111) != 0b1111);
+    RegisterBank::SetH((RegisterBank::A & 0b000) != 0b000);
 
     --RegisterBank::A;
 
@@ -1022,9 +1038,9 @@ inline int op0x94()
 inline int op0x95()
 {
     RegisterBank::SetC(RegisterBank::A >= RegisterBank::L);
-    uint8_t bitmask = 0b1111;
-    uint8_t lowerA = RegisterBank::A & bitmask;
-    uint8_t lowerL = RegisterBank::L & bitmask;
+    uint8 bitmask = 0b1111;
+    uint8 lowerA = RegisterBank::A & bitmask;
+    uint8 lowerL = RegisterBank::L & bitmask;
     RegisterBank::SetH(lowerA >= lowerL);
 
     RegisterBank::A -= RegisterBank::L;
@@ -1039,9 +1055,9 @@ inline int op0x95()
 inline int op0x96()
 {
     RegisterBank::SetC(RegisterBank::A >= RegisterBank::HL());
-    uint8_t bitmask = 0b1111;
-    uint16_t lowerA = RegisterBank::A & bitmask;
-    uint16_t lowerHL = RegisterBank::HL() & bitmask;
+    uint8 bitmask = 0b1111;
+    uint16 lowerA = RegisterBank::A & bitmask;
+    uint16 lowerHL = RegisterBank::HL() & bitmask;
     RegisterBank::SetH(lowerA >= lowerHL);
 
     RegisterBank::A -= RegisterBank::HL();
@@ -1328,7 +1344,7 @@ inline int op0xC2()
 
 inline int op0xC3()
 {
-    uint16_t address = getNextTwoBytes();
+    uint16 address = getNextTwoBytes();
     RegisterBank::PC = address - 1; //account for the already incremented pc
     #ifdef DEBUG
     fprintf(debugStream, "JP\t0x%04X\n", address);
@@ -1370,7 +1386,7 @@ inline int op0xC8()
 
 inline int op0xC9()
 {
-    uint16_t address = RAM::ReadByteAt(++RegisterBank::SP) << 8;
+    uint16 address = RAM::ReadByteAt(++RegisterBank::SP) << 8;
     address += RAM::ReadByteAt(++RegisterBank::SP);
     RegisterBank::PC = address - 1; //offset the one that gets added.
     fprintf(debugStream, "RET\t(0x%04X)\n", address);
@@ -1417,7 +1433,7 @@ inline int cbOp0x7C()
 
 inline int op0xCB()
 {
-    uint8_t cb_op = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 cb_op = RAM::ReadByteAt(++RegisterBank::PC);
     switch (cb_op) {
         case 0x11: return cbOp0x11();
         case 0x7C: return cbOp0x7C();
@@ -1436,7 +1452,7 @@ inline int op0xCC()
 
 inline int op0xCD()
 {
-    uint16_t funcAddr = getNextTwoBytes();
+    uint16 funcAddr = getNextTwoBytes();
 
     RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::PC + 1);
     RAM::WriteByteAt(RegisterBank::SP--, (RegisterBank::PC + 1) >> 8);
@@ -1560,7 +1576,7 @@ inline int op0xDF()
 
 inline int op0xE0()
 {
-    uint16_t immediate = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
+    uint16 immediate = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
     RAM::WriteByteAt(immediate, RegisterBank::A);
     fprintf(debugStream, "LDH\t[0x%02X], A\n", immediate);
     return 12;
@@ -1627,7 +1643,7 @@ inline int op0xE9()
 
 inline int op0xEA()
 {
-    uint16_t address = getNextTwoBytes();
+    uint16 address = getNextTwoBytes();
     RAM::WriteByteAt(address, RegisterBank::A);
 
     Helper::CPULog("LD\t[0x%04X], A", address);
@@ -1666,7 +1682,7 @@ inline int op0xEF()
 
 inline int op0xF0()
 {
-    uint16_t address = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
+    uint16 address = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
     RegisterBank::A = RAM::ReadByteAt(address);
     Helper::CPULog("LD\tA, [0x%04X]", address);
     return 12;
@@ -1756,7 +1772,7 @@ inline int op0xFD()
 
 inline int op0xFE()
 {
-    uint8_t immediate = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 immediate = RAM::ReadByteAt(++RegisterBank::PC);
 
     RegisterBank::SetZ(RegisterBank::A == immediate);
     RegisterBank::SetN(true);
@@ -1773,9 +1789,9 @@ inline int op0xFF()
     return -1;
 }
 
-int Processor::decodeInstr(uint16_t address)
+int Processor::decodeInstr(uint16 address)
 {
-    uint8_t op_code = RAM::ReadByteAt(address);
+    uint8 op_code = RAM::ReadByteAt(address);
     #ifdef DEBUG
     fprintf(debugStream, "0x%04X: ", address);
     #endif
@@ -2046,23 +2062,18 @@ void Processor::StartCPULoop()
 {
     Helper::Log("Start CPU loop");
     int status = 1;
-    int cycles = 0;
     while (status > 0) {
-        while (cycles < (INSTPERSEC / FPS)) {
-            status = decodeInstr(RegisterBank::PC);
-            cycles += status;
-            RegisterBank::PC++;
+        status = decodeInstr(RegisterBank::PC);
+        PPU::Update(status);
+        RegisterBank::PC++;
 
-            #ifdef REGISTERS
-            Helper::CPULog(
-                    "\t[A: 0x%02X] [B: 0x%02X] [C: 0x%02X]\n",
-                    RegisterBank::A,
-                    RegisterBank::B,
-                    RegisterBank::C
-            );
-
-            #endif
-        }
-        cycles = 0;
+        #ifdef REGISTERS
+        Helper::CPULog(
+                "\t[A: 0x%02X] [B: 0x%02X] [C: 0x%02X]\n",
+                RegisterBank::A,
+                RegisterBank::B,
+                RegisterBank::C
+        );
+        #endif
     }
 }
