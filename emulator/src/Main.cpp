@@ -2,11 +2,13 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include "ROM.h"
-#include "Processor.h"
-#include "RegisterBank.h"
+
+#include "../include/ROM.h"
+#include "../include/Processor.h"
+#include "../include/RegisterBank.h"
 #include "../include/Helper.h"
 #include "../include/Window.h"
+#include "../include/PPU.h"
 
 using std::cout;
 using std::endl;
@@ -33,6 +35,7 @@ int main(int argc, char *argv[])
 
     Helper::Log("Open Window");
     Window window;
+    PPU::SetWindow(&window);
 
     Helper::Log("Open game ROM");
     ROM rom(argv[1]);
