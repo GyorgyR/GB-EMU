@@ -7,11 +7,19 @@
 
 #include <string>
 
+#include "RGBA.h"
+
 class Configuration
 {
+private:
+    //Make class static
+    Configuration();
+
+    ~Configuration();
 public:
     static std::string WindowTitle;
     static const unsigned int PixelScaleFactor = 2;
+    static RGBA Colours[];
 };
 
 
