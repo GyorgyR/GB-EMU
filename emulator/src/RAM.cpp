@@ -2,20 +2,19 @@
 // Created by gyorgy on 29/09/18.
 //
 
-#define DEBUG
-
 #include <cstdlib>
 
 #include "../include/RAM.h"
 #include "../include/SoundGenerator.h"
 #include "../include/VideoRegisters.h"
 #include "../include/Helper.h"
+#include "../include/Types.h"
 
 ROM *RAM::loadedRom = nullptr;
 ROM *RAM::bootRom = nullptr;
 ROM **RAM::activeBootPage = &bootRom;
-uint8_t RAM::vram[8192];
-uint8_t RAM::stack[0x7F];
+uint8 RAM::vram[8192];
+uint8 RAM::stack[0x7F];
 
 RAM::RAM()
 {
@@ -25,9 +24,9 @@ RAM::~RAM()
 {
 }
 
-uint8_t RAM::ReadByteAt(uint16_t address)
+uint8 RAM::ReadByteAt(uint16 address)
 {
-    uint8_t retVal = -1;
+    uint8 retVal = -1;
     Helper::RAMLog("[READ ] [@0x%04X]", address);
     switch (address) {
         case 0x0 ... 0x00FF: {
@@ -48,7 +47,12 @@ uint8_t RAM::ReadByteAt(uint16_t address)
         case 0x8000 ... 0x9FFF: {
             int internalAddress = address - 0x8000;
             Helper::RAMLog(" [VRAM@%d]", internalAddress);
-            goto UNIMPLEMENTED;
+            retVal = vram[internalAddress];
+            break;
+        }
+        case 0xFF44: {
+            Helper::RAMLog(" [LCDY]");
+            retVal = VideoRegisters::LCDYCoordinate();
             break;
         }
         case 0xFF80 ... 0xFFFE: {
@@ -65,7 +69,7 @@ uint8_t RAM::ReadByteAt(uint16_t address)
     return retVal;
 }
 
-bool RAM::WriteByteAt(uint16_t address, uint8_t value)
+bool RAM::WriteByteAt(uint16 address, uint8 value)
 {
     Helper::RAMLog("[WRITE] [@0x%04X]", address);
     bool success = false;
@@ -104,7 +108,7 @@ bool RAM::WriteByteAt(uint16_t address, uint8_t value)
         }
         case 0xFF42: {
             Helper::RAMLog(" [ScrollPosY]");
-            success = VideoRegisters::ScollPosY(value);
+            success = VideoRegisters::ScrollPosY(value);
             break;
         }
         case 0xFF47: {
