@@ -3,6 +3,7 @@
 //
 
 #define DEBUG
+#undef RAM_DEBUG
 
 #include <cstdio>
 #include <cstdarg>
@@ -78,14 +79,14 @@ void Helper::CPULog(const char *message, ...)
 
 void Helper::RAMLog(const char *message, ...)
 {
-    #ifdef DEBUG
+    #ifdef RAM_DEBUG
     va_list args;
     va_start(args, message);
     vfprintf(ramLog, message, args);
     va_end(args);
     fflush(ramLog);
     #else
-    return
+    return;
     #endif
 }
 
