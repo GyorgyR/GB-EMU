@@ -6,6 +6,7 @@
 #define GB_EMULATOR_VIDEOREGISTERS_H
 
 #include <cstdint>
+#include "Types.h"
 
 class VideoRegisters
 {
@@ -14,19 +15,29 @@ private:
     VideoRegisters();
     ~VideoRegisters();
 
-    static uint8_t BGPaletteDataReg;
-    static uint8_t ScrollPosYReg;
-    static uint8_t LCDControlReg;
+    static uint8 BGPaletteDataReg;
+    static uint8 ScrollPosYReg;
+    static uint8 LCDControlReg;
+    static uint8 LCDYCoordReg;
 
 public:
-    static uint8_t BGPaletteData();
-    static bool    BGPaletteData(uint8_t value);
+    static uint8 BGPaletteData();
 
-    static uint8_t ScrollPosY();
-    static bool    ScollPosY(uint8_t value);
+    static bool BGPaletteData(uint8 value);
 
-    static uint8_t LCDControl();
-    static bool    LCDControl(uint8_t value);
+    static uint8 ScrollPosY();
+
+    static bool ScrollPosY(uint8 value);
+
+    static uint8 LCDYCoordinate();
+
+    static bool LCDYCoordinate(uint8 value);
+
+    static uint8 LCDControl();
+
+    static bool LCDControl(uint8 value);
+
+    static uint16 BGTileMapBaseAddr();
 };
 
 
