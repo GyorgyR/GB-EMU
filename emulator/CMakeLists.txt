@@ -9,3 +9,6 @@ include_directories(${SDL2_INCLUDE_DIR})
 
 add_custom_target(test-emulator COMMAND make -C ${gb-emulator_SOURCE_DIR}
                                     CLION_EXE_DIR=${PROJECT_BINARY_DIR})
+
+add_custom_target(run-tests COMMAND make tester -C ${gb-emulator_SOURCE_DIR}
+        CLION_EXE_DIR=${PROJECT_BINARY_DIR})

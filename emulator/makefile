@@ -3,6 +3,7 @@ CC := g++ # This is the main compiler
 SRCDIR := src
 BUILDDIR := build
 TARGET := bin/runner
+TESTBINDIR := test/bin
  
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -29,6 +30,10 @@ clean:
 
 # Tests
 tester:
-	$(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester
+	$(CC) $(CFLAGS) $(SRCDIR)/Helper.cpp test/HelperTests.cpp -o $(TESTBINDIR)/helperTests.bin && $(TESTBINDIR)/helperTests.bin
+	@echo "===================================================================="
+	$(CC) $(CFLAGS) $(SRCDIR)/Helper.cpp $(SRCDIR)/RegisterBank.cpp test/RegisterBankTests.cpp -o $(TESTBINDIR)/regTests.bin && $(TESTBINDIR)/regTests.bin
+	@echo "===================================================================="
+	$(CC) $(CFLAGS) $(SRCDIR)/RGBA.cpp $(SRCDIR)/Configuration.cpp $(SRCDIR)/Window.cpp test/WindowTests.cpp -o $(TESTBINDIR)/windowTests.bin $(LIB) && $(TESTBINDIR)/windowTests.bin
 
 .PHONY: clean
