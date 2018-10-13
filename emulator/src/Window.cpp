@@ -2,9 +2,6 @@
 // Created by gyorgy on 12/10/18.
 //
 
-#define WINDOWHEIGHT 160
-#define WINDOWWIDTH 140
-
 #include <iostream>
 #include <SDL2/SDL.h>
 
@@ -23,8 +20,10 @@ Window::Window()
             Configuration::WindowTitle.c_str(),
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
-            WINDOWWIDTH * Configuration::PixelScaleFactor,
-            WINDOWHEIGHT * Configuration::PixelScaleFactor,
+            //width,
+            //height,
+            width * Configuration::PixelScaleFactor,
+            height * Configuration::PixelScaleFactor,
             SDL_WINDOW_SHOWN
     );
 
@@ -50,5 +49,17 @@ Window::~Window()
 void Window::DrawPixel(uint8_t x, uint8_t y, RGBA colour)
 {
     SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
-    SDL_RenderDrawPoint(renderer, x, y);
+    unsigned int tX = x * Configuration::PixelScaleFactor;
+    unsigned int tY = y * Configuration::PixelScaleFactor;
+
+    for (unsigned int xPos = 0; xPos < Configuration::PixelScaleFactor; xPos++) {
+        for (unsigned int yPos = 0; yPos < Configuration::PixelScaleFactor; ++yPos) {
+            SDL_RenderDrawPoint(renderer, tX + xPos, tY + yPos);
+        }
+    }
+}
+
+void Window::UpdateScreen()
+{
+    SDL_RenderPresent(renderer);
 }

@@ -14,11 +14,15 @@
 class Window
 {
 public:
-    Window();
+    const unsigned int width = 140;
+    const unsigned int height = 160;
 
+    Window();
     ~Window();
 
     void DrawPixel(uint8_t x, uint8_t y, RGBA colour);
+
+    void UpdateScreen();
 
 private:
     SDL_Window *window = nullptr;
