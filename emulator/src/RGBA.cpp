@@ -17,3 +17,8 @@ RGBA::RGBA(uint8_t _r, uint8_t _g, uint8_t _b) :
 RGBA::~RGBA()
 {
 }
+
+RGBA::RGBA(uint8_t shade) :
+        r(shade), g(shade), b(shade), a(255)
+{
+}

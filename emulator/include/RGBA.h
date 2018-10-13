@@ -12,9 +12,9 @@ class RGBA
 {
 public:
     RGBA(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a);
-
     RGBA(uint8_t _r, uint8_t _g, uint8_t _b);
 
+    RGBA(uint8_t shade);
     ~RGBA();
 
     uint8_t r;
