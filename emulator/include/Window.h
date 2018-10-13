@@ -14,8 +14,8 @@
 class Window
 {
 public:
-    const unsigned int width = 140;
-    const unsigned int height = 160;
+    const unsigned int width = 160;
+    const unsigned int height = 144;
 
     Window();
     ~Window();

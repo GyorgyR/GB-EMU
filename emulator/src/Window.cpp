@@ -20,8 +20,6 @@ Window::Window()
             Configuration::WindowTitle.c_str(),
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
-            //width,
-            //height,
             width * Configuration::PixelScaleFactor,
             height * Configuration::PixelScaleFactor,
             SDL_WINDOW_SHOWN
@@ -35,7 +33,7 @@ Window::Window()
     renderer = SDL_CreateRenderer(window, 0, 0);
 
     if (renderer == nullptr) {
-        std::cerr << "SDL_CreateRendere ERROR" << SDL_GetError() << std::endl;
+        std::cerr << "SDL_CreateRenderer ERROR" << SDL_GetError() << std::endl;
         exit(1);
     }
 }
