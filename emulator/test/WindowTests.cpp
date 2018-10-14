@@ -4,6 +4,7 @@
 
 #include <chrono>
 #include <thread>
+#include <iostream>
 
 #include "../include/Window.h"
 #include "../include/RGBA.h"
@@ -24,8 +25,17 @@ int main()
     }
     window.UpdateScreen();
 
-    for (unsigned int i = 0; i < (window.width + window.height) / 2; i += window.height / window.width)
-        window.DrawPixel(i, i, blue);
+    for (int i = 0; i < window.height; i += 1) {
+        for (int j = 0; j < window.width; j += 2) {
+            window.DrawPixel(j + (i % 2), i, blue);
+        }
+    }
+
+    for (int i = 0; i < 144; i += 1) {
+        for (int j = 1; j < 160; j += 2) {
+            window.DrawPixel(j - (i % 2), i, red);
+        }
+    }
     window.UpdateScreen();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(5000));
