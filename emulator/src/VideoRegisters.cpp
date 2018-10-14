@@ -7,6 +7,7 @@
 
 uint8_t VideoRegisters::BGPaletteDataReg = 0;
 uint8_t VideoRegisters::ScrollPosYReg = 0;
+uint8_t VideoRegisters::ScrollPosXReg = 0;
 uint8_t VideoRegisters::LCDControlReg = 0;
 uint8_t VideoRegisters::LCDYCoordReg = 0;
 
@@ -59,6 +60,12 @@ uint16_t VideoRegisters::BGTileMapBaseAddr()
     else return 0x9800;
 }
 
+uint16 VideoRegisters::BGTileDataBaseAddr()
+{
+    if (Helper::IsBitSet(LCDControlReg, 4)) return 0x8000;
+    else return 0x8800;
+}
+
 uint8 VideoRegisters::LCDYCoordinate()
 {
     return LCDYCoordReg;
@@ -67,5 +74,16 @@ uint8 VideoRegisters::LCDYCoordinate()
 bool VideoRegisters::LCDYCoordinate(uint8 value)
 {
     LCDYCoordReg = value;
+    return true;
+}
+
+uint8 VideoRegisters::ScrollPosX()
+{
+    return ScrollPosXReg;
+}
+
+bool VideoRegisters::ScrollPosX(uint8 value)
+{
+    ScrollPosXReg = value;
     return true;
 }

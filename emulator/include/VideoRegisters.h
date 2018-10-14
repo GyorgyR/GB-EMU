@@ -17,27 +17,29 @@ private:
 
     static uint8 BGPaletteDataReg;
     static uint8 ScrollPosYReg;
+    static uint8 ScrollPosXReg;
     static uint8 LCDControlReg;
     static uint8 LCDYCoordReg;
 
 public:
     static uint8 BGPaletteData();
-
     static bool BGPaletteData(uint8 value);
 
     static uint8 ScrollPosY();
-
     static bool ScrollPosY(uint8 value);
 
-    static uint8 LCDYCoordinate();
+    static uint8 ScrollPosX();
 
+    static bool ScrollPosX(uint8 value);
+
+    static uint8 LCDYCoordinate();
     static bool LCDYCoordinate(uint8 value);
 
     static uint8 LCDControl();
-
     static bool LCDControl(uint8 value);
-
     static uint16 BGTileMapBaseAddr();
+
+    static uint16 BGTileDataBaseAddr();
 };
 
 
