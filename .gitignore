@@ -4,3 +4,4 @@ disassembler
 *.gb
 tools
 .idea
+emulator/include/SDL2/ #used for autocomplete
