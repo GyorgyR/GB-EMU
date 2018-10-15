@@ -27,6 +27,8 @@ public:
     static void InitBootRom(ROM *boot);
     static uint8_t ReadByteAt(uint16_t address);
     static bool WriteByteAt(uint16_t address, uint8_t value);
+
+    static void DumpVRAM();
 };
 
 

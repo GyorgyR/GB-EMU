@@ -50,6 +50,11 @@ uint8 RAM::ReadByteAt(uint16 address)
             retVal = vram[internalAddress];
             break;
         }
+        case 0xFF42: {
+            Helper::RAMLog(" [ScrollPosY]");
+            retVal = VideoRegisters::ScrollPosY();
+            break;
+        }
         case 0xFF44: {
             Helper::RAMLog(" [LCDY]");
             retVal = VideoRegisters::LCDYCoordinate();
@@ -83,12 +88,22 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
         }
         case 0xFF11: {
             Helper::RAMLog(" [Channel1 Wave Pattern]");
-            success = SoundGenerator::ChannelWavePattern(value);
+            success = SoundGenerator::Channel1WavePattern(value);
             break;
         }
         case 0xFF12: {
             Helper::RAMLog(" [Channel1 Volume Envelope]");
             success = SoundGenerator::Channel1VolumeEnvelope(value);
+            break;
+        }
+        case 0xFF13: {
+            Helper::RAMLog(" [Channel1 Freq-lo]");
+            success = SoundGenerator::Channel1FreqLo(value);
+            break;
+        }
+        case 0xFF14: {
+            Helper::RAMLog(" [Channel1 Freq-hi]");
+            success = SoundGenerator::Channel1FreqHi(value);
             break;
         }
         case 0xFF25: {
@@ -148,3 +163,12 @@ void RAM::InitBootRom(ROM *boot)
 {
     bootRom = boot;
 }
+
+void RAM::DumpVRAM()
+{
+    for (int i = 0x8000; i < 0xA000; ++i) {
+        Helper::Log("0x%04X: 0x%02X", i, vram[i - 0x8000]);
+    }
+}
+
+
