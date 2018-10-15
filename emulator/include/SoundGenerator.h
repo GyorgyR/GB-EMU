@@ -6,6 +6,7 @@
 #define GB_EMULATOR_SOUNDGENERATOR_H
 
 #include <cstdint>
+#include "Types.h"
 
 class SoundGenerator
 {
@@ -15,26 +16,36 @@ private:
 
     ~SoundGenerator();
 
-    static uint8_t soundOnOffReg;
-    static uint8_t channel1WaveReg;
-    static uint8_t channel1VolumeEnvelope;
-    static uint8_t soundOutTerminalReg;
+    static uint8 soundOnOffReg;
+    static uint8 channel1WaveReg;
+    static uint8 channel1VolumeEnvelope;
+    static uint8 soundOutTerminalReg;
+    static uint8 channel1FreqLoReg;
+    static uint8 channel1FreqHiReg;
 public:
-    static uint8_t Channel1WavePattern();
+    static uint8 Channel1WavePattern();
 
-    static bool ChannelWavePattern(uint8_t value);
+    static bool Channel1WavePattern(uint8 value);
 
-    static uint8_t Channel1VolumeEnvelope();
+    static uint8 Channel1FreqLo();
 
-    static bool Channel1VolumeEnvelope(uint8_t value);
+    static bool Channel1FreqLo(uint8 value);
 
-    static uint8_t SoundOutTerminal();
+    static uint8 Channel1FreqHi();
 
-    static bool SoundOutTerminal(uint8_t value);
+    static bool Channel1FreqHi(uint8 value);
 
-    static uint8_t SoundOnOff();
+    static uint8 Channel1VolumeEnvelope();
 
-    static bool SoundOnOff(uint8_t value);
+    static bool Channel1VolumeEnvelope(uint8 value);
+
+    static uint8 SoundOutTerminal();
+
+    static bool SoundOutTerminal(uint8 value);
+
+    static uint8 SoundOnOff();
+
+    static bool SoundOnOff(uint8 value);
 };
 
 
