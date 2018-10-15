@@ -23,20 +23,19 @@ private:
     static unsigned int currentLineCycle;
     static unsigned int currentPixel;
     static unsigned int fifoFetchState;
-    static unsigned int lastTileNo;
+    static int lastTileNo;
+    static uint8 lastByte1;
     static int decodedBytes[];
     static std::queue<int> fifo;
     static Window *window;
 
     //functions
     static void FifoFetch();
-
     static void FifoPush();
-
     static inline uint16 currentTileRowBaseAddr();
+
 public:
     static void SetWindow(Window *currWindow);
-
     static void Update(int cycles);
 };
 
