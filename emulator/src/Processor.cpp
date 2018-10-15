@@ -2,7 +2,7 @@
 // Created by gyorgy on 11/08/18.
 //
 
-#define DEBUG
+#undef DEBUG
 #undef REGISTERS
 
 #define INSTPERSEC 4194304
@@ -25,34 +25,64 @@ Processor::Processor()
 {
 }
 
-uint16 getNextTwoBytes()
+inline uint16 getNextTwoBytes()
 {
     uint8 first = RAM::ReadByteAt(++RegisterBank::PC);
     uint8 second = RAM::ReadByteAt(++RegisterBank::PC);
     return Helper::ConcatTwoBytes(second, first);
 }
 
+inline int baseLoadReg(uint8 *destination, uint8 value)
+{
+    *destination = value;
+    return 4;
+}
+
+inline int baseSub(uint8 value)
+{
+    RegisterBank::SetH((RegisterBank::A & 0b111) > (value & 0b111));
+    RegisterBank::SetC(RegisterBank::A > value);
+
+    RegisterBank::A -= value;
+
+    RegisterBank::SetZ(RegisterBank::A == 0);
+    RegisterBank::SetN(true);
+
+    return 4;
+}
+
+inline int baseDec(uint8 *reg)
+{
+    RegisterBank::SetH(((*reg) & 0b000) > 0);
+
+    --(*reg);
+
+    RegisterBank::SetZ((*reg) == 0);
+    RegisterBank::SetN(true);
+    return 4;
+}
+
 inline int op0x00()
 {
-    fprintf(debugStream, "NOP\n");
+    Helper::CPULog("NOP\n");
     return 1;
 }
 
 inline int op0x01()
 {
-    fprintf(debugStream, "Op not implemented: 0x01\n");
+    Helper::CPULog("Op not implemented: 0x01\n");
     return -1;
 }
 
 inline int op0x02()
 {
-    fprintf(debugStream, "Op not implemented: 0x02\n");
+    Helper::CPULog("Op not implemented: 0x02\n");
     return -1;
 }
 
 inline int op0x03()
 {
-    fprintf(debugStream, "Op not implemented: 0x03\n");
+    Helper::CPULog("Op not implemented: 0x03\n");
     return -1;
 }
 
@@ -64,57 +94,50 @@ inline int op0x04()
     RegisterBank::SetZ(RegisterBank::B == 0);
     RegisterBank::SetN(false);
 
-    Helper::CPULog("INC\tB");
+    Helper::CPULog("INC\tB\n");
     return 4;
 }
 
 inline int op0x05()
 {
-    RegisterBank::SetH((RegisterBank::B & 0b000) != 0b000);
-
-    --RegisterBank::B;
-
-    RegisterBank::SetZ(RegisterBank::B == 0);
-    RegisterBank::SetN(true);
-
-    fprintf(debugStream, "DEC\tB\n");
-    return 4;
+    Helper::CPULog("DEC\tB\n");
+    return baseDec(&RegisterBank::B);
 }
 
 inline int op0x06()
 {
     RegisterBank::B = RAM::ReadByteAt(++RegisterBank::PC);
-    fprintf(debugStream, "LD\tB, 0x%02X\n", RegisterBank::B);
+    Helper::CPULog("LD\tB, 0x%02X\n", RegisterBank::B);
     return 8;
 }
 
 inline int op0x07()
 {
-    fprintf(debugStream, "Op not implemented: 0x07\n");
+    Helper::CPULog("Op not implemented: 0x07\n");
     return -1;
 }
 
 inline int op0x08()
 {
-    fprintf(debugStream, "Op not implemented: 0x08\n");
+    Helper::CPULog("Op not implemented: 0x08\n");
     return -1;
 }
 
 inline int op0x09()
 {
-    fprintf(debugStream, "Op not implemented: 0x09\n");
+    Helper::CPULog("Op not implemented: 0x09\n");
     return -1;
 }
 
 inline int op0x0A()
 {
-    fprintf(debugStream, "Op not implemented: 0x0A\n");
+    Helper::CPULog("Op not implemented: 0x0A\n");
     return -1;
 }
 
 inline int op0x0B()
 {
-    fprintf(debugStream, "Op not implemented: 0x0B\n");
+    Helper::CPULog("Op not implemented: 0x0B\n");
     return -1;
 }
 
@@ -127,77 +150,72 @@ inline int op0x0C()
     RegisterBank::SetZ(RegisterBank::C == 0);
     RegisterBank::SetN(false);
 
-    fprintf(debugStream, "INC\tC\n");
+    Helper::CPULog("INC\tC\n");
     return 4;
 }
 
 inline int op0x0D()
 {
-    RegisterBank::SetH((RegisterBank::C & 0b000) != 0b000);
-    --RegisterBank::C;
-
-    RegisterBank::SetZ(RegisterBank::C == 0);
-    RegisterBank::SetN(true);
-
-    Helper::CPULog("DEC\tC");
-    return 4;
+    Helper::CPULog("DEC\tC\n");
+    return baseDec(&RegisterBank::C);
 }
 
 inline int op0x0E()
 {
     RegisterBank::C = RAM::ReadByteAt(++RegisterBank::PC);
-    fprintf(debugStream, "LD\tC, 0x%02X\n", RegisterBank::C);
+    Helper::CPULog("LD\tC, 0x%02X\n", RegisterBank::C);
     return 8;
 }
 
 inline int op0x0F()
 {
-    fprintf(debugStream, "Op not implemented: 0x0F\n");
+    Helper::CPULog("Op not implemented: 0x0F\n");
     return -1;
 }
 
 inline int op0x10()
 {
-    fprintf(debugStream, "Op not implemented: 0x10\n");
+    Helper::CPULog("Op not implemented: 0x10\n");
     return -1;
 }
 
 inline int op0x11()
 {
     RegisterBank::DE(getNextTwoBytes());
-    fprintf(debugStream, "LD\tDE, 0x%04X\n", RegisterBank::DE());
+    Helper::CPULog("LD\tDE, 0x%04X\n", RegisterBank::DE());
     return 12;
 }
 
 inline int op0x12()
 {
-    fprintf(debugStream, "Op not implemented: 0x12\n");
+    Helper::CPULog("Op not implemented: 0x12\n");
     return -1;
 }
 
 inline int op0x13()
 {
     RegisterBank::DE(RegisterBank::DE() + 1);
-    fprintf(debugStream, "INC\tDE(0x%04X)\n", RegisterBank::DE());
+    Helper::CPULog("INC\tDE(0x%04X)\n", RegisterBank::DE());
     return 8;
 }
 
 inline int op0x14()
 {
-    fprintf(debugStream, "Op not implemented: 0x14\n");
+    Helper::CPULog("Op not implemented: 0x14\n");
     return -1;
 }
 
 inline int op0x15()
 {
-    fprintf(debugStream, "Op not implemented: 0x15\n");
-    return -1;
+    Helper::CPULog("DEC\tD\n");
+    return baseDec(&RegisterBank::D);
 }
 
 inline int op0x16()
 {
-    fprintf(debugStream, "Op not implemented: 0x16\n");
-    return -1;
+    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
+    Helper::CPULog("LD\tD, 0x%02X\n", value);
+    return baseLoadReg(&RegisterBank::D, value) + 4;
 }
 
 inline int op0x17()
@@ -212,7 +230,7 @@ inline int op0x17()
     RegisterBank::SetN(false);
     RegisterBank::SetH(false);
 
-    fprintf(debugStream, "RLA sets carry: %s\n", RegisterBank::IsCSet() ? "true" : "false");
+    Helper::CPULog("RLA sets carry: %s\n", RegisterBank::IsCSet() ? "true" : "false");
     return 4;
 }
 
@@ -220,58 +238,52 @@ inline int op0x18()
 {
     int8_t value = RAM::ReadByteAt(++RegisterBank::PC);
     RegisterBank::PC += value;
-    Helper::CPULog("JR\t%d", value);
+    Helper::CPULog("JR\t%d\n", value);
     return 12;
 }
 
 inline int op0x19()
 {
-    fprintf(debugStream, "Op not implemented: 0x19\n");
+    Helper::CPULog("Op not implemented: 0x19\n");
     return -1;
 }
 
 inline int op0x1A()
 {
     RegisterBank::A = RAM::ReadByteAt(RegisterBank::DE());
-    fprintf(debugStream, "LD\tA, [DE]\n");
+    Helper::CPULog("LD\tA, [DE]\n");
     return 8;
 }
 
 inline int op0x1B()
 {
-    fprintf(debugStream, "Op not implemented: 0x1B\n");
+    Helper::CPULog("Op not implemented: 0x1B\n");
     return -1;
 }
 
 inline int op0x1C()
 {
-    fprintf(debugStream, "Op not implemented: 0x1C\n");
+    Helper::CPULog("Op not implemented: 0x1C\n");
     return -1;
 }
 
 inline int op0x1D()
 {
-    RegisterBank::SetH((RegisterBank::E & 0b000) != 0b000);
-    --RegisterBank::E;
-
-    RegisterBank::SetZ(RegisterBank::E == 0);
-    RegisterBank::SetN(true);
-
-    Helper::CPULog("DEC\tE");
-    return 4;
+    Helper::CPULog("DEC\tE\n");
+    return baseDec(&RegisterBank::E);
 }
 
 inline int op0x1E()
 {
     uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
     RegisterBank::E = value;
-    Helper::CPULog("LD\tE, 0x%02X", value);
+    Helper::CPULog("LD\tE, 0x%02X\n", value);
     return 8;
 }
 
 inline int op0x1F()
 {
-    fprintf(debugStream, "Op not implemented: 0x1F\n");
+    Helper::CPULog("Op not implemented: 0x1F\n");
     return -1;
 }
 
@@ -283,18 +295,14 @@ inline int op0x20()
         RegisterBank::PC += value;
         cycles += 4;
     }
-    #ifdef DEBUG
-    fprintf(debugStream, "JR\tNZ, %d\n", value);
-    #endif
+    Helper::CPULog("JR\tNZ, %d\n", value);
     return cycles;
 }
 
 inline int op0x21()
 {
     RegisterBank::HL(getNextTwoBytes());
-    #ifdef DEBUG
-    fprintf(debugStream, "LD\tHL, 0x%04X\n", RegisterBank::HL());
-    #endif
+    Helper::CPULog("LD\tHL, 0x%04X\n", RegisterBank::HL());
     return 12;
 }
 
@@ -302,14 +310,14 @@ inline int op0x22()
 {
     RAM::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
     RegisterBank::HL(RegisterBank::HL() + 1);
-    fprintf(debugStream, "LD\t[HL++], A\n");
+    Helper::CPULog("LD\t[HL++], A\n");
     return 8;
 }
 
 inline int op0x23()
 {
     RegisterBank::HL(RegisterBank::HL() + 1);
-    fprintf(debugStream, "INC\tHL\n");
+    Helper::CPULog("INC\tHL\n");
     return 8;
 }
 
@@ -322,25 +330,25 @@ inline int op0x24()
     RegisterBank::SetZ(RegisterBank::H == 0);
     RegisterBank::SetN(false);
 
-    Helper::CPULog("INC\tH");
+    Helper::CPULog("INC\tH\n");
     return 4;
 }
 
 inline int op0x25()
 {
-    fprintf(debugStream, "Op not implemented: 0x25\n");
+    Helper::CPULog("Op not implemented: 0x25\n");
     return -1;
 }
 
 inline int op0x26()
 {
-    fprintf(debugStream, "Op not implemented: 0x26\n");
+    Helper::CPULog("Op not implemented: 0x26\n");
     return -1;
 }
 
 inline int op0x27()
 {
-    fprintf(debugStream, "Op not implemented: 0x27\n");
+    Helper::CPULog("Op not implemented: 0x27\n");
     return -1;
 }
 
@@ -353,37 +361,37 @@ inline int op0x28()
         RegisterBank::PC += value;
         cycles += 4;
     }
-    Helper::CPULog("JR\tZ, %d", value);
+    Helper::CPULog("JR\tZ, %d\n", value);
     return cycles;
 }
 
 inline int op0x29()
 {
-    fprintf(debugStream, "Op not implemented: 0x29\n");
+    Helper::CPULog("Op not implemented: 0x29\n");
     return -1;
 }
 
 inline int op0x2A()
 {
-    fprintf(debugStream, "Op not implemented: 0x2A\n");
+    Helper::CPULog("Op not implemented: 0x2A\n");
     return -1;
 }
 
 inline int op0x2B()
 {
-    fprintf(debugStream, "Op not implemented: 0x2B\n");
+    Helper::CPULog("Op not implemented: 0x2B\n");
     return -1;
 }
 
 inline int op0x2C()
 {
-    fprintf(debugStream, "Op not implemented: 0x2C\n");
+    Helper::CPULog("Op not implemented: 0x2C\n");
     return -1;
 }
 
 inline int op0x2D()
 {
-    fprintf(debugStream, "Op not implemented: 0x2D\n");
+    Helper::CPULog("Op not implemented: 0x2D\n");
     return -1;
 }
 
@@ -391,28 +399,26 @@ inline int op0x2E()
 {
     uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
     RegisterBank::L = value;
-    Helper::CPULog("LD\tL, 0x%02X", value);
+    Helper::CPULog("LD\tL, 0x%02X\n", value);
     return 8;
 }
 
 inline int op0x2F()
 {
-    fprintf(debugStream, "Op not implemented: 0x2F\n");
+    Helper::CPULog("Op not implemented: 0x2F\n");
     return -1;
 }
 
 inline int op0x30()
 {
-    fprintf(debugStream, "Op not implemented: 0x30\n");
+    Helper::CPULog("Op not implemented: 0x30\n");
     return -1;
 }
 
 inline int op0x31()
 {
     RegisterBank::SP = getNextTwoBytes();
-    #ifdef DEBUG
-    fprintf(debugStream, "LD\tSP, 0x%04X\n", RegisterBank::SP);
-    #endif
+    Helper::CPULog("LD\tSP, 0x%04X\n", RegisterBank::SP);
     return 12;
 }
 
@@ -420,45 +426,43 @@ inline int op0x32()
 {
     RAM::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
     RegisterBank::HL(RegisterBank::HL() - 1);
-    #ifdef DEBUG
-    fprintf(debugStream, "LD\t[HL--](0x%04X), A\n", RegisterBank::HL());
-    #endif
+    Helper::CPULog("LD\t[HL--](0x%04X), A\n", RegisterBank::HL());
     return 8;
 }
 
 inline int op0x33()
 {
-    fprintf(debugStream, "Op not implemented: 0x33\n");
+    Helper::CPULog("Op not implemented: 0x33\n");
     return -1;
 }
 
 inline int op0x34()
 {
-    fprintf(debugStream, "Op not implemented: 0x34\n");
+    Helper::CPULog("Op not implemented: 0x34\n");
     return -1;
 }
 
 inline int op0x35()
 {
-    fprintf(debugStream, "Op not implemented: 0x35\n");
+    Helper::CPULog("Op not implemented: 0x35\n");
     return -1;
 }
 
 inline int op0x36()
 {
-    fprintf(debugStream, "Op not implemented: 0x36\n");
+    Helper::CPULog("Op not implemented: 0x36\n");
     return -1;
 }
 
 inline int op0x37()
 {
-    fprintf(debugStream, "Op not implemented: 0x37\n");
+    Helper::CPULog("Op not implemented: 0x37\n");
     return -1;
 }
 
 inline int op0x38()
 {
-    fprintf(debugStream, "Op not implemented: 0x38\n");
+    Helper::CPULog("Op not implemented: 0x38\n");
     return -1;
 }
 
@@ -472,566 +476,559 @@ inline int op0x39()
     RegisterBank::SetN(false);
     RegisterBank::SetC(result & (UINT16_MAX + 1));
     RegisterBank::SetH(halfResult & (halfBitmask + 1));
-    Helper::CPULog("ADD\tHL, SP");
+    Helper::CPULog("ADD\tHL, SP\n");
     return -8;
 }
 
 inline int op0x3A()
 {
-    fprintf(debugStream, "Op not implemented: 0x3A\n");
+    Helper::CPULog("Op not implemented: 0x3A\n");
     return -1;
 }
 
 inline int op0x3B()
 {
-    fprintf(debugStream, "Op not implemented: 0x3B\n");
+    Helper::CPULog("Op not implemented: 0x3B\n");
     return -1;
 }
 
 inline int op0x3C()
 {
-    fprintf(debugStream, "Op not implemented: 0x3C\n");
+    Helper::CPULog("Op not implemented: 0x3C\n");
     return -1;
 }
 
 inline int op0x3D()
 {
-    RegisterBank::SetH((RegisterBank::A & 0b000) != 0b000);
-
-    --RegisterBank::A;
-
-    RegisterBank::SetZ(RegisterBank::A == 0);
-    RegisterBank::SetN(true);
-
-    Helper::CPULog("DEC\tA");
-    return 4;
+    Helper::CPULog("DEC\tA\n");
+    return baseDec(&RegisterBank::A);
 }
 
 inline int op0x3E()
 {
     RegisterBank::A = RAM::ReadByteAt(++RegisterBank::PC);
-    fprintf(debugStream, "LD\tA, 0x%02X\n", RegisterBank::A);
+    Helper::CPULog("LD\tA, 0x%02X\n", RegisterBank::A);
     return 8;
 }
 
 inline int op0x3F()
 {
-    fprintf(debugStream, "Op not implemented: 0x3F\n");
+    Helper::CPULog("Op not implemented: 0x3F\n");
     return -1;
 }
 
 inline int op0x40()
 {
-    fprintf(debugStream, "Op not implemented: 0x40\n");
+    Helper::CPULog("Op not implemented: 0x40\n");
     return -1;
 }
 
 inline int op0x41()
 {
-    fprintf(debugStream, "Op not implemented: 0x41\n");
+    Helper::CPULog("Op not implemented: 0x41\n");
     return -1;
 }
 
 inline int op0x42()
 {
-    fprintf(debugStream, "Op not implemented: 0x42\n");
+    Helper::CPULog("Op not implemented: 0x42\n");
     return -1;
 }
 
 inline int op0x43()
 {
-    fprintf(debugStream, "Op not implemented: 0x43\n");
+    Helper::CPULog("Op not implemented: 0x43\n");
     return -1;
 }
 
 inline int op0x44()
 {
-    fprintf(debugStream, "Op not implemented: 0x44\n");
+    Helper::CPULog("Op not implemented: 0x44\n");
     return -1;
 }
 
 inline int op0x45()
 {
-    fprintf(debugStream, "Op not implemented: 0x45\n");
+    Helper::CPULog("Op not implemented: 0x45\n");
     return -1;
 }
 
 inline int op0x46()
 {
-    fprintf(debugStream, "Op not implemented: 0x46\n");
+    Helper::CPULog("Op not implemented: 0x46\n");
     return -1;
 }
 
 inline int op0x47()
 {
-    fprintf(debugStream, "Op not implemented: 0x47\n");
+    Helper::CPULog("Op not implemented: 0x47\n");
     return -1;
 }
 
 inline int op0x48()
 {
-    fprintf(debugStream, "Op not implemented: 0x48\n");
+    Helper::CPULog("Op not implemented: 0x48\n");
     return -1;
 }
 
 inline int op0x49()
 {
-    fprintf(debugStream, "Op not implemented: 0x49\n");
+    Helper::CPULog("Op not implemented: 0x49\n");
     return -1;
 }
 
 inline int op0x4A()
 {
-    fprintf(debugStream, "Op not implemented: 0x4A\n");
+    Helper::CPULog("Op not implemented: 0x4A\n");
     return -1;
 }
 
 inline int op0x4B()
 {
-    fprintf(debugStream, "Op not implemented: 0x4B\n");
+    Helper::CPULog("Op not implemented: 0x4B\n");
     return -1;
 }
 
 inline int op0x4C()
 {
-    fprintf(debugStream, "Op not implemented: 0x4C\n");
+    Helper::CPULog("Op not implemented: 0x4C\n");
     return -1;
 }
 
 inline int op0x4D()
 {
-    fprintf(debugStream, "Op not implemented: 0x4D\n");
+    Helper::CPULog("Op not implemented: 0x4D\n");
     return -1;
 }
 
 inline int op0x4E()
 {
-    fprintf(debugStream, "Op not implemented: 0x4E\n");
+    Helper::CPULog("Op not implemented: 0x4E\n");
     return -1;
 }
 
 inline int op0x4F()
 {
     RegisterBank::C = RegisterBank::A;
-    fprintf(debugStream, "LD\tC, A\n");
+    Helper::CPULog("LD\tC, A\n");
     return 4;
 }
 
 inline int op0x50()
 {
-    fprintf(debugStream, "Op not implemented: 0x50\n");
+    Helper::CPULog("Op not implemented: 0x50\n");
     return -1;
 }
 
 inline int op0x51()
 {
-    fprintf(debugStream, "Op not implemented: 0x51\n");
+    Helper::CPULog("Op not implemented: 0x51\n");
     return -1;
 }
 
 inline int op0x52()
 {
-    fprintf(debugStream, "Op not implemented: 0x52\n");
+    Helper::CPULog("Op not implemented: 0x52\n");
     return -1;
 }
 
 inline int op0x53()
 {
-    fprintf(debugStream, "Op not implemented: 0x53\n");
+    Helper::CPULog("Op not implemented: 0x53\n");
     return -1;
 }
 
 inline int op0x54()
 {
-    fprintf(debugStream, "Op not implemented: 0x54\n");
+    Helper::CPULog("Op not implemented: 0x54\n");
     return -1;
 }
 
 inline int op0x55()
 {
-    fprintf(debugStream, "Op not implemented: 0x55\n");
+    Helper::CPULog("Op not implemented: 0x55\n");
     return -1;
 }
 
 inline int op0x56()
 {
-    fprintf(debugStream, "Op not implemented: 0x56\n");
+    Helper::CPULog("Op not implemented: 0x56\n");
     return -1;
 }
 
 inline int op0x57()
 {
     RegisterBank::D = RegisterBank::A;
-    Helper::CPULog("LD\tD, A");
+    Helper::CPULog("LD\tD, A\n");
     return 4;
 }
 
 inline int op0x58()
 {
-    fprintf(debugStream, "Op not implemented: 0x58\n");
+    Helper::CPULog("Op not implemented: 0x58\n");
     return -1;
 }
 
 inline int op0x59()
 {
-    fprintf(debugStream, "Op not implemented: 0x59\n");
+    Helper::CPULog("Op not implemented: 0x59\n");
     return -1;
 }
 
 inline int op0x5A()
 {
-    fprintf(debugStream, "Op not implemented: 0x5A\n");
+    Helper::CPULog("Op not implemented: 0x5A\n");
     return -1;
 }
 
 inline int op0x5B()
 {
-    fprintf(debugStream, "Op not implemented: 0x5B\n");
+    Helper::CPULog("Op not implemented: 0x5B\n");
     return -1;
 }
 
 inline int op0x5C()
 {
-    fprintf(debugStream, "Op not implemented: 0x5C\n");
+    Helper::CPULog("Op not implemented: 0x5C\n");
     return -1;
 }
 
 inline int op0x5D()
 {
-    fprintf(debugStream, "Op not implemented: 0x5D\n");
+    Helper::CPULog("Op not implemented: 0x5D\n");
     return -1;
 }
 
 inline int op0x5E()
 {
-    fprintf(debugStream, "Op not implemented: 0x5E\n");
+    Helper::CPULog("Op not implemented: 0x5E\n");
     return -1;
 }
 
 inline int op0x5F()
 {
-    fprintf(debugStream, "Op not implemented: 0x5F\n");
+    Helper::CPULog("Op not implemented: 0x5F\n");
     return -1;
 }
 
 inline int op0x60()
 {
-    fprintf(debugStream, "Op not implemented: 0x60\n");
+    Helper::CPULog("Op not implemented: 0x60\n");
     return -1;
 }
 
 inline int op0x61()
 {
-    fprintf(debugStream, "Op not implemented: 0x61\n");
+    Helper::CPULog("Op not implemented: 0x61\n");
     return -1;
 }
 
 inline int op0x62()
 {
-    fprintf(debugStream, "Op not implemented: 0x62\n");
+    Helper::CPULog("Op not implemented: 0x62\n");
     return -1;
 }
 
 inline int op0x63()
 {
-    fprintf(debugStream, "Op not implemented: 0x63\n");
+    Helper::CPULog("Op not implemented: 0x63\n");
     return -1;
 }
 
 inline int op0x64()
 {
-    fprintf(debugStream, "Op not implemented: 0x64\n");
+    Helper::CPULog("Op not implemented: 0x64\n");
     return -1;
 }
 
 inline int op0x65()
 {
-    fprintf(debugStream, "Op not implemented: 0x65\n");
+    Helper::CPULog("Op not implemented: 0x65\n");
     return -1;
 }
 
 inline int op0x66()
 {
-    fprintf(debugStream, "Op not implemented: 0x66\n");
+    Helper::CPULog("Op not implemented: 0x66\n");
     return -1;
 }
 
 inline int op0x67()
 {
     RegisterBank::H = RegisterBank::A;
-    Helper::CPULog("LD\tH, A");
+    Helper::CPULog("LD\tH, A\n");
     return 4;
 }
 
 inline int op0x68()
 {
-    fprintf(debugStream, "Op not implemented: 0x68\n");
+    Helper::CPULog("Op not implemented: 0x68\n");
     return -1;
 }
 
 inline int op0x69()
 {
-    fprintf(debugStream, "Op not implemented: 0x69\n");
+    Helper::CPULog("Op not implemented: 0x69\n");
     return -1;
 }
 
 inline int op0x6A()
 {
-    fprintf(debugStream, "Op not implemented: 0x6A\n");
+    Helper::CPULog("Op not implemented: 0x6A\n");
     return -1;
 }
 
 inline int op0x6B()
 {
-    fprintf(debugStream, "Op not implemented: 0x6B\n");
+    Helper::CPULog("Op not implemented: 0x6B\n");
     return -1;
 }
 
 inline int op0x6C()
 {
-    fprintf(debugStream, "Op not implemented: 0x6C\n");
+    Helper::CPULog("Op not implemented: 0x6C\n");
     return -1;
 }
 
 inline int op0x6D()
 {
-    fprintf(debugStream, "Op not implemented: 0x6D\n");
+    Helper::CPULog("Op not implemented: 0x6D\n");
     return -1;
 }
 
 inline int op0x6E()
 {
-    fprintf(debugStream, "Op not implemented: 0x6E\n");
+    Helper::CPULog("Op not implemented: 0x6E\n");
     return -1;
 }
 
 inline int op0x6F()
 {
-    fprintf(debugStream, "Op not implemented: 0x6F\n");
+    Helper::CPULog("Op not implemented: 0x6F\n");
     return -1;
 }
 
 inline int op0x70()
 {
-    fprintf(debugStream, "Op not implemented: 0x70\n");
+    Helper::CPULog("Op not implemented: 0x70\n");
     return -1;
 }
 
 inline int op0x71()
 {
-    fprintf(debugStream, "Op not implemented: 0x71\n");
+    Helper::CPULog("Op not implemented: 0x71\n");
     return -1;
 }
 
 inline int op0x72()
 {
-    fprintf(debugStream, "Op not implemented: 0x72\n");
+    Helper::CPULog("Op not implemented: 0x72\n");
     return -1;
 }
 
 inline int op0x73()
 {
-    fprintf(debugStream, "Op not implemented: 0x73\n");
+    Helper::CPULog("Op not implemented: 0x73\n");
     return -1;
 }
 
 inline int op0x74()
 {
-    fprintf(debugStream, "Op not implemented: 0x74\n");
+    Helper::CPULog("Op not implemented: 0x74\n");
     return -1;
 }
 
 inline int op0x75()
 {
-    fprintf(debugStream, "Op not implemented: 0x75\n");
+    Helper::CPULog("Op not implemented: 0x75\n");
     return -1;
 }
 
 inline int op0x76()
 {
-    fprintf(debugStream, "Op not implemented: 0x76\n");
+    Helper::CPULog("Op not implemented: 0x76\n");
     return -1;
 }
 
 inline int op0x77()
 {
     RegisterBank::HL(RegisterBank::A);
-    fprintf(debugStream, "LD\tHL, A\n");
+    Helper::CPULog("LD\tHL, A\n");
     return 8;
 }
 
 inline int op0x78()
 {
-    fprintf(debugStream, "Op not implemented: 0x78\n");
+    Helper::CPULog("Op not implemented: 0x78\n");
     return -1;
 }
 
 inline int op0x79()
 {
-    fprintf(debugStream, "Op not implemented: 0x79\n");
+    Helper::CPULog("Op not implemented: 0x79\n");
     return -1;
 }
 
 inline int op0x7A()
 {
-    fprintf(debugStream, "Op not implemented: 0x7A\n");
+    Helper::CPULog("Op not implemented: 0x7A\n");
     return -1;
 }
 
 inline int op0x7B()
 {
     RegisterBank::A = RegisterBank::E;
-    fprintf(debugStream, "LD\tA, E\n");
+    Helper::CPULog("LD\tA, E\n");
     return 4;
 }
 
 inline int op0x7C()
 {
-    fprintf(debugStream, "Op not implemented: 0x7C\n");
-    return -1;
+    Helper::CPULog("LD\tA, H\n");
+    return baseLoadReg(&RegisterBank::A, RegisterBank::H);
 }
 
 inline int op0x7D()
 {
-    fprintf(debugStream, "Op not implemented: 0x7D\n");
+    Helper::CPULog("Op not implemented: 0x7D\n");
     return -1;
 }
 
 inline int op0x7E()
 {
-    fprintf(debugStream, "Op not implemented: 0x7E\n");
+    Helper::CPULog("Op not implemented: 0x7E\n");
     return -1;
 }
 
 inline int op0x7F()
 {
-    fprintf(debugStream, "Op not implemented: 0x7F\n");
+    Helper::CPULog("Op not implemented: 0x7F\n");
     return -1;
 }
 
 inline int op0x80()
 {
-    fprintf(debugStream, "Op not implemented: 0x80\n");
+    Helper::CPULog("Op not implemented: 0x80\n");
     return -1;
 }
 
 inline int op0x81()
 {
-    fprintf(debugStream, "Op not implemented: 0x81\n");
+    Helper::CPULog("Op not implemented: 0x81\n");
     return -1;
 }
 
 inline int op0x82()
 {
-    fprintf(debugStream, "Op not implemented: 0x82\n");
+    Helper::CPULog("Op not implemented: 0x82\n");
     return -1;
 }
 
 inline int op0x83()
 {
-    fprintf(debugStream, "Op not implemented: 0x83\n");
+    Helper::CPULog("Op not implemented: 0x83\n");
     return -1;
 }
 
 inline int op0x84()
 {
-    fprintf(debugStream, "Op not implemented: 0x84\n");
+    Helper::CPULog("Op not implemented: 0x84\n");
     return -1;
 }
 
 inline int op0x85()
 {
-    fprintf(debugStream, "Op not implemented: 0x85\n");
+    Helper::CPULog("Op not implemented: 0x85\n");
     return -1;
 }
 
 inline int op0x86()
 {
-    fprintf(debugStream, "Op not implemented: 0x86\n");
+    Helper::CPULog("Op not implemented: 0x86\n");
     return -1;
 }
 
 inline int op0x87()
 {
-    fprintf(debugStream, "Op not implemented: 0x87\n");
+    Helper::CPULog("Op not implemented: 0x87\n");
     return -1;
 }
 
 inline int op0x88()
 {
-    fprintf(debugStream, "Op not implemented: 0x88\n");
+    Helper::CPULog("Op not implemented: 0x88\n");
     return -1;
 }
 
 inline int op0x89()
 {
-    fprintf(debugStream, "Op not implemented: 0x89\n");
+    Helper::CPULog("Op not implemented: 0x89\n");
     return -1;
 }
 
 inline int op0x8A()
 {
-    fprintf(debugStream, "Op not implemented: 0x8A\n");
+    Helper::CPULog("Op not implemented: 0x8A\n");
     return -1;
 }
 
 inline int op0x8B()
 {
-    fprintf(debugStream, "Op not implemented: 0x8B\n");
+    Helper::CPULog("Op not implemented: 0x8B\n");
     return -1;
 }
 
 inline int op0x8C()
 {
-    fprintf(debugStream, "Op not implemented: 0x8C\n");
+    Helper::CPULog("Op not implemented: 0x8C\n");
     return -1;
 }
 
 inline int op0x8D()
 {
-    fprintf(debugStream, "Op not implemented: 0x8D\n");
+    Helper::CPULog("Op not implemented: 0x8D\n");
     return -1;
 }
 
 inline int op0x8E()
 {
-    fprintf(debugStream, "Op not implemented: 0x8E\n");
+    Helper::CPULog("Op not implemented: 0x8E\n");
     return -1;
 }
 
 inline int op0x8F()
 {
-    fprintf(debugStream, "Op not implemented: 0x8F\n");
+    Helper::CPULog("Op not implemented: 0x8F\n");
     return -1;
 }
 
 inline int op0x90()
 {
-    fprintf(debugStream, "Op not implemented: 0x90\n");
-    return -1;
+    Helper::CPULog("SUB\tB\n");
+    return baseSub(RegisterBank::B);
 }
 
 inline int op0x91()
 {
-    fprintf(debugStream, "Op not implemented: 0x91\n");
+    Helper::CPULog("Op not implemented: 0x91\n");
     return -1;
 }
 
 inline int op0x92()
 {
-    fprintf(debugStream, "Op not implemented: 0x92\n");
+    Helper::CPULog("Op not implemented: 0x92\n");
     return -1;
 }
 
 inline int op0x93()
 {
-    fprintf(debugStream, "Op not implemented: 0x93\n");
+    Helper::CPULog("Op not implemented: 0x93\n");
     return -1;
 }
 
 inline int op0x94()
 {
-    fprintf(debugStream, "Op not implemented: 0x94\n");
+    Helper::CPULog("Op not implemented: 0x94\n");
     return -1;
 }
 
@@ -1048,7 +1045,7 @@ inline int op0x95()
     RegisterBank::SetZ(RegisterBank::A == 0);
     RegisterBank::SetN(true);
 
-    fprintf(debugStream, "SUB\tL\n");
+    Helper::CPULog("SUB\tL\n");
     return 4;
 }
 
@@ -1065,151 +1062,151 @@ inline int op0x96()
     RegisterBank::SetZ(RegisterBank::A == 0);
     RegisterBank::SetN(true);
 
-    fprintf(debugStream, "SUB\tHL\n");
+    Helper::CPULog("SUB\tHL\n");
     return 8;
 }
 
 inline int op0x97()
 {
-    fprintf(debugStream, "Op not implemented: 0x97\n");
+    Helper::CPULog("Op not implemented: 0x97\n");
     return -1;
 }
 
 inline int op0x98()
 {
-    fprintf(debugStream, "Op not implemented: 0x98\n");
+    Helper::CPULog("Op not implemented: 0x98\n");
     return -1;
 }
 
 inline int op0x99()
 {
-    fprintf(debugStream, "Op not implemented: 0x99\n");
+    Helper::CPULog("Op not implemented: 0x99\n");
     return -1;
 }
 
 inline int op0x9A()
 {
-    fprintf(debugStream, "Op not implemented: 0x9A\n");
+    Helper::CPULog("Op not implemented: 0x9A\n");
     return -1;
 }
 
 inline int op0x9B()
 {
-    fprintf(debugStream, "Op not implemented: 0x9B\n");
+    Helper::CPULog("Op not implemented: 0x9B\n");
     return -1;
 }
 
 inline int op0x9C()
 {
-    fprintf(debugStream, "Op not implemented: 0x9C\n");
+    Helper::CPULog("Op not implemented: 0x9C\n");
     return -1;
 }
 
 inline int op0x9D()
 {
-    fprintf(debugStream, "Op not implemented: 0x9D\n");
+    Helper::CPULog("Op not implemented: 0x9D\n");
     return -1;
 }
 
 inline int op0x9E()
 {
-    fprintf(debugStream, "Op not implemented: 0x9E\n");
+    Helper::CPULog("Op not implemented: 0x9E\n");
     return -1;
 }
 
 inline int op0x9F()
 {
-    fprintf(debugStream, "Op not implemented: 0x9F\n");
+    Helper::CPULog("Op not implemented: 0x9F\n");
     return -1;
 }
 
 inline int op0xA0()
 {
-    fprintf(debugStream, "Op not implemented: 0xA0\n");
+    Helper::CPULog("Op not implemented: 0xA0\n");
     return -1;
 }
 
 inline int op0xA1()
 {
-    fprintf(debugStream, "Op not implemented: 0xA1\n");
+    Helper::CPULog("Op not implemented: 0xA1\n");
     return -1;
 }
 
 inline int op0xA2()
 {
-    fprintf(debugStream, "Op not implemented: 0xA2\n");
+    Helper::CPULog("Op not implemented: 0xA2\n");
     return -1;
 }
 
 inline int op0xA3()
 {
-    fprintf(debugStream, "Op not implemented: 0xA3\n");
+    Helper::CPULog("Op not implemented: 0xA3\n");
     return -1;
 }
 
 inline int op0xA4()
 {
-    fprintf(debugStream, "Op not implemented: 0xA4\n");
+    Helper::CPULog("Op not implemented: 0xA4\n");
     return -1;
 }
 
 inline int op0xA5()
 {
-    fprintf(debugStream, "Op not implemented: 0xA5\n");
+    Helper::CPULog("Op not implemented: 0xA5\n");
     return -1;
 }
 
 inline int op0xA6()
 {
-    fprintf(debugStream, "Op not implemented: 0xA6\n");
+    Helper::CPULog("Op not implemented: 0xA6\n");
     return -1;
 }
 
 inline int op0xA7()
 {
-    fprintf(debugStream, "Op not implemented: 0xA7\n");
+    Helper::CPULog("Op not implemented: 0xA7\n");
     return -1;
 }
 
 inline int op0xA8()
 {
-    fprintf(debugStream, "Op not implemented: 0xA8\n");
+    Helper::CPULog("Op not implemented: 0xA8\n");
     return -1;
 }
 
 inline int op0xA9()
 {
-    fprintf(debugStream, "Op not implemented: 0xA9\n");
+    Helper::CPULog("Op not implemented: 0xA9\n");
     return -1;
 }
 
 inline int op0xAA()
 {
-    fprintf(debugStream, "Op not implemented: 0xAA\n");
+    Helper::CPULog("Op not implemented: 0xAA\n");
     return -1;
 }
 
 inline int op0xAB()
 {
-    fprintf(debugStream, "Op not implemented: 0xAB\n");
+    Helper::CPULog("Op not implemented: 0xAB\n");
     return -1;
 }
 
 inline int op0xAC()
 {
-    fprintf(debugStream, "Op not implemented: 0xAC\n");
+    Helper::CPULog("Op not implemented: 0xAC\n");
     return -1;
 }
 
 inline int op0xAD()
 {
-    fprintf(debugStream, "Op not implemented: 0xAD\n");
+    Helper::CPULog("Op not implemented: 0xAD\n");
     return -1;
 }
 
 inline int op0xAE()
 {
-    fprintf(debugStream, "Op not implemented: 0xAE\n");
+    Helper::CPULog("Op not implemented: 0xAE\n");
     return -1;
 }
 
@@ -1220,111 +1217,109 @@ inline int op0xAF()
     RegisterBank::SetN(false);
     RegisterBank::SetH(false);
     RegisterBank::SetC(false);
-    #ifdef DEBUG
-    fprintf(debugStream, "XOR A\n");
-    #endif
+    Helper::CPULog("XOR A\n");
     return 4;
 }
 
 inline int op0xB0()
 {
-    fprintf(debugStream, "Op not implemented: 0xB0\n");
+    Helper::CPULog("Op not implemented: 0xB0\n");
     return -1;
 }
 
 inline int op0xB1()
 {
-    fprintf(debugStream, "Op not implemented: 0xB1\n");
+    Helper::CPULog("Op not implemented: 0xB1\n");
     return -1;
 }
 
 inline int op0xB2()
 {
-    fprintf(debugStream, "Op not implemented: 0xB2\n");
+    Helper::CPULog("Op not implemented: 0xB2\n");
     return -1;
 }
 
 inline int op0xB3()
 {
-    fprintf(debugStream, "Op not implemented: 0xB3\n");
+    Helper::CPULog("Op not implemented: 0xB3\n");
     return -1;
 }
 
 inline int op0xB4()
 {
-    fprintf(debugStream, "Op not implemented: 0xB4\n");
+    Helper::CPULog("Op not implemented: 0xB4\n");
     return -1;
 }
 
 inline int op0xB5()
 {
-    fprintf(debugStream, "Op not implemented: 0xB5\n");
+    Helper::CPULog("Op not implemented: 0xB5\n");
     return -1;
 }
 
 inline int op0xB6()
 {
-    fprintf(debugStream, "Op not implemented: 0xB6\n");
+    Helper::CPULog("Op not implemented: 0xB6\n");
     return -1;
 }
 
 inline int op0xB7()
 {
-    fprintf(debugStream, "Op not implemented: 0xB7\n");
+    Helper::CPULog("Op not implemented: 0xB7\n");
     return -1;
 }
 
 inline int op0xB8()
 {
-    fprintf(debugStream, "Op not implemented: 0xB8\n");
+    Helper::CPULog("Op not implemented: 0xB8\n");
     return -1;
 }
 
 inline int op0xB9()
 {
-    fprintf(debugStream, "Op not implemented: 0xB9\n");
+    Helper::CPULog("Op not implemented: 0xB9\n");
     return -1;
 }
 
 inline int op0xBA()
 {
-    fprintf(debugStream, "Op not implemented: 0xBA\n");
+    Helper::CPULog("Op not implemented: 0xBA\n");
     return -1;
 }
 
 inline int op0xBB()
 {
-    fprintf(debugStream, "Op not implemented: 0xBB\n");
+    Helper::CPULog("Op not implemented: 0xBB\n");
     return -1;
 }
 
 inline int op0xBC()
 {
-    fprintf(debugStream, "Op not implemented: 0xBC\n");
+    Helper::CPULog("Op not implemented: 0xBC\n");
     return -1;
 }
 
 inline int op0xBD()
 {
-    fprintf(debugStream, "Op not implemented: 0xBD\n");
+    Helper::CPULog("Op not implemented: 0xBD\n");
     return -1;
 }
 
 inline int op0xBE()
 {
-    fprintf(debugStream, "Op not implemented: 0xBE\n");
+    Helper::CPULog("Op not implemented: 0xBE\n");
     return -1;
 }
 
 inline int op0xBF()
 {
-    fprintf(debugStream, "Op not implemented: 0xBF\n");
+    Helper::CPULog("Op not implemented: 0xBF\n");
     return -1;
 }
 
 inline int op0xC0()
 {
-    fprintf(debugStream, "Op not implemented: 0xC0\n");
+    Helper::CPULog("Op not implemented: 0xC0\n");
     return -1;
 }
 
@@ -1332,13 +1327,13 @@ inline int op0xC1()
 {
     RegisterBank::C = RAM::ReadByteAt(++RegisterBank::SP);
     RegisterBank::B = RAM::ReadByteAt(++RegisterBank::SP);
-    fprintf(debugStream, "POP\tBC(0x%04X)\n", RegisterBank::BC());
+    Helper::CPULog("POP\tBC(0x%04X)\n", RegisterBank::BC());
     return 12;
 }
 
 inline int op0xC2()
 {
-    fprintf(debugStream, "Op not implemented: 0xC2\n");
+    Helper::CPULog("Op not implemented: 0xC2\n");
     return -1;
 }
 
@@ -1346,15 +1341,13 @@ inline int op0xC3()
 {
     uint16 address = getNextTwoBytes();
     RegisterBank::PC = address - 1; //account for the already incremented pc
-    #ifdef DEBUG
-    fprintf(debugStream, "JP\t0x%04X\n", address);
-    #endif
+    Helper::CPULog("JP\t0x%04X\n", address);
     return 16;
 }
 
 inline int op0xC4()
 {
-    fprintf(debugStream, "Op not implemented: 0xC4\n");
+    Helper::CPULog("Op not implemented: 0xC4\n");
     return -1;
 }
 
@@ -1362,25 +1355,25 @@ inline int op0xC5()
 {
     RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::B);
     RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::C);
-    fprintf(debugStream, "PUSH\tBC(0x%04X)\n", RegisterBank::BC());
+    Helper::CPULog("PUSH\tBC(0x%04X)\n", RegisterBank::BC());
     return 16;
 }
 
 inline int op0xC6()
 {
-    fprintf(debugStream, "Op not implemented: 0xC6\n");
+    Helper::CPULog("Op not implemented: 0xC6\n");
     return -1;
 }
 
 inline int op0xC7()
 {
-    fprintf(debugStream, "Op not implemented: 0xC7\n");
+    Helper::CPULog("Op not implemented: 0xC7\n");
     return -1;
 }
 
 inline int op0xC8()
 {
-    fprintf(debugStream, "Op not implemented: 0xC8\n");
+    Helper::CPULog("Op not implemented: 0xC8\n");
     return -1;
 }
 
@@ -1389,13 +1382,13 @@ inline int op0xC9()
     uint16 address = RAM::ReadByteAt(++RegisterBank::SP) << 8;
     address += RAM::ReadByteAt(++RegisterBank::SP);
     RegisterBank::PC = address - 1; //offset the one that gets added.
-    fprintf(debugStream, "RET\t(0x%04X)\n", address);
+    Helper::CPULog("RET\t(0x%04X)\n", address);
     return 16;
 }
 
 inline int op0xCA()
 {
-    fprintf(debugStream, "Op not implemented: 0xCA\n");
+    Helper::CPULog("Op not implemented: 0xCA\n");
     return -1;
 }
 
@@ -1412,9 +1405,7 @@ inline int cbOp0x11()
     RegisterBank::SetN(false);
     RegisterBank::SetH(false);
 
-    #ifdef DEBUG
-    fprintf(debugStream, "RL\tC sets carry: %s\n", RegisterBank::IsCSet() ? "true" : "false");
-    #endif
+    Helper::CPULog("RL\tC sets carry: %s\n", RegisterBank::IsCSet() ? "true" : "false");
 
     return 8;
 }
@@ -1424,9 +1415,7 @@ inline int cbOp0x7C()
     RegisterBank::SetZ(!Helper::IsBitSet(RegisterBank::H, 7));
     RegisterBank::SetN(false);
     RegisterBank::SetH(true);
-    #ifdef DEBUG
-    fprintf(debugStream, "BIT\t7, H\n");
-    #endif
+    Helper::CPULog("BIT\t7, H\n");
 
     return 8;
 }
@@ -1437,8 +1426,7 @@ inline int op0xCB()
     switch (cb_op) {
         case 0x11: return cbOp0x11();
         case 0x7C: return cbOp0x7C();
-        default:
-            fprintf(debugStream, "NOT IMPLEMENTED CB Prefix(0x%02X)\n", cb_op);
+        default:Helper::CPULog("NOT IMPLEMENTED CB Prefix(0x%02X)\n", cb_op);
             break;
     }
     return -1;
@@ -1446,7 +1434,7 @@ inline int op0xCB()
 
 inline int op0xCC()
 {
-    fprintf(debugStream, "Op not implemented: 0xCC\n");
+    Helper::CPULog("Op not implemented: 0xCC\n");
     return -1;
 }
 
@@ -1458,25 +1446,25 @@ inline int op0xCD()
     RAM::WriteByteAt(RegisterBank::SP--, (RegisterBank::PC + 1) >> 8);
 
     RegisterBank::PC = funcAddr - 1; //offset the increment that's gonna happen
-    fprintf(debugStream, "CALL\t0x%04X\n", funcAddr);
+    Helper::CPULog("CALL\t0x%04X\n", funcAddr);
     return 24;
 }
 
 inline int op0xCE()
 {
-    fprintf(debugStream, "Op not implemented: 0xCE\n");
+    Helper::CPULog("Op not implemented: 0xCE\n");
     return -1;
 }
 
 inline int op0xCF()
 {
-    fprintf(debugStream, "Op not implemented: 0xCF\n");
+    Helper::CPULog("Op not implemented: 0xCF\n");
     return -1;
 }
 
 inline int op0xD0()
 {
-    fprintf(debugStream, "Op not implemented: 0xD0\n");
+    Helper::CPULog("Op not implemented: 0xD0\n");
     return -1;
 }
 
@@ -1484,25 +1472,25 @@ inline int op0xD1()
 {
     RegisterBank::E = RAM::ReadByteAt(++RegisterBank::SP);
     RegisterBank::D = RAM::ReadByteAt(++RegisterBank::SP);
-    fprintf(debugStream, "POP\tDE(0x%04X)\n", RegisterBank::DE());
+    Helper::CPULog("POP\tDE(0x%04X)\n", RegisterBank::DE());
     return 12;
 }
 
 inline int op0xD2()
 {
-    fprintf(debugStream, "Op not implemented: 0xD2\n");
+    Helper::CPULog("Op not implemented: 0xD2\n");
     return -1;
 }
 
 inline int op0xD3()
 {
-    fprintf(debugStream, "Op not implemented: 0xD3\n");
+    Helper::CPULog("Op not implemented: 0xD3\n");
     return -1;
 }
 
 inline int op0xD4()
 {
-    fprintf(debugStream, "Op not implemented: 0xD4\n");
+    Helper::CPULog("Op not implemented: 0xD4\n");
     return -1;
 }
 
@@ -1510,67 +1498,67 @@ inline int op0xD5()
 {
     RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::D);
     RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::E);
-    fprintf(debugStream, "PUSH\tDE(0x%04X)\n", RegisterBank::DE());
+    Helper::CPULog("PUSH\tDE(0x%04X)\n", RegisterBank::DE());
     return 16;
 }
 
 inline int op0xD6()
 {
-    fprintf(debugStream, "Op not implemented: 0xD6\n");
+    Helper::CPULog("Op not implemented: 0xD6\n");
     return -1;
 }
 
 inline int op0xD7()
 {
-    fprintf(debugStream, "Op not implemented: 0xD7\n");
+    Helper::CPULog("Op not implemented: 0xD7\n");
     return -1;
 }
 
 inline int op0xD8()
 {
-    fprintf(debugStream, "Op not implemented: 0xD8\n");
+    Helper::CPULog("Op not implemented: 0xD8\n");
     return -1;
 }
 
 inline int op0xD9()
 {
-    fprintf(debugStream, "Op not implemented: 0xD9\n");
+    Helper::CPULog("Op not implemented: 0xD9\n");
     return -1;
 }
 
 inline int op0xDA()
 {
-    fprintf(debugStream, "Op not implemented: 0xDA\n");
+    Helper::CPULog("Op not implemented: 0xDA\n");
     return -1;
 }
 
 inline int op0xDB()
 {
-    fprintf(debugStream, "Op not implemented: 0xDB\n");
+    Helper::CPULog("Op not implemented: 0xDB\n");
     return -1;
 }
 
 inline int op0xDC()
 {
-    fprintf(debugStream, "Op not implemented: 0xDC\n");
+    Helper::CPULog("Op not implemented: 0xDC\n");
     return -1;
 }
 
 inline int op0xDD()
 {
-    fprintf(debugStream, "Op not implemented: 0xDD\n");
+    Helper::CPULog("Op not implemented: 0xDD\n");
     return -1;
 }
 
 inline int op0xDE()
 {
-    fprintf(debugStream, "Op not implemented: 0xDE\n");
+    Helper::CPULog("Op not implemented: 0xDE\n");
     return -1;
 }
 
 inline int op0xDF()
 {
-    fprintf(debugStream, "Op not implemented: 0xDF\n");
+    Helper::CPULog("Op not implemented: 0xDF\n");
     return -1;
 }
 
@@ -1578,7 +1566,7 @@ inline int op0xE0()
 {
     uint16 immediate = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
     RAM::WriteByteAt(immediate, RegisterBank::A);
-    fprintf(debugStream, "LDH\t[0x%02X], A\n", immediate);
+    Helper::CPULog("LDH\t[0x%02X], A\n", immediate);
     return 12;
 }
 
@@ -1586,26 +1574,26 @@ inline int op0xE1()
 {
     RegisterBank::H = RAM::ReadByteAt(++RegisterBank::SP);
     RegisterBank::L = RAM::ReadByteAt(++RegisterBank::SP);
-    fprintf(debugStream, "POP\tHL(0x%04X)\n", RegisterBank::HL());
+    Helper::CPULog("POP\tHL(0x%04X)\n", RegisterBank::HL());
     return 12;
 }
 
 inline int op0xE2()
 {
     RAM::WriteByteAt(0xFF00 + RegisterBank::C, RegisterBank::A);
-    fprintf(debugStream, "LD\t[C], A\n");
+    Helper::CPULog("LD\t[C], A\n");
     return 8;
 }
 
 inline int op0xE3()
 {
-    fprintf(debugStream, "Op not implemented: 0xE3\n");
+    Helper::CPULog("Op not implemented: 0xE3\n");
     return -1;
 }
 
 inline int op0xE4()
 {
-    fprintf(debugStream, "Op not implemented: 0xE4\n");
+    Helper::CPULog("Op not implemented: 0xE4\n");
     return -1;
 }
 
@@ -1613,31 +1601,31 @@ inline int op0xE5()
 {
     RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::L);
     RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::H);
-    fprintf(debugStream, "PUSH\tHL(0x%04X)\n", RegisterBank::HL());
+    Helper::CPULog("PUSH\tHL(0x%04X)\n", RegisterBank::HL());
     return 16;
 }
 
 inline int op0xE6()
 {
-    fprintf(debugStream, "Op not implemented: 0xE6\n");
+    Helper::CPULog("Op not implemented: 0xE6\n");
     return -1;
 }
 
 inline int op0xE7()
 {
-    fprintf(debugStream, "Op not implemented: 0xE7\n");
+    Helper::CPULog("Op not implemented: 0xE7\n");
     return -1;
 }
 
 inline int op0xE8()
 {
-    fprintf(debugStream, "Op not implemented: 0xE8\n");
+    Helper::CPULog("Op not implemented: 0xE8\n");
     return -1;
 }
 
 inline int op0xE9()
 {
-    fprintf(debugStream, "Op not implemented: 0xE9\n");
+    Helper::CPULog("Op not implemented: 0xE9\n");
     return -1;
 }
 
@@ -1652,31 +1640,31 @@ inline int op0xEA()
 
 inline int op0xEB()
 {
-    fprintf(debugStream, "Op not implemented: 0xEB\n");
+    Helper::CPULog("Op not implemented: 0xEB\n");
     return -1;
 }
 
 inline int op0xEC()
 {
-    fprintf(debugStream, "Op not implemented: 0xEC\n");
+    Helper::CPULog("Op not implemented: 0xEC\n");
     return -1;
 }
 
 inline int op0xED()
 {
-    fprintf(debugStream, "Op not implemented: 0xED\n");
+    Helper::CPULog("Op not implemented: 0xED\n");
     return -1;
 }
 
 inline int op0xEE()
 {
-    fprintf(debugStream, "Op not implemented: 0xEE\n");
+    Helper::CPULog("Op not implemented: 0xEE\n");
     return -1;
 }
 
 inline int op0xEF()
 {
-    fprintf(debugStream, "Op not implemented: 0xEF\n");
+    Helper::CPULog("Op not implemented: 0xEF\n");
     return -1;
 }
 
@@ -1684,7 +1672,7 @@ inline int op0xF0()
 {
     uint16 address = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
     RegisterBank::A = RAM::ReadByteAt(address);
-    Helper::CPULog("LD\tA, [0x%04X]", address);
+    Helper::CPULog("LD\tA, [0x%04X]\n", address);
     return 12;
 }
 
@@ -1692,25 +1680,25 @@ inline int op0xF1()
 {
     RegisterBank::A = RAM::ReadByteAt(++RegisterBank::SP);
     RegisterBank::F = RAM::ReadByteAt(++RegisterBank::SP);
-    fprintf(debugStream, "POP\tAF(0x%04X)\n", RegisterBank::AF());
+    Helper::CPULog("POP\tAF(0x%04X)\n", RegisterBank::AF());
     return 12;
 }
 
 inline int op0xF2()
 {
-    fprintf(debugStream, "Op not implemented: 0xF2\n");
+    Helper::CPULog("Op not implemented: 0xF2\n");
     return -1;
 }
 
 inline int op0xF3()
 {
-    fprintf(debugStream, "Op not implemented: 0xF3\n");
+    Helper::CPULog("Op not implemented: 0xF3\n");
     return -1;
 }
 
 inline int op0xF4()
 {
-    fprintf(debugStream, "Op not implemented: 0xF4\n");
+    Helper::CPULog("Op not implemented: 0xF4\n");
     return -1;
 }
 
@@ -1718,55 +1706,55 @@ inline int op0xF5()
 {
     RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::F);
     RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::A);
-    fprintf(debugStream, "PUSH\tAF(0x%04X)\n", RegisterBank::AF());
+    Helper::CPULog("PUSH\tAF(0x%04X)\n", RegisterBank::AF());
     return 16;
 }
 
 inline int op0xF6()
 {
-    fprintf(debugStream, "Op not implemented: 0xF6\n");
+    Helper::CPULog("Op not implemented: 0xF6\n");
     return -1;
 }
 
 inline int op0xF7()
 {
-    fprintf(debugStream, "Op not implemented: 0xF7\n");
+    Helper::CPULog("Op not implemented: 0xF7\n");
     return -1;
 }
 
 inline int op0xF8()
 {
-    fprintf(debugStream, "Op not implemented: 0xF8\n");
+    Helper::CPULog("Op not implemented: 0xF8\n");
     return -1;
 }
 
 inline int op0xF9()
 {
-    fprintf(debugStream, "Op not implemented: 0xF9\n");
+    Helper::CPULog("Op not implemented: 0xF9\n");
     return -1;
 }
 
 inline int op0xFA()
 {
-    fprintf(debugStream, "Op not implemented: 0xFA\n");
+    Helper::CPULog("Op not implemented: 0xFA\n");
     return -1;
 }
 
 inline int op0xFB()
 {
-    fprintf(debugStream, "Op not implemented: 0xFB\n");
+    Helper::CPULog("Op not implemented: 0xFB\n");
     return -1;
 }
 
 inline int op0xFC()
 {
-    fprintf(debugStream, "Op not implemented: 0xFC\n");
+    Helper::CPULog("Op not implemented: 0xFC\n");
     return -1;
 }
 
 inline int op0xFD()
 {
-    fprintf(debugStream, "Op not implemented: 0xFD\n");
+    Helper::CPULog("Op not implemented: 0xFD\n");
     return -1;
 }
 
@@ -1779,22 +1767,20 @@ inline int op0xFE()
     RegisterBank::SetH((RegisterBank::A & 0b1111) >= (immediate & 0b1111));
     RegisterBank::SetC(RegisterBank::A >= immediate);
 
-    fprintf(debugStream, "CP\t0x%02X (0x%02X)\n", immediate, RegisterBank::A);
+    Helper::CPULog("CP\t0x%02X (0x%02X)\n", immediate, RegisterBank::A);
     return 8;
 }
 
 inline int op0xFF()
 {
-    fprintf(debugStream, "Op not implemented: 0xFF\n");
+    Helper::CPULog("Op not implemented: 0xFF\n");
     return -1;
 }
 
 int Processor::decodeInstr(uint16 address)
 {
     uint8 op_code = RAM::ReadByteAt(address);
-    #ifdef DEBUG
-    fprintf(debugStream, "0x%04X: ", address);
-    #endif
+    Helper::CPULog("0x%04X: ", address);
     switch(op_code) {
         case 0x00: return op0x00();
         case 0x01: return op0x01();
