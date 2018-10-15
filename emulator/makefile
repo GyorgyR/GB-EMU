@@ -8,7 +8,7 @@ TESTBINDIR := test/bin
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -Wall -std=c++11 #-O3
+CFLAGS := -g -Wall -std=c++11 -Og #-O3 #-Ofast
 LIB := -lSDL2main -lSDL2  #-pthread
 INC := -I include
 

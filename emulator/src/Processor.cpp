@@ -65,24 +65,24 @@ inline int baseDec(uint8 *reg)
 inline int op0x00()
 {
     Helper::CPULog("NOP\n");
-    return 1;
+    return 4;
 }
 
 inline int op0x01()
 {
-    Helper::CPULog("Op not implemented: 0x01\n");
+    printf("Op not implemented: 0x01\n");
     return -1;
 }
 
 inline int op0x02()
 {
-    Helper::CPULog("Op not implemented: 0x02\n");
+    printf("Op not implemented: 0x02\n");
     return -1;
 }
 
 inline int op0x03()
 {
-    Helper::CPULog("Op not implemented: 0x03\n");
+    printf("Op not implemented: 0x03\n");
     return -1;
 }
 
@@ -113,31 +113,31 @@ inline int op0x06()
 
 inline int op0x07()
 {
-    Helper::CPULog("Op not implemented: 0x07\n");
+    printf("Op not implemented: 0x07\n");
     return -1;
 }
 
 inline int op0x08()
 {
-    Helper::CPULog("Op not implemented: 0x08\n");
+    printf("Op not implemented: 0x08\n");
     return -1;
 }
 
 inline int op0x09()
 {
-    Helper::CPULog("Op not implemented: 0x09\n");
+    printf("Op not implemented: 0x09\n");
     return -1;
 }
 
 inline int op0x0A()
 {
-    Helper::CPULog("Op not implemented: 0x0A\n");
+    printf("Op not implemented: 0x0A\n");
     return -1;
 }
 
 inline int op0x0B()
 {
-    Helper::CPULog("Op not implemented: 0x0B\n");
+    printf("Op not implemented: 0x0B\n");
     return -1;
 }
 
@@ -169,13 +169,13 @@ inline int op0x0E()
 
 inline int op0x0F()
 {
-    Helper::CPULog("Op not implemented: 0x0F\n");
+    printf("Op not implemented: 0x0F\n");
     return -1;
 }
 
 inline int op0x10()
 {
-    Helper::CPULog("Op not implemented: 0x10\n");
+    printf("Op not implemented: 0x10\n");
     return -1;
 }
 
@@ -188,7 +188,7 @@ inline int op0x11()
 
 inline int op0x12()
 {
-    Helper::CPULog("Op not implemented: 0x12\n");
+    printf("Op not implemented: 0x12\n");
     return -1;
 }
 
@@ -201,7 +201,7 @@ inline int op0x13()
 
 inline int op0x14()
 {
-    Helper::CPULog("Op not implemented: 0x14\n");
+    printf("Op not implemented: 0x14\n");
     return -1;
 }
 
@@ -244,7 +244,7 @@ inline int op0x18()
 
 inline int op0x19()
 {
-    Helper::CPULog("Op not implemented: 0x19\n");
+    printf("Op not implemented: 0x19\n");
     return -1;
 }
 
@@ -257,13 +257,13 @@ inline int op0x1A()
 
 inline int op0x1B()
 {
-    Helper::CPULog("Op not implemented: 0x1B\n");
+    printf("Op not implemented: 0x1B\n");
     return -1;
 }
 
 inline int op0x1C()
 {
-    Helper::CPULog("Op not implemented: 0x1C\n");
+    printf("Op not implemented: 0x1C\n");
     return -1;
 }
 
@@ -283,7 +283,7 @@ inline int op0x1E()
 
 inline int op0x1F()
 {
-    Helper::CPULog("Op not implemented: 0x1F\n");
+    printf("Op not implemented: 0x1F\n");
     return -1;
 }
 
@@ -336,19 +336,19 @@ inline int op0x24()
 
 inline int op0x25()
 {
-    Helper::CPULog("Op not implemented: 0x25\n");
+    printf("Op not implemented: 0x25\n");
     return -1;
 }
 
 inline int op0x26()
 {
-    Helper::CPULog("Op not implemented: 0x26\n");
+    printf("Op not implemented: 0x26\n");
     return -1;
 }
 
 inline int op0x27()
 {
-    Helper::CPULog("Op not implemented: 0x27\n");
+    printf("Op not implemented: 0x27\n");
     return -1;
 }
 
@@ -367,31 +367,31 @@ inline int op0x28()
 
 inline int op0x29()
 {
-    Helper::CPULog("Op not implemented: 0x29\n");
+    printf("Op not implemented: 0x29\n");
     return -1;
 }
 
 inline int op0x2A()
 {
-    Helper::CPULog("Op not implemented: 0x2A\n");
+    printf("Op not implemented: 0x2A\n");
     return -1;
 }
 
 inline int op0x2B()
 {
-    Helper::CPULog("Op not implemented: 0x2B\n");
+    printf("Op not implemented: 0x2B\n");
     return -1;
 }
 
 inline int op0x2C()
 {
-    Helper::CPULog("Op not implemented: 0x2C\n");
+    printf("Op not implemented: 0x2C\n");
     return -1;
 }
 
 inline int op0x2D()
 {
-    Helper::CPULog("Op not implemented: 0x2D\n");
+    printf("Op not implemented: 0x2D\n");
     return -1;
 }
 
@@ -405,13 +405,13 @@ inline int op0x2E()
 
 inline int op0x2F()
 {
-    Helper::CPULog("Op not implemented: 0x2F\n");
+    printf("Op not implemented: 0x2F\n");
     return -1;
 }
 
 inline int op0x30()
 {
-    Helper::CPULog("Op not implemented: 0x30\n");
+    printf("Op not implemented: 0x30\n");
     return -1;
 }
 
@@ -432,37 +432,37 @@ inline int op0x32()
 
 inline int op0x33()
 {
-    Helper::CPULog("Op not implemented: 0x33\n");
+    printf("Op not implemented: 0x33\n");
     return -1;
 }
 
 inline int op0x34()
 {
-    Helper::CPULog("Op not implemented: 0x34\n");
+    printf("Op not implemented: 0x34\n");
     return -1;
 }
 
 inline int op0x35()
 {
-    Helper::CPULog("Op not implemented: 0x35\n");
+    printf("Op not implemented: 0x35\n");
     return -1;
 }
 
 inline int op0x36()
 {
-    Helper::CPULog("Op not implemented: 0x36\n");
+    printf("Op not implemented: 0x36\n");
     return -1;
 }
 
 inline int op0x37()
 {
-    Helper::CPULog("Op not implemented: 0x37\n");
+    printf("Op not implemented: 0x37\n");
     return -1;
 }
 
 inline int op0x38()
 {
-    Helper::CPULog("Op not implemented: 0x38\n");
+    printf("Op not implemented: 0x38\n");
     return -1;
 }
 
@@ -482,19 +482,19 @@ inline int op0x39()
 
 inline int op0x3A()
 {
-    Helper::CPULog("Op not implemented: 0x3A\n");
+    printf("Op not implemented: 0x3A\n");
     return -1;
 }
 
 inline int op0x3B()
 {
-    Helper::CPULog("Op not implemented: 0x3B\n");
+    printf("Op not implemented: 0x3B\n");
     return -1;
 }
 
 inline int op0x3C()
 {
-    Helper::CPULog("Op not implemented: 0x3C\n");
+    printf("Op not implemented: 0x3C\n");
     return -1;
 }
 
@@ -513,97 +513,97 @@ inline int op0x3E()
 
 inline int op0x3F()
 {
-    Helper::CPULog("Op not implemented: 0x3F\n");
+    printf("Op not implemented: 0x3F\n");
     return -1;
 }
 
 inline int op0x40()
 {
-    Helper::CPULog("Op not implemented: 0x40\n");
+    printf("Op not implemented: 0x40\n");
     return -1;
 }
 
 inline int op0x41()
 {
-    Helper::CPULog("Op not implemented: 0x41\n");
+    printf("Op not implemented: 0x41\n");
     return -1;
 }
 
 inline int op0x42()
 {
-    Helper::CPULog("Op not implemented: 0x42\n");
+    printf("Op not implemented: 0x42\n");
     return -1;
 }
 
 inline int op0x43()
 {
-    Helper::CPULog("Op not implemented: 0x43\n");
+    printf("Op not implemented: 0x43\n");
     return -1;
 }
 
 inline int op0x44()
 {
-    Helper::CPULog("Op not implemented: 0x44\n");
+    printf("Op not implemented: 0x44\n");
     return -1;
 }
 
 inline int op0x45()
 {
-    Helper::CPULog("Op not implemented: 0x45\n");
+    printf("Op not implemented: 0x45\n");
     return -1;
 }
 
 inline int op0x46()
 {
-    Helper::CPULog("Op not implemented: 0x46\n");
+    printf("Op not implemented: 0x46\n");
     return -1;
 }
 
 inline int op0x47()
 {
-    Helper::CPULog("Op not implemented: 0x47\n");
+    printf("Op not implemented: 0x47\n");
     return -1;
 }
 
 inline int op0x48()
 {
-    Helper::CPULog("Op not implemented: 0x48\n");
+    printf("Op not implemented: 0x48\n");
     return -1;
 }
 
 inline int op0x49()
 {
-    Helper::CPULog("Op not implemented: 0x49\n");
+    printf("Op not implemented: 0x49\n");
     return -1;
 }
 
 inline int op0x4A()
 {
-    Helper::CPULog("Op not implemented: 0x4A\n");
+    printf("Op not implemented: 0x4A\n");
     return -1;
 }
 
 inline int op0x4B()
 {
-    Helper::CPULog("Op not implemented: 0x4B\n");
+    printf("Op not implemented: 0x4B\n");
     return -1;
 }
 
 inline int op0x4C()
 {
-    Helper::CPULog("Op not implemented: 0x4C\n");
+    printf("Op not implemented: 0x4C\n");
     return -1;
 }
 
 inline int op0x4D()
 {
-    Helper::CPULog("Op not implemented: 0x4D\n");
+    printf("Op not implemented: 0x4D\n");
     return -1;
 }
 
 inline int op0x4E()
 {
-    Helper::CPULog("Op not implemented: 0x4E\n");
+    printf("Op not implemented: 0x4E\n");
     return -1;
 }
 
@@ -616,43 +616,43 @@ inline int op0x4F()
 
 inline int op0x50()
 {
-    Helper::CPULog("Op not implemented: 0x50\n");
+    printf("Op not implemented: 0x50\n");
     return -1;
 }
 
 inline int op0x51()
 {
-    Helper::CPULog("Op not implemented: 0x51\n");
+    printf("Op not implemented: 0x51\n");
     return -1;
 }
 
 inline int op0x52()
 {
-    Helper::CPULog("Op not implemented: 0x52\n");
+    printf("Op not implemented: 0x52\n");
     return -1;
 }
 
 inline int op0x53()
 {
-    Helper::CPULog("Op not implemented: 0x53\n");
+    printf("Op not implemented: 0x53\n");
     return -1;
 }
 
 inline int op0x54()
 {
-    Helper::CPULog("Op not implemented: 0x54\n");
+    printf("Op not implemented: 0x54\n");
     return -1;
 }
 
 inline int op0x55()
 {
-    Helper::CPULog("Op not implemented: 0x55\n");
+    printf("Op not implemented: 0x55\n");
     return -1;
 }
 
 inline int op0x56()
 {
-    Helper::CPULog("Op not implemented: 0x56\n");
+    printf("Op not implemented: 0x56\n");
     return -1;
 }
 
@@ -665,91 +665,91 @@ inline int op0x57()
 
 inline int op0x58()
 {
-    Helper::CPULog("Op not implemented: 0x58\n");
+    printf("Op not implemented: 0x58\n");
     return -1;
 }
 
 inline int op0x59()
 {
-    Helper::CPULog("Op not implemented: 0x59\n");
+    printf("Op not implemented: 0x59\n");
     return -1;
 }
 
 inline int op0x5A()
 {
-    Helper::CPULog("Op not implemented: 0x5A\n");
+    printf("Op not implemented: 0x5A\n");
     return -1;
 }
 
 inline int op0x5B()
 {
-    Helper::CPULog("Op not implemented: 0x5B\n");
+    printf("Op not implemented: 0x5B\n");
     return -1;
 }
 
 inline int op0x5C()
 {
-    Helper::CPULog("Op not implemented: 0x5C\n");
+    printf("Op not implemented: 0x5C\n");
     return -1;
 }
 
 inline int op0x5D()
 {
-    Helper::CPULog("Op not implemented: 0x5D\n");
+    printf("Op not implemented: 0x5D\n");
     return -1;
 }
 
 inline int op0x5E()
 {
-    Helper::CPULog("Op not implemented: 0x5E\n");
+    printf("Op not implemented: 0x5E\n");
     return -1;
 }
 
 inline int op0x5F()
 {
-    Helper::CPULog("Op not implemented: 0x5F\n");
+    printf("Op not implemented: 0x5F\n");
     return -1;
 }
 
 inline int op0x60()
 {
-    Helper::CPULog("Op not implemented: 0x60\n");
+    printf("Op not implemented: 0x60\n");
     return -1;
 }
 
 inline int op0x61()
 {
-    Helper::CPULog("Op not implemented: 0x61\n");
+    printf("Op not implemented: 0x61\n");
     return -1;
 }
 
 inline int op0x62()
 {
-    Helper::CPULog("Op not implemented: 0x62\n");
+    printf("Op not implemented: 0x62\n");
     return -1;
 }
 
 inline int op0x63()
 {
-    Helper::CPULog("Op not implemented: 0x63\n");
+    printf("Op not implemented: 0x63\n");
     return -1;
 }
 
 inline int op0x64()
 {
-    Helper::CPULog("Op not implemented: 0x64\n");
+    printf("Op not implemented: 0x64\n");
     return -1;
 }
 
 inline int op0x65()
 {
-    Helper::CPULog("Op not implemented: 0x65\n");
+    printf("Op not implemented: 0x65\n");
     return -1;
 }
 
 inline int op0x66()
 {
-    Helper::CPULog("Op not implemented: 0x66\n");
+    printf("Op not implemented: 0x66\n");
     return -1;
 }
 
@@ -762,91 +762,91 @@ inline int op0x67()
 
 inline int op0x68()
 {
-    Helper::CPULog("Op not implemented: 0x68\n");
+    printf("Op not implemented: 0x68\n");
     return -1;
 }
 
 inline int op0x69()
 {
-    Helper::CPULog("Op not implemented: 0x69\n");
+    printf("Op not implemented: 0x69\n");
     return -1;
 }
 
 inline int op0x6A()
 {
-    Helper::CPULog("Op not implemented: 0x6A\n");
+    printf("Op not implemented: 0x6A\n");
     return -1;
 }
 
 inline int op0x6B()
 {
-    Helper::CPULog("Op not implemented: 0x6B\n");
+    printf("Op not implemented: 0x6B\n");
     return -1;
 }
 
 inline int op0x6C()
 {
-    Helper::CPULog("Op not implemented: 0x6C\n");
+    printf("Op not implemented: 0x6C\n");
     return -1;
 }
 
 inline int op0x6D()
 {
-    Helper::CPULog("Op not implemented: 0x6D\n");
+    printf("Op not implemented: 0x6D\n");
     return -1;
 }
 
 inline int op0x6E()
 {
-    Helper::CPULog("Op not implemented: 0x6E\n");
+    printf("Op not implemented: 0x6E\n");
     return -1;
 }
 
 inline int op0x6F()
 {
-    Helper::CPULog("Op not implemented: 0x6F\n");
+    printf("Op not implemented: 0x6F\n");
     return -1;
 }
 
 inline int op0x70()
 {
-    Helper::CPULog("Op not implemented: 0x70\n");
+    printf("Op not implemented: 0x70\n");
     return -1;
 }
 
 inline int op0x71()
 {
-    Helper::CPULog("Op not implemented: 0x71\n");
+    printf("Op not implemented: 0x71\n");
     return -1;
 }
 
 inline int op0x72()
 {
-    Helper::CPULog("Op not implemented: 0x72\n");
+    printf("Op not implemented: 0x72\n");
     return -1;
 }
 
 inline int op0x73()
 {
-    Helper::CPULog("Op not implemented: 0x73\n");
+    printf("Op not implemented: 0x73\n");
     return -1;
 }
 
 inline int op0x74()
 {
-    Helper::CPULog("Op not implemented: 0x74\n");
+    printf("Op not implemented: 0x74\n");
     return -1;
 }
 
 inline int op0x75()
 {
-    Helper::CPULog("Op not implemented: 0x75\n");
+    printf("Op not implemented: 0x75\n");
     return -1;
 }
 
 inline int op0x76()
 {
-    Helper::CPULog("Op not implemented: 0x76\n");
+    printf("Op not implemented: 0x76\n");
     return -1;
 }
 
@@ -859,19 +859,19 @@ inline int op0x77()
 
 inline int op0x78()
 {
-    Helper::CPULog("Op not implemented: 0x78\n");
+    printf("Op not implemented: 0x78\n");
     return -1;
 }
 
 inline int op0x79()
 {
-    Helper::CPULog("Op not implemented: 0x79\n");
+    printf("Op not implemented: 0x79\n");
     return -1;
 }
 
 inline int op0x7A()
 {
-    Helper::CPULog("Op not implemented: 0x7A\n");
+    printf("Op not implemented: 0x7A\n");
     return -1;
 }
 
@@ -890,115 +890,115 @@ inline int op0x7C()
 
 inline int op0x7D()
 {
-    Helper::CPULog("Op not implemented: 0x7D\n");
+    printf("Op not implemented: 0x7D\n");
     return -1;
 }
 
 inline int op0x7E()
 {
-    Helper::CPULog("Op not implemented: 0x7E\n");
+    printf("Op not implemented: 0x7E\n");
     return -1;
 }
 
 inline int op0x7F()
 {
-    Helper::CPULog("Op not implemented: 0x7F\n");
+    printf("Op not implemented: 0x7F\n");
     return -1;
 }
 
 inline int op0x80()
 {
-    Helper::CPULog("Op not implemented: 0x80\n");
+    printf("Op not implemented: 0x80\n");
     return -1;
 }
 
 inline int op0x81()
 {
-    Helper::CPULog("Op not implemented: 0x81\n");
+    printf("Op not implemented: 0x81\n");
     return -1;
 }
 
 inline int op0x82()
 {
-    Helper::CPULog("Op not implemented: 0x82\n");
+    printf("Op not implemented: 0x82\n");
     return -1;
 }
 
 inline int op0x83()
 {
-    Helper::CPULog("Op not implemented: 0x83\n");
+    printf("Op not implemented: 0x83\n");
     return -1;
 }
 
 inline int op0x84()
 {
-    Helper::CPULog("Op not implemented: 0x84\n");
+    printf("Op not implemented: 0x84\n");
     return -1;
 }
 
 inline int op0x85()
 {
-    Helper::CPULog("Op not implemented: 0x85\n");
+    printf("Op not implemented: 0x85\n");
     return -1;
 }
 
 inline int op0x86()
 {
-    Helper::CPULog("Op not implemented: 0x86\n");
+    printf("Op not implemented: 0x86\n");
     return -1;
 }
 
 inline int op0x87()
 {
-    Helper::CPULog("Op not implemented: 0x87\n");
+    printf("Op not implemented: 0x87\n");
     return -1;
 }
 
 inline int op0x88()
 {
-    Helper::CPULog("Op not implemented: 0x88\n");
+    printf("Op not implemented: 0x88\n");
     return -1;
 }
 
 inline int op0x89()
 {
-    Helper::CPULog("Op not implemented: 0x89\n");
+    printf("Op not implemented: 0x89\n");
     return -1;
 }
 
 inline int op0x8A()
 {
-    Helper::CPULog("Op not implemented: 0x8A\n");
+    printf("Op not implemented: 0x8A\n");
     return -1;
 }
 
 inline int op0x8B()
 {
-    Helper::CPULog("Op not implemented: 0x8B\n");
+    printf("Op not implemented: 0x8B\n");
     return -1;
 }
 
 inline int op0x8C()
 {
-    Helper::CPULog("Op not implemented: 0x8C\n");
+    printf("Op not implemented: 0x8C\n");
     return -1;
 }
 
 inline int op0x8D()
 {
-    Helper::CPULog("Op not implemented: 0x8D\n");
+    printf("Op not implemented: 0x8D\n");
     return -1;
 }
 
 inline int op0x8E()
 {
-    Helper::CPULog("Op not implemented: 0x8E\n");
+    printf("Op not implemented: 0x8E\n");
     return -1;
 }
 
 inline int op0x8F()
 {
-    Helper::CPULog("Op not implemented: 0x8F\n");
+    printf("Op not implemented: 0x8F\n");
     return -1;
 }
 
@@ -1010,25 +1010,25 @@ inline int op0x90()
 
 inline int op0x91()
 {
-    Helper::CPULog("Op not implemented: 0x91\n");
+    printf("Op not implemented: 0x91\n");
     return -1;
 }
 
 inline int op0x92()
 {
-    Helper::CPULog("Op not implemented: 0x92\n");
+    printf("Op not implemented: 0x92\n");
     return -1;
 }
 
 inline int op0x93()
 {
-    Helper::CPULog("Op not implemented: 0x93\n");
+    printf("Op not implemented: 0x93\n");
     return -1;
 }
 
 inline int op0x94()
 {
-    Helper::CPULog("Op not implemented: 0x94\n");
+    printf("Op not implemented: 0x94\n");
     return -1;
 }
 
@@ -1068,145 +1068,145 @@ inline int op0x96()
 
 inline int op0x97()
 {
-    Helper::CPULog("Op not implemented: 0x97\n");
+    printf("Op not implemented: 0x97\n");
     return -1;
 }
 
 inline int op0x98()
 {
-    Helper::CPULog("Op not implemented: 0x98\n");
+    printf("Op not implemented: 0x98\n");
     return -1;
 }
 
 inline int op0x99()
 {
-    Helper::CPULog("Op not implemented: 0x99\n");
+    printf("Op not implemented: 0x99\n");
     return -1;
 }
 
 inline int op0x9A()
 {
-    Helper::CPULog("Op not implemented: 0x9A\n");
+    printf("Op not implemented: 0x9A\n");
     return -1;
 }
 
 inline int op0x9B()
 {
-    Helper::CPULog("Op not implemented: 0x9B\n");
+    printf("Op not implemented: 0x9B\n");
     return -1;
 }
 
 inline int op0x9C()
 {
-    Helper::CPULog("Op not implemented: 0x9C\n");
+    printf("Op not implemented: 0x9C\n");
     return -1;
 }
 
 inline int op0x9D()
 {
-    Helper::CPULog("Op not implemented: 0x9D\n");
+    printf("Op not implemented: 0x9D\n");
     return -1;
 }
 
 inline int op0x9E()
 {
-    Helper::CPULog("Op not implemented: 0x9E\n");
+    printf("Op not implemented: 0x9E\n");
     return -1;
 }
 
 inline int op0x9F()
 {
-    Helper::CPULog("Op not implemented: 0x9F\n");
+    printf("Op not implemented: 0x9F\n");
     return -1;
 }
 
 inline int op0xA0()
 {
-    Helper::CPULog("Op not implemented: 0xA0\n");
+    printf("Op not implemented: 0xA0\n");
     return -1;
 }
 
 inline int op0xA1()
 {
-    Helper::CPULog("Op not implemented: 0xA1\n");
+    printf("Op not implemented: 0xA1\n");
     return -1;
 }
 
 inline int op0xA2()
 {
-    Helper::CPULog("Op not implemented: 0xA2\n");
+    printf("Op not implemented: 0xA2\n");
     return -1;
 }
 
 inline int op0xA3()
 {
-    Helper::CPULog("Op not implemented: 0xA3\n");
+    printf("Op not implemented: 0xA3\n");
     return -1;
 }
 
 inline int op0xA4()
 {
-    Helper::CPULog("Op not implemented: 0xA4\n");
+    printf("Op not implemented: 0xA4\n");
     return -1;
 }
 
 inline int op0xA5()
 {
-    Helper::CPULog("Op not implemented: 0xA5\n");
+    printf("Op not implemented: 0xA5\n");
     return -1;
 }
 
 inline int op0xA6()
 {
-    Helper::CPULog("Op not implemented: 0xA6\n");
+    printf("Op not implemented: 0xA6\n");
     return -1;
 }
 
 inline int op0xA7()
 {
-    Helper::CPULog("Op not implemented: 0xA7\n");
+    printf("Op not implemented: 0xA7\n");
     return -1;
 }
 
 inline int op0xA8()
 {
-    Helper::CPULog("Op not implemented: 0xA8\n");
+    printf("Op not implemented: 0xA8\n");
     return -1;
 }
 
 inline int op0xA9()
 {
-    Helper::CPULog("Op not implemented: 0xA9\n");
+    printf("Op not implemented: 0xA9\n");
     return -1;
 }
 
 inline int op0xAA()
 {
-    Helper::CPULog("Op not implemented: 0xAA\n");
+    printf("Op not implemented: 0xAA\n");
     return -1;
 }
 
 inline int op0xAB()
 {
-    Helper::CPULog("Op not implemented: 0xAB\n");
+    printf("Op not implemented: 0xAB\n");
     return -1;
 }
 
 inline int op0xAC()
 {
-    Helper::CPULog("Op not implemented: 0xAC\n");
+    printf("Op not implemented: 0xAC\n");
     return -1;
 }
 
 inline int op0xAD()
 {
-    Helper::CPULog("Op not implemented: 0xAD\n");
+    printf("Op not implemented: 0xAD\n");
     return -1;
 }
 
 inline int op0xAE()
 {
-    Helper::CPULog("Op not implemented: 0xAE\n");
+    printf("Op not implemented: 0xAE\n");
     return -1;
 }
 
@@ -1223,103 +1223,103 @@ inline int op0xAF()
 
 inline int op0xB0()
 {
-    Helper::CPULog("Op not implemented: 0xB0\n");
+    printf("Op not implemented: 0xB0\n");
     return -1;
 }
 
 inline int op0xB1()
 {
-    Helper::CPULog("Op not implemented: 0xB1\n");
+    printf("Op not implemented: 0xB1\n");
     return -1;
 }
 
 inline int op0xB2()
 {
-    Helper::CPULog("Op not implemented: 0xB2\n");
+    printf("Op not implemented: 0xB2\n");
     return -1;
 }
 
 inline int op0xB3()
 {
-    Helper::CPULog("Op not implemented: 0xB3\n");
+    printf("Op not implemented: 0xB3\n");
     return -1;
 }
 
 inline int op0xB4()
 {
-    Helper::CPULog("Op not implemented: 0xB4\n");
+    printf("Op not implemented: 0xB4\n");
     return -1;
 }
 
 inline int op0xB5()
 {
-    Helper::CPULog("Op not implemented: 0xB5\n");
+    printf("Op not implemented: 0xB5\n");
     return -1;
 }
 
 inline int op0xB6()
 {
-    Helper::CPULog("Op not implemented: 0xB6\n");
+    printf("Op not implemented: 0xB6\n");
     return -1;
 }
 
 inline int op0xB7()
 {
-    Helper::CPULog("Op not implemented: 0xB7\n");
+    printf("Op not implemented: 0xB7\n");
     return -1;
 }
 
 inline int op0xB8()
 {
-    Helper::CPULog("Op not implemented: 0xB8\n");
+    printf("Op not implemented: 0xB8\n");
     return -1;
 }
 
 inline int op0xB9()
 {
-    Helper::CPULog("Op not implemented: 0xB9\n");
+    printf("Op not implemented: 0xB9\n");
     return -1;
 }
 
 inline int op0xBA()
 {
-    Helper::CPULog("Op not implemented: 0xBA\n");
+    printf("Op not implemented: 0xBA\n");
     return -1;
 }
 
 inline int op0xBB()
 {
-    Helper::CPULog("Op not implemented: 0xBB\n");
+    printf("Op not implemented: 0xBB\n");
     return -1;
 }
 
 inline int op0xBC()
 {
-    Helper::CPULog("Op not implemented: 0xBC\n");
+    printf("Op not implemented: 0xBC\n");
     return -1;
 }
 
 inline int op0xBD()
 {
-    Helper::CPULog("Op not implemented: 0xBD\n");
+    printf("Op not implemented: 0xBD\n");
     return -1;
 }
 
 inline int op0xBE()
 {
-    Helper::CPULog("Op not implemented: 0xBE\n");
+    printf("Op not implemented: 0xBE\n");
     return -1;
 }
 
 inline int op0xBF()
 {
-    Helper::CPULog("Op not implemented: 0xBF\n");
+    printf("Op not implemented: 0xBF\n");
     return -1;
 }
 
 inline int op0xC0()
 {
-    Helper::CPULog("Op not implemented: 0xC0\n");
+    printf("Op not implemented: 0xC0\n");
     return -1;
 }
 
@@ -1333,7 +1333,7 @@ inline int op0xC1()
 
 inline int op0xC2()
 {
-    Helper::CPULog("Op not implemented: 0xC2\n");
+    printf("Op not implemented: 0xC2\n");
     return -1;
 }
 
@@ -1347,7 +1347,7 @@ inline int op0xC3()
 
 inline int op0xC4()
 {
-    Helper::CPULog("Op not implemented: 0xC4\n");
+    printf("Op not implemented: 0xC4\n");
     return -1;
 }
 
@@ -1361,19 +1361,19 @@ inline int op0xC5()
 
 inline int op0xC6()
 {
-    Helper::CPULog("Op not implemented: 0xC6\n");
+    printf("Op not implemented: 0xC6\n");
     return -1;
 }
 
 inline int op0xC7()
 {
-    Helper::CPULog("Op not implemented: 0xC7\n");
+    printf("Op not implemented: 0xC7\n");
     return -1;
 }
 
 inline int op0xC8()
 {
-    Helper::CPULog("Op not implemented: 0xC8\n");
+    printf("Op not implemented: 0xC8\n");
     return -1;
 }
 
@@ -1388,7 +1388,7 @@ inline int op0xC9()
 
 inline int op0xCA()
 {
-    Helper::CPULog("Op not implemented: 0xCA\n");
+    printf("Op not implemented: 0xCA\n");
     return -1;
 }
 
@@ -1426,7 +1426,7 @@ inline int op0xCB()
     switch (cb_op) {
         case 0x11: return cbOp0x11();
         case 0x7C: return cbOp0x7C();
-        default:Helper::CPULog("NOT IMPLEMENTED CB Prefix(0x%02X)\n", cb_op);
+        default:printf("NOT IMPLEMENTED CB Prefix(0x%02X)\n", cb_op);
             break;
     }
     return -1;
@@ -1434,7 +1434,7 @@ inline int op0xCB()
 
 inline int op0xCC()
 {
-    Helper::CPULog("Op not implemented: 0xCC\n");
+    printf("Op not implemented: 0xCC\n");
     return -1;
 }
 
@@ -1452,19 +1452,19 @@ inline int op0xCD()
 
 inline int op0xCE()
 {
-    Helper::CPULog("Op not implemented: 0xCE\n");
+    printf("Op not implemented: 0xCE\n");
     return -1;
 }
 
 inline int op0xCF()
 {
-    Helper::CPULog("Op not implemented: 0xCF\n");
+    printf("Op not implemented: 0xCF\n");
     return -1;
 }
 
 inline int op0xD0()
 {
-    Helper::CPULog("Op not implemented: 0xD0\n");
+    printf("Op not implemented: 0xD0\n");
     return -1;
 }
 
@@ -1478,19 +1478,19 @@ inline int op0xD1()
 
 inline int op0xD2()
 {
-    Helper::CPULog("Op not implemented: 0xD2\n");
+    printf("Op not implemented: 0xD2\n");
     return -1;
 }
 
 inline int op0xD3()
 {
-    Helper::CPULog("Op not implemented: 0xD3\n");
+    printf("Op not implemented: 0xD3\n");
     return -1;
 }
 
 inline int op0xD4()
 {
-    Helper::CPULog("Op not implemented: 0xD4\n");
+    printf("Op not implemented: 0xD4\n");
     return -1;
 }
 
@@ -1504,61 +1504,61 @@ inline int op0xD5()
 
 inline int op0xD6()
 {
-    Helper::CPULog("Op not implemented: 0xD6\n");
+    printf("Op not implemented: 0xD6\n");
     return -1;
 }
 
 inline int op0xD7()
 {
-    Helper::CPULog("Op not implemented: 0xD7\n");
+    printf("Op not implemented: 0xD7\n");
     return -1;
 }
 
 inline int op0xD8()
 {
-    Helper::CPULog("Op not implemented: 0xD8\n");
+    printf("Op not implemented: 0xD8\n");
     return -1;
 }
 
 inline int op0xD9()
 {
-    Helper::CPULog("Op not implemented: 0xD9\n");
+    printf("Op not implemented: 0xD9\n");
     return -1;
 }
 
 inline int op0xDA()
 {
-    Helper::CPULog("Op not implemented: 0xDA\n");
+    printf("Op not implemented: 0xDA\n");
     return -1;
 }
 
 inline int op0xDB()
 {
-    Helper::CPULog("Op not implemented: 0xDB\n");
+    printf("Op not implemented: 0xDB\n");
     return -1;
 }
 
 inline int op0xDC()
 {
-    Helper::CPULog("Op not implemented: 0xDC\n");
+    printf("Op not implemented: 0xDC\n");
     return -1;
 }
 
 inline int op0xDD()
 {
-    Helper::CPULog("Op not implemented: 0xDD\n");
+    printf("Op not implemented: 0xDD\n");
     return -1;
 }
 
 inline int op0xDE()
 {
-    Helper::CPULog("Op not implemented: 0xDE\n");
+    printf("Op not implemented: 0xDE\n");
     return -1;
 }
 
 inline int op0xDF()
 {
-    Helper::CPULog("Op not implemented: 0xDF\n");
+    printf("Op not implemented: 0xDF\n");
     return -1;
 }
 
@@ -1587,13 +1587,13 @@ inline int op0xE2()
 
 inline int op0xE3()
 {
-    Helper::CPULog("Op not implemented: 0xE3\n");
+    printf("Op not implemented: 0xE3\n");
     return -1;
 }
 
 inline int op0xE4()
 {
-    Helper::CPULog("Op not implemented: 0xE4\n");
+    printf("Op not implemented: 0xE4\n");
     return -1;
 }
 
@@ -1607,25 +1607,25 @@ inline int op0xE5()
 
 inline int op0xE6()
 {
-    Helper::CPULog("Op not implemented: 0xE6\n");
+    printf("Op not implemented: 0xE6\n");
     return -1;
 }
 
 inline int op0xE7()
 {
-    Helper::CPULog("Op not implemented: 0xE7\n");
+    printf("Op not implemented: 0xE7\n");
     return -1;
 }
 
 inline int op0xE8()
 {
-    Helper::CPULog("Op not implemented: 0xE8\n");
+    printf("Op not implemented: 0xE8\n");
     return -1;
 }
 
 inline int op0xE9()
 {
-    Helper::CPULog("Op not implemented: 0xE9\n");
+    printf("Op not implemented: 0xE9\n");
     return -1;
 }
 
@@ -1640,31 +1640,31 @@ inline int op0xEA()
 
 inline int op0xEB()
 {
-    Helper::CPULog("Op not implemented: 0xEB\n");
+    printf("Op not implemented: 0xEB\n");
     return -1;
 }
 
 inline int op0xEC()
 {
-    Helper::CPULog("Op not implemented: 0xEC\n");
+    printf("Op not implemented: 0xEC\n");
     return -1;
 }
 
 inline int op0xED()
 {
-    Helper::CPULog("Op not implemented: 0xED\n");
+    printf("Op not implemented: 0xED\n");
     return -1;
 }
 
 inline int op0xEE()
 {
-    Helper::CPULog("Op not implemented: 0xEE\n");
+    printf("Op not implemented: 0xEE\n");
     return -1;
 }
 
 inline int op0xEF()
 {
-    Helper::CPULog("Op not implemented: 0xEF\n");
+    printf("Op not implemented: 0xEF\n");
     return -1;
 }
 
@@ -1686,19 +1686,19 @@ inline int op0xF1()
 
 inline int op0xF2()
 {
-    Helper::CPULog("Op not implemented: 0xF2\n");
+    printf("Op not implemented: 0xF2\n");
     return -1;
 }
 
 inline int op0xF3()
 {
-    Helper::CPULog("Op not implemented: 0xF3\n");
+    printf("Op not implemented: 0xF3\n");
     return -1;
 }
 
 inline int op0xF4()
 {
-    Helper::CPULog("Op not implemented: 0xF4\n");
+    printf("Op not implemented: 0xF4\n");
     return -1;
 }
 
@@ -1712,49 +1712,49 @@ inline int op0xF5()
 
 inline int op0xF6()
 {
-    Helper::CPULog("Op not implemented: 0xF6\n");
+    printf("Op not implemented: 0xF6\n");
     return -1;
 }
 
 inline int op0xF7()
 {
-    Helper::CPULog("Op not implemented: 0xF7\n");
+    printf("Op not implemented: 0xF7\n");
     return -1;
 }
 
 inline int op0xF8()
 {
-    Helper::CPULog("Op not implemented: 0xF8\n");
+    printf("Op not implemented: 0xF8\n");
     return -1;
 }
 
 inline int op0xF9()
 {
-    Helper::CPULog("Op not implemented: 0xF9\n");
+    printf("Op not implemented: 0xF9\n");
     return -1;
 }
 
 inline int op0xFA()
 {
-    Helper::CPULog("Op not implemented: 0xFA\n");
+    printf("Op not implemented: 0xFA\n");
     return -1;
 }
 
 inline int op0xFB()
 {
-    Helper::CPULog("Op not implemented: 0xFB\n");
+    printf("Op not implemented: 0xFB\n");
     return -1;
 }
 
 inline int op0xFC()
 {
-    Helper::CPULog("Op not implemented: 0xFC\n");
+    printf("Op not implemented: 0xFC\n");
     return -1;
 }
 
 inline int op0xFD()
 {
-    Helper::CPULog("Op not implemented: 0xFD\n");
+    printf("Op not implemented: 0xFD\n");
     return -1;
 }
 
@@ -1773,7 +1773,7 @@ inline int op0xFE()
 
 inline int op0xFF()
 {
-    Helper::CPULog("Op not implemented: 0xFF\n");
+    printf("Op not implemented: 0xFF\n");
     return -1;
 }
 

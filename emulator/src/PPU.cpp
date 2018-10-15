@@ -28,8 +28,6 @@ PPU::PPU() {}
 
 PPU::~PPU() {}
 
-std::queue<int> tiles;
-
 void PPU::Update(int cycles)
 {
     for (int iteration = 0; iteration < cycles; ++iteration) {
@@ -37,18 +35,19 @@ void PPU::Update(int cycles)
             ++currentLine;
             currentLineCycle = 0;
             currentPixel = 0;
-            while (!fifo.empty()) fifo.pop();
-            while (!tiles.empty()) tiles.pop();
+            fifo = std::queue<int>();
             fifoFetchState = 0;
-            Helper::PPULog("\n");
+            //Helper::PPULog("\n");
         }
 
         if (currentLine > LINES) currentLine = 0;
         VideoRegisters::LCDYCoordinate(currentLine);
 
-        if (currentLine == window->height + 1) {
+        if (currentLine == window->height) {
             window->UpdateScreen();
+            continue;
         }
+        else if (currentLine > window->height) continue;
 
         bool isInRenderMode =
                 currentLine < window->height &&
@@ -58,7 +57,7 @@ void PPU::Update(int cycles)
         if (isInRenderMode) {
 
             if (currentLineCycle % 2 == 1) FifoFetch();
-            FifoPush();
+            if (fifo.size() > 8) FifoPush();
 
             /*
             int currentMapLine = (currentLine + VideoRegisters::ScrollPosY()) / 8;
@@ -103,14 +102,14 @@ void PPU::FifoFetch()
             lastTileNo = RAM::ReadByteAt(tileMapAddress);
             Helper::PPULog("  Fetched tile map: %d\n", lastTileNo);
             ++fifoFetchState;
-            break;
+            return;
         }
         case 1: { //byte 1 fetch
             uint8 byte1 = RAM::ReadByteAt(currentTileRowBaseAddr());
             Helper::PPULog("  Fetched byte1: 0x%02X\n", byte1);
             lastByte1 = byte1;
             ++fifoFetchState;
-            break;
+            return;
         }
         case 2: { //byte 2 fetch, decode and store to fifo
             uint8 byte2 = RAM::ReadByteAt(currentTileRowBaseAddr() + 1);
@@ -124,26 +123,24 @@ void PPU::FifoFetch()
             if (fifo.size() <= 8) {
                 for (int i = 7; i >= 0; --i) {
                     fifo.push(decodedBytes[i]);
-                    tiles.push(lastTileNo);
                 }
                 fifoFetchState = 0;
             }
             else
                 fifoFetchState = 3;
-            break;
+            return;
         }
         case 3: { // idle (put into fifo if possible)
             Helper::PPULog("  IDLE\n");
             if (fifo.size() <= 8) {
                 for (int i = 7; i >= 0; --i) {
                     fifo.push(decodedBytes[i]);
-                    tiles.push(lastTileNo);
                 }
                 fifoFetchState = 0;
             }
             else
                 fifoFetchState = 3;
-            break;
+            return;
         }
         default: //ERROR
             Helper::Log("FIFO FETCH ERROR -- INVALID STATE");
@@ -166,14 +163,10 @@ uint16 PPU::currentTileRowBaseAddr()
 void PPU::FifoPush()
 {
     Helper::PPULog("PUSH (%d)\n", fifo.size());
-    if (fifo.size() <= 8) return;
 
     int colour = fifo.front();
     fifo.pop();
-    int currTile = tiles.front();
-    tiles.pop();
 
-    Helper::PPULog("  Tile: %d, Draw pixel: %d, to: %03d, %03d\n", currTile, colour, currentPixel, currentLine);
     window->DrawPixel(currentPixel++, currentLine, Configuration::Colours[colour]);
 }
 
