@@ -4,10 +4,13 @@
 
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <chrono>
+#include <thread>
 
 #include "../include/Window.h"
 #include "../include/Configuration.h"
 #include "../include/RGBA.h"
+#include "../include/RAM.h"
 
 Window::Window()
 {
@@ -36,10 +39,13 @@ Window::Window()
         std::cerr << "SDL_CreateRenderer ERROR" << SDL_GetError() << std::endl;
         exit(1);
     }
+
+    SDL_RenderSetScale(renderer, Configuration::PixelScaleFactor, Configuration::PixelScaleFactor);
 }
 
 Window::~Window()
 {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     SDL_DestroyWindow(window);
     SDL_VideoQuit();
 }
@@ -47,14 +53,7 @@ Window::~Window()
 void Window::DrawPixel(uint8_t x, uint8_t y, RGBA colour)
 {
     SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
-    unsigned int tX = x * Configuration::PixelScaleFactor;
-    unsigned int tY = y * Configuration::PixelScaleFactor;
-
-    for (unsigned int xPos = 0; xPos < Configuration::PixelScaleFactor; xPos++) {
-        for (unsigned int yPos = 0; yPos < Configuration::PixelScaleFactor; ++yPos) {
-            SDL_RenderDrawPoint(renderer, tX + xPos, tY + yPos);
-        }
-    }
+    SDL_RenderDrawPoint(renderer, x, y);
 }
 
 void Window::UpdateScreen()
