@@ -18,7 +18,7 @@ private:
     ~Configuration();
 public:
     static std::string WindowTitle;
-    static const unsigned int PixelScaleFactor = 2;
+    static unsigned int PixelScaleFactor;
     static RGBA Colours[];
 };
 
