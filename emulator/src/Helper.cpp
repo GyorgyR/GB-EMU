@@ -4,6 +4,8 @@
 
 #define DEBUG
 #undef RAM_DEBUG
+#undef PPU_DEBUG
+#undef CPU_DEBUG
 
 #include <cstdio>
 #include <cstdarg>
@@ -13,15 +15,7 @@
 FILE *Helper::debugLog;
 FILE *Helper::ramLog;
 FILE *Helper::cpuLog;
-
-uint16_t Helper::ConcatTwoBytes(uint8_t first, uint8_t second) {
-    return (first << 8) + second;
-}
-
-std::pair<uint8_t, uint8_t> Helper::DivideIntoTwoBytes(uint16_t value) {
-    const uint16_t bit_mask = 0b0000000011111111;
-    return std::make_pair((value >> 8) & bit_mask, value & bit_mask);
-}
+FILE *Helper::ppuLog;
 
 Helper::Helper()
 {
@@ -33,15 +27,27 @@ Helper::~Helper()
 
 }
 
+uint16_t Helper::ConcatTwoBytes(uint8_t first, uint8_t second) {
+    return (first << 8) + second;
+}
+
+std::pair<uint8_t, uint8_t> Helper::DivideIntoTwoBytes(uint16_t value) {
+    const uint16_t bit_mask = 0b0000000011111111;
+    return std::make_pair((value >> 8) & bit_mask, value & bit_mask);
+}
+
+bool Helper::IsBitSet(uint16_t bits, uint16_t bitPos)
+{
+    uint16_t bitmask = 1 << bitPos;
+    return bits & bitmask;
+}
+
 void Helper::InitLogger()
 {
-    #ifdef DEBUG
     debugLog = fopen("logs/debug.log", "w+");
     ramLog = fopen("logs/ram.debug.log", "w+");
     cpuLog = fopen("logs/cpu.debug.log", "w+");
-    #else
-    return
-    #endif
+    ppuLog = fopen("logs/ppu.debug.log", "w+");
 }
 
 void Helper::Log(const char *message, ...)
@@ -65,12 +71,11 @@ void Helper::SetCPULogStream(FILE *stream)
 
 void Helper::CPULog(const char *message, ...)
 {
-    #ifdef DEBUG
+    #ifdef CPU_DEBUG
     va_list args;
     va_start(args, message);
     vfprintf(cpuLog, message, args);
     va_end(args);
-    fprintf(cpuLog, "\n");
     fflush(cpuLog);
     #else
     return;
@@ -90,8 +95,15 @@ void Helper::RAMLog(const char *message, ...)
     #endif
 }
 
-bool Helper::IsBitSet(uint16_t bits, uint16_t bitPos)
+void Helper::PPULog(const char *message, ...)
 {
-    uint16_t bitmask = 1 << bitPos;
-    return bits & bitmask;
+    #ifdef PPU_DEBUG
+    va_list args;
+    va_start(args, message);
+    vfprintf(ppuLog, message, args);
+    va_end(args);
+    fflush(ppuLog);
+    #else
+    return;
+    #endif
 }
