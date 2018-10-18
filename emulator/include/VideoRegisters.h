@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include "Types.h"
+#include "RGBA.h"
 
 class VideoRegisters
 {
@@ -16,6 +17,7 @@ private:
     ~VideoRegisters();
 
     static uint8 BGPaletteDataReg;
+    static uint8 BGPaletteArray[];
     static uint8 ScrollPosYReg;
     static uint8 ScrollPosXReg;
     static uint8 LCDControlReg;
@@ -24,12 +26,12 @@ private:
 public:
     static uint8 BGPaletteData();
     static bool BGPaletteData(uint8 value);
+    static RGBA &GetBGColour(int colour);
 
     static uint8 ScrollPosY();
     static bool ScrollPosY(uint8 value);
 
     static uint8 ScrollPosX();
-
     static bool ScrollPosX(uint8 value);
 
     static uint8 LCDYCoordinate();
@@ -38,7 +40,6 @@ public:
     static uint8 LCDControl();
     static bool LCDControl(uint8 value);
     static uint16 BGTileMapBaseAddr();
-
     static uint16 BGTileDataBaseAddr();
 };
 

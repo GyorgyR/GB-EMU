@@ -4,12 +4,14 @@
 
 #include "../include/VideoRegisters.h"
 #include "../include/Helper.h"
+#include "../include/Configuration.h"
 
-uint8_t VideoRegisters::BGPaletteDataReg = 0;
-uint8_t VideoRegisters::ScrollPosYReg = 0;
-uint8_t VideoRegisters::ScrollPosXReg = 0;
-uint8_t VideoRegisters::LCDControlReg = 0;
-uint8_t VideoRegisters::LCDYCoordReg = 0;
+uint8 VideoRegisters::BGPaletteDataReg = 0;
+uint8 VideoRegisters::BGPaletteArray[4];
+uint8 VideoRegisters::ScrollPosYReg = 0;
+uint8 VideoRegisters::ScrollPosXReg = 0;
+uint8 VideoRegisters::LCDControlReg = 0;
+uint8 VideoRegisters::LCDYCoordReg = 0;
 
 VideoRegisters::VideoRegisters()
 {
@@ -21,7 +23,7 @@ VideoRegisters::~VideoRegisters()
 
 }
 
-uint8_t VideoRegisters::BGPaletteData()
+uint8 VideoRegisters::BGPaletteData()
 {
     return BGPaletteDataReg;
 }
@@ -29,10 +31,14 @@ uint8_t VideoRegisters::BGPaletteData()
 bool VideoRegisters::BGPaletteData(uint8_t value)
 {
     BGPaletteDataReg = value;
+    for (int pos = 0; pos < 4; ++pos) {
+        BGPaletteArray[pos] = value & 0b11;
+        value >>= 2;
+    }
     return true;
 }
 
-uint8_t VideoRegisters::ScrollPosY()
+uint8 VideoRegisters::ScrollPosY()
 {
     return ScrollPosYReg;
 }
@@ -43,7 +49,7 @@ bool VideoRegisters::ScrollPosY(uint8_t value)
     return true;
 }
 
-uint8_t VideoRegisters::LCDControl()
+uint8 VideoRegisters::LCDControl()
 {
     return LCDControlReg;
 }
@@ -54,7 +60,7 @@ bool VideoRegisters::LCDControl(uint8_t value)
     return true;
 }
 
-uint16_t VideoRegisters::BGTileMapBaseAddr()
+uint16 VideoRegisters::BGTileMapBaseAddr()
 {
     if (Helper::IsBitSet(LCDControlReg, 3)) return 0x9C00;
     else return 0x9800;
@@ -86,4 +92,8 @@ bool VideoRegisters::ScrollPosX(uint8 value)
 {
     ScrollPosXReg = value;
     return true;
+}
+
+RGBA &VideoRegisters::GetBGColour(int colour) {
+    return Configuration::Colours[BGPaletteArray[colour]];
 }

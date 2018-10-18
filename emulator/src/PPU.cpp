@@ -167,7 +167,7 @@ void PPU::FifoPush()
     int colour = fifo.front();
     fifo.pop();
 
-    window->DrawPixel(currentPixel++, currentLine, Configuration::Colours[colour]);
+    window->DrawPixel(currentPixel++, currentLine, VideoRegisters::GetBGColour(colour));
 }
 
 void PPU::SetWindow(Window *currWindow)
