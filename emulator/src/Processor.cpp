@@ -51,6 +51,19 @@ inline int baseSub(uint8 value)
     return 4;
 }
 
+inline int baseSub(uint8 *dest, uint8 value)
+{
+    RegisterBank::SetH((RegisterBank::A & 0b111) > (value & 0b111));
+    RegisterBank::SetC(RegisterBank::A > value);
+
+    RegisterBank::A -= value;
+
+    RegisterBank::SetZ(RegisterBank::A == 0);
+    RegisterBank::SetN(true);
+
+    return 4;
+}
+
 inline int baseDec(uint8 *reg)
 {
     RegisterBank::SetH(((*reg) & 0b000) > 0);
@@ -59,6 +72,21 @@ inline int baseDec(uint8 *reg)
 
     RegisterBank::SetZ((*reg) == 0);
     RegisterBank::SetN(true);
+    return 4;
+}
+
+inline int baseAdd(uint8 *op1, uint8 op2)
+{
+    uint8 halfBitmask = 0b111;
+    uint16 result = *op1 + op2;
+    uint8 halfResult = (*op1 & halfBitmask) + (op2 & halfBitmask);
+    *op1 = result;
+
+    RegisterBank::SetZ((uint8)result == 0);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(halfResult > halfBitmask + 1);
+    RegisterBank::SetC(result > UINT8_MAX);
+
     return 4;
 }
 
@@ -859,8 +887,8 @@ inline int op0x77()
 
 inline int op0x78()
 {
-    printf("Op not implemented: 0x78\n");
-    return -1;
+    Helper::CPULog("LD\tA, B\n");
+    return baseLoadReg(&RegisterBank::A, RegisterBank::B);
 }
 
 inline int op0x79()
@@ -890,8 +918,8 @@ inline int op0x7C()
 
 inline int op0x7D()
 {
-    printf("Op not implemented: 0x7D\n");
-    return -1;
+    Helper::CPULog("LD\tA, L\n");
+    return baseLoadReg(&RegisterBank::A, RegisterBank::L);
 }
 
 inline int op0x7E()
@@ -944,8 +972,10 @@ inline int op0x85()
 
 inline int op0x86()
 {
-    printf("Op not implemented: 0x86\n");
-    return -1;
+    uint8 value = RAM::ReadByteAt(RegisterBank::HL());
+    baseAdd(&RegisterBank::A, value);
+    Helper::CPULog("ADD\tA, [0x%04X] (0x%02X, 0x%02X)\n", RegisterBank::HL(), RegisterBank::A, value);
+    return 8;
 }
 
 inline int op0x87()
@@ -1307,8 +1337,11 @@ inline int op0xBD()
 
 inline int op0xBE()
 {
-    printf("Op not implemented: 0xBE\n");
-    return -1;
+    uint8 result = RegisterBank::A;
+    uint8 value = RAM::ReadByteAt(RegisterBank::HL());
+    baseSub(&result, value);
+    Helper::CPULog("CP\t[0x%04X]\n", RegisterBank::HL());
+    return 8;
 }
 
 inline int op0xBF()
