@@ -67,7 +67,8 @@ uint8 RAM::ReadByteAt(uint16 address)
             break;
         }
         UNIMPLEMENTED:
-        default:printf(" (Unimplemented read range: 0x%04X)\n", address);
+        default:
+            printf(" (Unimplemented read range: 0x%04X)\n", address);
             exit(1);
     }
     Helper::RAMLog(" [VALUE 0x%02X]\n", retVal);
@@ -132,11 +133,10 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             break;
         }
         case 0xFF50: {
-            Helper::RAMLog("[BOOT ROM OFF]");
+            Helper::RAMLog(" [BOOT ROM OFF]");
             activeBootPage = &loadedRom;
             success = true;
             puts("Successfully reached end of boot rom");
-            exit(0);
             break;
         }
         case 0xFF80 ... 0xFFFE: {

@@ -2,15 +2,21 @@
 // Created by gyorgy on 12/10/18.
 //
 
-#include <iostream>
+#undef FPS_COUNTER
+
 #include <SDL2/SDL.h>
 #include <chrono>
 #include <thread>
+#include <iostream>
 
 #include "../include/Window.h"
 #include "../include/Configuration.h"
 #include "../include/RGBA.h"
 #include "../include/RAM.h"
+#include "../include/Types.h"
+
+uint32 frameCount = 0;
+uint64 startTime;
 
 Window::Window()
 {
@@ -33,7 +39,7 @@ Window::Window()
         exit(1);
     }
 
-    renderer = SDL_CreateRenderer(window, 0, 0);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
     if (renderer == nullptr) {
         std::cerr << "SDL_CreateRenderer ERROR" << SDL_GetError() << std::endl;
@@ -41,6 +47,9 @@ Window::Window()
     }
 
     SDL_RenderSetScale(renderer, Configuration::PixelScaleFactor, Configuration::PixelScaleFactor);
+
+    std::cout << "\n";
+    startTime = SDL_GetPerformanceCounter();
 }
 
 Window::~Window()
@@ -59,4 +68,19 @@ void Window::DrawPixel(uint8_t x, uint8_t y, RGBA colour)
 void Window::UpdateScreen()
 {
     SDL_RenderPresent(renderer);
+    #ifdef FPS_COUNTER
+    uint64 timeNow = SDL_GetPerformanceCounter();
+    uint64 freq = SDL_GetPerformanceFrequency();
+    int seconds = (timeNow - startTime) / static_cast<double>(freq);
+
+    ++frameCount;
+
+    if (seconds == 3) {
+        std::cout << "\e[A";
+        std::cout << "\r" << frameCount << "\n";
+        std::flush(std::cout);
+        frameCount = 0;
+        startTime = timeNow;
+    }
+    #endif
 }
