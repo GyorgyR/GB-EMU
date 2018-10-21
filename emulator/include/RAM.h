@@ -8,6 +8,7 @@
 #include <cstdio>
 
 #include "ROM.h"
+#include "Types.h"
 
 class RAM
 {
@@ -15,8 +16,9 @@ private:
     static ROM *loadedRom;
     static ROM *bootRom;
     static ROM **activeBootPage;
-    static uint8_t vram[];
-    static uint8_t stack[];
+    static uint8 vram[];
+    static uint8 stack[];
+    static uint8 workRam[8][4096];
 
     RAM();
     ~RAM();

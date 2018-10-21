@@ -15,6 +15,7 @@ ROM *RAM::bootRom = nullptr;
 ROM **RAM::activeBootPage = &bootRom;
 uint8 RAM::vram[8192];
 uint8 RAM::stack[0x7F];
+uint8 RAM::workRam[8][4096];
 
 RAM::RAM()
 {
@@ -40,8 +41,8 @@ uint8 RAM::ReadByteAt(uint16 address)
             break;
         }
         case 0x4000 ... 0x7FFF: {
+            retVal = loadedRom->GetByteAt(address);
             Helper::RAMLog("[ROM BANK N]");
-            goto UNIMPLEMENTED;
             break;
         }
         case 0x8000 ... 0x9FFF: {
@@ -84,6 +85,20 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             int internalAddress = address - 0x8000;
             Helper::RAMLog(" [VRAM @%d]", internalAddress);
             vram[internalAddress] = value;
+            success = true;
+            break;
+        }
+        case 0xC000 ... 0xCFFF: {
+            int internalAddress = address - 0xC000;
+            Helper::RAMLog(" [WRAM0@d]", internalAddress);
+            workRam[0][internalAddress] = value;
+            success = true;
+            break;
+        }
+        case 0xD000 ... 0xDFFF : {
+            int intenalAddress = address - 0xD000;
+            Helper::RAMLog(" [WRAM1%d]", intenalAddress);
+            workRam[1][intenalAddress] = value;
             success = true;
             break;
         }
@@ -137,6 +152,7 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             activeBootPage = &loadedRom;
             success = true;
             puts("Successfully reached end of boot rom");
+            exit(0);
             break;
         }
         case 0xFF80 ... 0xFFFE: {
@@ -146,8 +162,8 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             success = true;
             break;
         }
-        UNIMPLEMENTED:
-        default:printf(" (Unimplemented write range: 0x%04X)\n", address);
+        default:
+            printf(" (Unimplemented write range: 0x%04X)\n", address);
             exit(1);
     }
     Helper::RAMLog(" [VALUE 0x%02X]\n", value);

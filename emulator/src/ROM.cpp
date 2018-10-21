@@ -16,7 +16,7 @@ ROM::ROM(const char *rom_file_path)
         rom_file_size = rom_file.tellg();
         rom_file.seekg(0, std::ios::beg);
 
-        rom = new uint8_t[rom_file_size];
+        rom = new uint8[rom_file_size];
 
         rom_file.read(reinterpret_cast<char *>(rom), rom_file_size);
 
@@ -29,7 +29,7 @@ ROM::~ROM()
 
 }
 
-uint8_t ROM::GetByteAt(uint16_t address)
+uint8 ROM::GetByteAt(uint16 address)
 {
     return rom[address];
 }
