@@ -2,7 +2,7 @@
 // Created by gyorgy on 12/10/18.
 //
 
-#undef FPS_COUNTER
+#define FPS_COUNTER
 
 #include <SDL2/SDL.h>
 #include <chrono>
@@ -39,7 +39,7 @@ Window::Window()
         exit(1);
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED /* | SDL_RENDERER_PRESENTVSYNC */);
 
     if (renderer == nullptr) {
         std::cerr << "SDL_CreateRenderer ERROR" << SDL_GetError() << std::endl;
@@ -75,7 +75,7 @@ void Window::UpdateScreen()
 
     ++frameCount;
 
-    if (seconds == 3) {
+    if (seconds == 1) {
         std::cout << "\e[A";
         std::cout << "\r" << frameCount << "\n";
         std::flush(std::cout);

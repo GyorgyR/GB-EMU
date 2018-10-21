@@ -23,6 +23,7 @@ private:
     static unsigned int currentLineCycle;
     static unsigned int currentPixel;
     static unsigned int fifoFetchState;
+    static unsigned int PPUState;
     static int lastTileNo;
     static uint8 lastByte1;
     static int decodedBytes[];

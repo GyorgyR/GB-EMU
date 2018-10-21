@@ -18,6 +18,7 @@ unsigned int PPU::currentLine = 0;
 unsigned int PPU::currentLineCycle = 0;
 unsigned int PPU::currentPixel = 0;
 unsigned int PPU::fifoFetchState = 0;
+unsigned int PPU::PPUState = 0;
 int PPU::lastTileNo = 0;
 uint8 PPU::lastByte1 = 0;
 int PPU::decodedBytes[8];
@@ -31,56 +32,49 @@ PPU::~PPU() {}
 void PPU::Update(int cycles)
 {
     for (int iteration = 0; iteration < cycles; ++iteration) {
+
         if (++currentLineCycle > CLOCKSPERLINE) {
             ++currentLine;
             currentLineCycle = 0;
-            currentPixel = 0;
-            fifo = std::queue<int>();
-            fifoFetchState = 0;
-            //Helper::PPULog("\n");
+            PPUState = 0;
+
+            if (currentLine == window->height) {
+                window->UpdateScreen();
+                PPUState = 3;
+            } else if (currentLine > LINES) {
+                currentLine = 0;
+                PPUState = 0;
+            }
+            VideoRegisters::LCDYCoordinate(currentLine);
         }
 
-        if (currentLine > LINES) currentLine = 0;
-        VideoRegisters::LCDYCoordinate(currentLine);
+        switch (PPUState) {
+            case 0: { //OAMSEARCH
+                if (currentLineCycle == OAMSEARCHCYCLES) PPUState = 1;
+                break;
+            }
+            case 1: { //Pixel Draw
 
-        if (currentLine == window->height) {
-            window->UpdateScreen();
-            continue;
-        }
-        else if (currentLine > window->height) continue;
-
-        bool isInRenderMode =
-                currentLine < window->height &&
-                currentLineCycle > OAMSEARCHCYCLES &&
-                currentPixel < window->width;
-
-        if (isInRenderMode) {
-
-            if (currentLineCycle % 2 == 1) FifoFetch();
-            if (fifo.size() > 8) FifoPush();
-
-            /*
-            int currentMapLine = (currentLine + VideoRegisters::ScrollPosY()) / 8;
-            int currentMapLineCycle = (currentPixel + VideoRegisters::ScrollPosX()) / 8;
-
-            uint16 tileAddress =
-                    VideoRegisters::BGTileMapBaseAddr() +
-                    (currentMapLine * 32) +
-                    (currentMapLineCycle)
-                    ;
-
-            lastTileNo = RAM::ReadByteAt(tileAddress);
-
-            uint16 address = currentTileRowBaseAddr();
-            uint8 byte1 = RAM::ReadByteAt(address);
-            uint8 byte2 = RAM::ReadByteAt(address + 1);
-
-            int posInTile = currentPixel % 8;
-            int colour = Helper::IsBitSet(byte2, 7 - posInTile) ? 2 : 0;
-            colour += Helper::IsBitSet(byte1, 7 - posInTile) ? 1 : 0;
-
-            window->DrawPixel(currentPixel++, currentLine, Configuration::Colours[colour]);
-             */
+                if (currentLineCycle % 2 == 1) FifoFetch();
+                if (fifo.size() > 8) FifoPush();
+                if (currentPixel == window->width) {
+                    PPUState = 2;
+                    currentPixel = 0;
+                    fifo = std::queue<int>();
+                    fifoFetchState = 0;
+                }
+                break;
+            }
+            case 2: { //H-BLANK
+                break;
+            }
+            case 3: { //V-BLANK
+                break;
+            }
+            default: { //ERROR
+                Helper::Log("PPU ERROR -- INVALID STATE");
+                exit(1);
+            }
         }
     }
 }
