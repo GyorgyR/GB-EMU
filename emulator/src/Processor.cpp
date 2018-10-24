@@ -1725,8 +1725,9 @@ inline int op0xF2()
 
 inline int op0xF3()
 {
-    printf("Op not implemented: 0xF3\n");
-    return -1;
+    RegisterBank::SetInterruptEnabled(false);
+    Helper::CPULog("DI\n");
+    return 4;
 }
 
 inline int op0xF4()
