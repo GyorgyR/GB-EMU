@@ -6,21 +6,30 @@
 #define GB_EMULATOR_REGISTERBANK_H
 
 #include <cstdint>
+#include "Types.h"
 
 
 class RegisterBank {
-public:
-    static uint8_t A;
-    static uint8_t F;
-    static uint8_t B;
-    static uint8_t C;
-    static uint8_t D;
-    static uint8_t E;
-    static uint8_t H;
-    static uint8_t L;
+private:
+    //Make class static
+    RegisterBank();
+    ~RegisterBank();
 
-    static uint16_t SP;
-    static uint16_t PC;
+    static uint8 interruptFlag;
+    static uint8 interruptEnable;
+    static bool areInterruptsEnabled;
+public:
+    static uint8 A;
+    static uint8 F;
+    static uint8 B;
+    static uint8 C;
+    static uint8 D;
+    static uint8 E;
+    static uint8 H;
+    static uint8 L;
+
+    static uint16 SP;
+    static uint16 PC;
 
     static bool IsZSet();
     static bool IsCSet();
@@ -32,15 +41,23 @@ public:
     static void SetN(bool isOn);
     static void SetH(bool isOn);
 
-    static uint16_t AF();
-    static uint16_t BC();
-    static uint16_t DE();
-    static uint16_t HL();
+    static uint16 AF();
+    static uint16 BC();
+    static uint16 DE();
+    static uint16 HL();
 
-    static void AF(uint16_t value);
-    static void BC(uint16_t value);
-    static void DE(uint16_t value);
-    static void HL(uint16_t value);
+    static void AF(uint16 value);
+    static void BC(uint16 value);
+    static void DE(uint16 value);
+    static void HL(uint16 value);
+
+    static bool AreInterruptsEnabled();
+    static void SetInterruptEnabled(bool enabled);
+
+    static uint8 InterruptFlag();
+    static void  InterruptFlag(uint8 value);
+    static uint8 InterruptEnable();
+    static void  InterruptEnable(uint8 value);
 };
 
 

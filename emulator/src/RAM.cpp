@@ -9,6 +9,7 @@
 #include "../include/VideoRegisters.h"
 #include "../include/Helper.h"
 #include "../include/Types.h"
+#include "../include/RegisterBank.h"
 
 ROM *RAM::loadedRom = nullptr;
 ROM *RAM::bootRom = nullptr;
@@ -102,6 +103,12 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             success = true;
             break;
         }
+        case 0xFF0F: {
+            Helper::RAMLog(" [Interrupt Flag]");
+            RegisterBank::InterruptFlag(value);
+            success = true;
+            break;
+        }
         case 0xFF11: {
             Helper::RAMLog(" [Channel1 Wave Pattern]");
             success = SoundGenerator::Channel1WavePattern(value);
@@ -142,6 +149,11 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             success = VideoRegisters::ScrollPosY(value);
             break;
         }
+        case 0xFF43: {
+            Helper::RAMLog(" [ScrollPosX]");
+            success = VideoRegisters::ScrollPosX(value);
+            break;
+        }
         case 0xFF47: {
             Helper::RAMLog(" [Video BG Palette]");
             success = VideoRegisters::BGPaletteData(value);
@@ -152,13 +164,19 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             activeBootPage = &loadedRom;
             success = true;
             puts("Successfully reached end of boot rom");
-            exit(0);
+            //exit(0);
             break;
         }
         case 0xFF80 ... 0xFFFE: {
             int internalAddr = address - 0xFF80;
             Helper::RAMLog(" [STACK@%d]", internalAddr);
             stack[internalAddr] = value;
+            success = true;
+            break;
+        }
+        case 0xFFFF: {
+            Helper::RAMLog(" [Interrupt Enable]");
+            RegisterBank::InterruptFlag(value);
             success = true;
             break;
         }

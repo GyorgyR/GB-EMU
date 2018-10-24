@@ -6,17 +6,21 @@
 #include "../include/RegisterBank.h"
 #include "../include/Helper.h"
 
-uint8_t RegisterBank::A = 0;
-uint8_t RegisterBank::B = 0;
-uint8_t RegisterBank::C = 0;
-uint8_t RegisterBank::D = 0;
-uint8_t RegisterBank::E = 0;
-uint8_t RegisterBank::F = 0;
-uint8_t RegisterBank::H = 0;
-uint8_t RegisterBank::L = 0;
+uint8 RegisterBank::A = 0;
+uint8 RegisterBank::B = 0;
+uint8 RegisterBank::C = 0;
+uint8 RegisterBank::D = 0;
+uint8 RegisterBank::E = 0;
+uint8 RegisterBank::F = 0;
+uint8 RegisterBank::H = 0;
+uint8 RegisterBank::L = 0;
+uint16 RegisterBank::SP = 0;
 
-uint16_t RegisterBank::SP = 0;
-uint16_t RegisterBank::PC = 0;
+uint16 RegisterBank::PC = 0;
+
+uint8 RegisterBank::interruptFlag = 0;
+uint8 RegisterBank::interruptEnable = 0;
+bool RegisterBank::areInterruptsEnabled = false;
 
 bool RegisterBank::IsZSet()
 {
@@ -98,4 +102,36 @@ void RegisterBank::SetN(bool isOn) {
 void RegisterBank::SetH(bool isOn) {
     if (isOn) RegisterBank::F |= 0b00100000;
     else RegisterBank::F &= 0b11011111;
+}
+
+RegisterBank::RegisterBank() {
+
+}
+
+RegisterBank::~RegisterBank() {
+
+}
+
+bool RegisterBank::AreInterruptsEnabled() {
+    return areInterruptsEnabled;
+}
+
+void RegisterBank::SetInterruptEnabled(bool enabled) {
+    areInterruptsEnabled = enabled;
+}
+
+uint8 RegisterBank::InterruptFlag() {
+    return interruptFlag;
+}
+
+void RegisterBank::InterruptFlag(uint8 value) {
+    interruptFlag = value;
+}
+
+uint8 RegisterBank::InterruptEnable() {
+    return interruptEnable;
+}
+
+void RegisterBank::InterruptEnable(uint8 value) {
+    interruptEnable = value;
 }
