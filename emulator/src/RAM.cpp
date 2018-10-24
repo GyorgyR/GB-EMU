@@ -68,7 +68,6 @@ uint8 RAM::ReadByteAt(uint16 address)
             retVal = stack[internalAddr];
             break;
         }
-        UNIMPLEMENTED:
         default:
             printf(" (Unimplemented read range: 0x%04X)\n", address);
             exit(1);
@@ -101,6 +100,18 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             Helper::RAMLog(" [WRAM1%d]", intenalAddress);
             workRam[1][intenalAddress] = value;
             success = true;
+            break;
+        }
+        case 0xFF01: {
+            Helper::RAMLog(" [Serial Data]");
+            printf("Serial send data: 0x%02X\n", value);
+            success = false;
+            break;
+        }
+        case 0xFF02: {
+            Helper::RAMLog(" [Serial Control");
+            printf("Serial set control: 0x%02X\n", value);
+            success = false;
             break;
         }
         case 0xFF0F: {
@@ -144,6 +155,11 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             success = VideoRegisters::LCDControl(value);
             break;
         }
+        case 0xFF41: {
+            Helper::RAMLog(" [LCD STAT]");
+            success = VideoRegisters::LCDStat(value);
+            break;
+        }
         case 0xFF42: {
             Helper::RAMLog(" [ScrollPosY]");
             success = VideoRegisters::ScrollPosY(value);
@@ -157,6 +173,16 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
         case 0xFF47: {
             Helper::RAMLog(" [Video BG Palette]");
             success = VideoRegisters::BGPaletteData(value);
+            break;
+        }
+        case 0xFF48: {
+            Helper::RAMLog(" [Video OBJ Palette0]");
+            success = VideoRegisters::OBJPalette0Data(value);
+            break;
+        }
+        case 0xFF49: {
+            Helper::RAMLog(" [Video OBJ Palette1]");
+            success = VideoRegisters::OBJPalette1Data(value);
             break;
         }
         case 0xFF50: {

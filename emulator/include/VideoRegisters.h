@@ -18,15 +18,28 @@ private:
 
     static uint8 BGPaletteDataReg;
     static uint8 BGPaletteArray[];
+    static uint8 OBJPalette0Reg;
+    static uint8 OBJPalette0Array[];
+    static uint8 OBJPalette1Reg;
+    static uint8 OBJPalette1Array[];
     static uint8 ScrollPosYReg;
     static uint8 ScrollPosXReg;
     static uint8 LCDControlReg;
     static uint8 LCDYCoordReg;
+    static uint8 LCDStatReg;
 
 public:
     static uint8 BGPaletteData();
-    static bool BGPaletteData(uint8 value);
+    static bool  BGPaletteData(uint8 value);
     static RGBA &GetBGColour(int colour);
+
+    static uint8 OBJPalette0Data();
+    static bool  OBJPalette0Data(uint8 value);
+    static RGBA &GetObjColour0(int colour);
+
+    static uint8 OBJPalette1Data();
+    static bool  OBJPalette1Data(uint8 value);
+    static RGBA &GetObjColour1(int colour);
 
     static uint8 ScrollPosY();
     static bool ScrollPosY(uint8 value);
@@ -41,6 +54,9 @@ public:
     static bool LCDControl(uint8 value);
     static uint16 BGTileMapBaseAddr();
     static uint16 BGTileDataBaseAddr();
+
+    static uint8 LCDStat();
+    static bool  LCDStat(uint8 value);
 };
 
 

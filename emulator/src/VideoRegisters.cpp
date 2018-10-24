@@ -8,10 +8,15 @@
 
 uint8 VideoRegisters::BGPaletteDataReg = 0;
 uint8 VideoRegisters::BGPaletteArray[4];
+uint8 VideoRegisters::OBJPalette0Reg = 0;
+uint8 VideoRegisters::OBJPalette0Array[4];
+uint8 VideoRegisters::OBJPalette1Reg = 0;
+uint8 VideoRegisters::OBJPalette1Array[4];
 uint8 VideoRegisters::ScrollPosYReg = 0;
 uint8 VideoRegisters::ScrollPosXReg = 0;
 uint8 VideoRegisters::LCDControlReg = 0;
 uint8 VideoRegisters::LCDYCoordReg = 0;
+uint8 VideoRegisters::LCDStatReg = 0;
 
 VideoRegisters::VideoRegisters()
 {
@@ -96,4 +101,47 @@ bool VideoRegisters::ScrollPosX(uint8 value)
 
 RGBA &VideoRegisters::GetBGColour(int colour) {
     return Configuration::Colours[BGPaletteArray[colour]];
+}
+
+uint8 VideoRegisters::LCDStat() {
+    return LCDStatReg;
+}
+
+bool VideoRegisters::LCDStat(uint8 value) {
+    LCDStatReg |= value & 0b01111000;
+    return true;
+}
+
+uint8 VideoRegisters::OBJPalette0Data() {
+    return OBJPalette0Reg;
+}
+
+bool VideoRegisters::OBJPalette0Data(uint8 value) {
+    OBJPalette0Reg = value;
+    for (int pos = 0; pos < 4; ++pos) {
+        OBJPalette0Array[pos] = value & 0b11;
+        value >>= 2;
+    }
+    return true;
+}
+
+RGBA &VideoRegisters::GetObjColour0(int colour) {
+    return Configuration::Colours[OBJPalette0Array[colour]];
+}
+
+uint8 VideoRegisters::OBJPalette1Data() {
+    return OBJPalette1Reg;
+}
+
+bool VideoRegisters::OBJPalette1Data(uint8 value) {
+    OBJPalette1Reg = value;
+    for (int pos = 0; pos < 4; ++pos) {
+        OBJPalette1Array[pos] = value & 0b11;
+        value >>= 2;
+    }
+    return true;
+}
+
+RGBA &VideoRegisters::GetObjColour1(int colour) {
+    return Configuration::Colours[OBJPalette1Array[colour]];
 }
