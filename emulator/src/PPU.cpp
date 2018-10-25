@@ -37,20 +37,26 @@ void PPU::Update(int cycles)
             ++currentLine;
             currentLineCycle = 0;
             PPUState = 0;
+            VideoRegisters::LCDStatMode(2);
 
             if (currentLine == window->height) {
                 window->UpdateScreen();
                 PPUState = 3;
+                VideoRegisters::LCDStatMode(1);
             } else if (currentLine > LINES) {
                 currentLine = 0;
                 PPUState = 0;
+                VideoRegisters::LCDStatMode(2);
             }
             VideoRegisters::LCDYCoordinate(currentLine);
         }
 
         switch (PPUState) {
             case 0: { //OAMSEARCH
-                if (currentLineCycle == OAMSEARCHCYCLES) PPUState = 1;
+                if (currentLineCycle == OAMSEARCHCYCLES) {
+                    PPUState = 1;
+                    VideoRegisters::LCDStatMode(3);
+                }
                 break;
             }
             case 1: { //Pixel Draw
@@ -59,6 +65,7 @@ void PPU::Update(int cycles)
                 if (fifo.size() > 8) FifoPush();
                 if (currentPixel == window->width) {
                     PPUState = 2;
+                    VideoRegisters::LCDStatMode(0);
                     currentPixel = 0;
                     fifo = std::queue<int>();
                     fifoFetchState = 0;
