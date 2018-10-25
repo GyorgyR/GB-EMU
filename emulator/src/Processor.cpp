@@ -478,8 +478,9 @@ inline int op0x35()
 
 inline int op0x36()
 {
-    printf("Op not implemented: 0x36\n");
-    return -1;
+    uint8 value = RAM::ReadByteAt(RegisterBank::HL());
+    Helper::CPULog("LD\t[0x%04X], 0x%02X\n", RegisterBank::HL(), value);
+    return 12;
 }
 
 inline int op0x37()
