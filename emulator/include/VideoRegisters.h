@@ -57,6 +57,7 @@ public:
 
     static uint8 LCDStat();
     static bool  LCDStat(uint8 value);
+    static void  LCDStatMode(uint8 value);
 };
 
 

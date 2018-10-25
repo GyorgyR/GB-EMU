@@ -108,7 +108,9 @@ uint8 VideoRegisters::LCDStat() {
 }
 
 bool VideoRegisters::LCDStat(uint8 value) {
-    LCDStatReg |= value & 0b01111000;
+    uint8 originalLower = value & 0b111;
+    LCDStatReg = value & 0b000;
+    LCDStatReg |= originalLower;
     return true;
 }
 
@@ -144,4 +146,9 @@ bool VideoRegisters::OBJPalette1Data(uint8 value) {
 
 RGBA &VideoRegisters::GetObjColour1(int colour) {
     return Configuration::Colours[OBJPalette1Array[colour]];
+}
+
+void VideoRegisters::LCDStatMode(uint8 value) {
+    LCDStatReg &= 0b00;
+    LCDStatReg |= value & 0b11;
 }
