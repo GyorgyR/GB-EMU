@@ -47,4 +47,18 @@ int main(int argc, char *argv[])
     printf("Cleared bit 3: ");
     printBits(sizeof(allOnes), &allOnes);
     printf("\n");
+
+    uint8 allZeros = 0;
+    printf("Start: ");
+    printBits(sizeof(allZeros), &allZeros);
+    Helper::SetBit(&allZeros, 0);
+    printf("Set bit 0: ");
+    printBits(sizeof(allZeros), &allZeros);
+    Helper::SetBit(&allZeros, 7);
+    printf("Set bit 7: ");
+    printBits(sizeof(allZeros), &allZeros);
+    Helper::SetBit(&allZeros, 3);
+    printf("Set bit 3: ");
+    printBits(sizeof(allZeros), &allZeros);
+    printf("\n");
 }

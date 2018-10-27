@@ -26,10 +26,10 @@ public:
     static std::pair<uint8_t, uint8_t> DivideIntoTwoBytes(uint16_t value);
 
     static bool IsBitSet(uint16 bits, uint16 bitPos);
-
     static void ClearBit(uint16 *bits, uint16 bitPos);
-
     static void ClearBit(uint8 *bits, uint8 bitPos);
+
+    static void SetBit(uint8 *bits, uint8 bitPos);
 
     static void InitLogger();
 

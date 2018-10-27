@@ -113,6 +113,11 @@ void Helper::ClearBit(uint16 *bits, uint16 bitPos)
     *bits &= ~(1UL << bitPos);
 }
 
+void Helper::SetBit(uint8 *bits, uint8 bitPos)
+{
+    *bits |= 1UL << bitPos;
+}
+
 void Helper::ClearBit(uint8 *bits, uint8 bitPos)
 {
     *bits &= ~(1UL << bitPos);
