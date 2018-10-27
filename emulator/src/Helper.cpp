@@ -5,7 +5,7 @@
 #define DEBUG
 #undef RAM_DEBUG
 #undef PPU_DEBUG
-#undef CPU_DEBUG
+#define CPU_DEBUG
 
 #include <cstdio>
 #include <cstdarg>
@@ -36,9 +36,9 @@ std::pair<uint8_t, uint8_t> Helper::DivideIntoTwoBytes(uint16_t value) {
     return std::make_pair((value >> 8) & bit_mask, value & bit_mask);
 }
 
-bool Helper::IsBitSet(uint16_t bits, uint16_t bitPos)
+bool Helper::IsBitSet(uint16 bits, uint16 bitPos)
 {
-    uint16_t bitmask = 1 << bitPos;
+    uint16 bitmask = 1 << bitPos;
     return bits & bitmask;
 }
 
@@ -106,4 +106,14 @@ void Helper::PPULog(const char *message, ...)
     #else
     return;
     #endif
+}
+
+void Helper::ClearBit(uint16 *bits, uint16 bitPos)
+{
+    *bits &= ~(1UL << bitPos);
+}
+
+void Helper::ClearBit(uint8 *bits, uint8 bitPos)
+{
+    *bits &= ~(1UL << bitPos);
 }

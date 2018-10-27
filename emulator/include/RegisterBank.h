@@ -18,6 +18,7 @@ private:
     static uint8 interruptFlag;
     static uint8 interruptEnable;
     static bool areInterruptsEnabled;
+
 public:
     static uint8 A;
     static uint8 F;

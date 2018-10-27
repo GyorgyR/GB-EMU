@@ -25,11 +25,16 @@ public:
     static uint16_t ConcatTwoBytes(uint8_t first, uint8_t second);
     static std::pair<uint8_t, uint8_t> DivideIntoTwoBytes(uint16_t value);
 
-    static bool IsBitSet(uint16_t bits, uint16_t bitPos);
+    static bool IsBitSet(uint16 bits, uint16 bitPos);
+
+    static void ClearBit(uint16 *bits, uint16 bitPos);
+
+    static void ClearBit(uint8 *bits, uint8 bitPos);
 
     static void InitLogger();
 
     static void Log(const char *message, ...);
+
     static void SetCPULogStream(FILE *stream);
     static void CPULog(const char *message, ...);
 
