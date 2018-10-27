@@ -98,8 +98,12 @@ inline int op0x00()
 
 inline int op0x01()
 {
-    printf("Op not implemented: 0x01\n");
-    return -1;
+    uint8 firstByte = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 secondByte = RAM::ReadByteAt(++RegisterBank::PC);
+    uint16 value = Helper::ConcatTwoBytes(firstByte, secondByte);
+    RegisterBank::BC(value);
+    Helper::CPULog("LD\tBC, 0x%04X\n", value);
+    return 12;
 }
 
 inline int op0x02()
@@ -165,8 +169,9 @@ inline int op0x0A()
 
 inline int op0x0B()
 {
-    printf("Op not implemented: 0x0B\n");
-    return -1;
+    RegisterBank::BC(RegisterBank::BC() - 1);
+    Helper::CPULog("DEC\tBC\n");
+    return 8;
 }
 
 inline int op0x0C()
@@ -370,8 +375,10 @@ inline int op0x25()
 
 inline int op0x26()
 {
-    printf("Op not implemented: 0x26\n");
-    return -1;
+    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
+    baseLoadReg(&RegisterBank::H, value);
+    Helper::CPULog("LD\tH, 0x%02X\n", value);
+    return 8;
 }
 
 inline int op0x27()
@@ -401,8 +408,10 @@ inline int op0x29()
 
 inline int op0x2A()
 {
-    printf("Op not implemented: 0x2A\n");
-    return -1;
+    RegisterBank::A = RAM::ReadByteAt(RegisterBank::HL());
+    RegisterBank::HL(RegisterBank::HL() + 1);
+    Helper::CPULog("LD\tA, [HL++]\n");
+    return 8;
 }
 
 inline int op0x2B()
@@ -1059,8 +1068,8 @@ inline int op0x93()
 
 inline int op0x94()
 {
-    printf("Op not implemented: 0x94\n");
-    return -1;
+    Helper::CPULog("SUB\tH\n");
+    return baseSub(RegisterBank::H);
 }
 
 inline int op0x95()
@@ -1260,8 +1269,15 @@ inline int op0xB0()
 
 inline int op0xB1()
 {
-    printf("Op not implemented: 0xB1\n");
-    return -1;
+    RegisterBank::A |= RegisterBank::C;
+
+    RegisterBank::SetZ(RegisterBank::A == 0);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(false);
+    RegisterBank::SetC(false);
+
+    Helper::CPULog("OR\tC\n");
+    return 4;
 }
 
 inline int op0xB2()
@@ -1395,8 +1411,10 @@ inline int op0xC5()
 
 inline int op0xC6()
 {
-    printf("Op not implemented: 0xC6\n");
-    return -1;
+    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
+    baseAdd(&RegisterBank::A, value);
+    Helper::CPULog("ADD\tA, 0x%02X\n", value);
+    return 8;
 }
 
 inline int op0xC7()
@@ -1668,7 +1686,7 @@ inline int op0xEA()
     uint16 address = getNextTwoBytes();
     RAM::WriteByteAt(address, RegisterBank::A);
 
-    Helper::CPULog("LD\t[0x%04X], A", address);
+    Helper::CPULog("LD\t[0x%04X], A\n", address);
     return 16;
 }
 
@@ -1777,8 +1795,9 @@ inline int op0xFA()
 
 inline int op0xFB()
 {
-    printf("Op not implemented: 0xFB\n");
-    return -1;
+    RegisterBank::SetInterruptEnabled(true);
+    Helper::CPULog("EI\n");
+    return 4;
 }
 
 inline int op0xFC()
@@ -2084,9 +2103,46 @@ void Processor::StartCPULoop()
     Helper::Log("Start CPU loop");
     int status = 1;
     while (status > 0) {
+        //Fetch and Decode
         status = decodeInstr(RegisterBank::PC);
-        PPU::Update(status);
         RegisterBank::PC++;
+
+        //PPU push pixels
+        PPU::Update(status);
+
+        //Handle Interrupts
+        if (
+                RegisterBank::AreInterruptsEnabled() &&
+                RegisterBank::InterruptEnable() &&
+                RegisterBank::InterruptFlag()
+                ) {
+
+            for (int i = 0; i < 5; ++i) {
+                if (
+                        Helper::IsBitSet(RegisterBank::InterruptEnable(), i) &&
+                        Helper::IsBitSet(RegisterBank::InterruptFlag(), i)
+                        ) {
+
+                    //Reset IF
+                    uint8 resetFlags = RegisterBank::InterruptFlag();
+                    Helper::ClearBit(&resetFlags, i);
+                    RegisterBank::InterruptFlag(resetFlags);
+
+                    //Turn off interrupts
+                    RegisterBank::SetInterruptEnabled(false);
+
+                    //Push PC
+                    pair <uint8, uint8> pcBytes = Helper::DivideIntoTwoBytes(RegisterBank::PC);
+                    RAM::WriteByteAt(RegisterBank::SP--, pcBytes.first);
+                    RAM::WriteByteAt(RegisterBank::SP--, pcBytes.second);
+
+                    RegisterBank::PC = 0x40 + i * 0x8;
+
+                    PPU::Update(12);
+                    break; //TODO: not use break?
+                }
+            }
+        }
 
         #ifdef REGISTERS
         Helper::CPULog(
