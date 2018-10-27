@@ -17,6 +17,8 @@ ROM **RAM::activeBootPage = &bootRom;
 uint8 RAM::vram[8192];
 uint8 RAM::stack[0x7F];
 uint8 RAM::workRam[8][4096];
+uint8 RAM::romBankNo = 0;
+uint8 RAM::wramBankNo = 1;
 
 RAM::RAM()
 {
@@ -42,14 +44,32 @@ uint8 RAM::ReadByteAt(uint16 address)
             break;
         }
         case 0x4000 ... 0x7FFF: {
-            retVal = loadedRom->GetByteAt(address);
-            Helper::RAMLog("[ROM BANK N]");
+            uint16 switchedAddress = address + (romBankNo - 1) * (0x7FFF - 0x4000);
+            retVal = loadedRom->GetByteAt(switchedAddress);
+            Helper::RAMLog("[ROM BANK %d]", romBankNo);
             break;
         }
         case 0x8000 ... 0x9FFF: {
             int internalAddress = address - 0x8000;
             Helper::RAMLog(" [VRAM@%d]", internalAddress);
             retVal = vram[internalAddress];
+            break;
+        }
+        case 0xC000 ... 0xCFFF: {
+            int internalAddress = address - 0xC000;
+            Helper::RAMLog(" [WRAM0@d]", internalAddress);
+            retVal = workRam[0][internalAddress];
+            break;
+        }
+        case 0xD000 ... 0xDFFF : {
+            int intenalAddress = address - 0xD000;
+            Helper::RAMLog(" [WRAM1%d]", intenalAddress);
+            retVal = workRam[wramBankNo][intenalAddress];
+            break;
+        }
+        case 0xFF24: {
+            Helper::RAMLog(" [Channel ctrl/on-off]");
+            retVal = SoundGenerator::ChannelOnOffVolume();
             break;
         }
         case 0xFF42: {
@@ -81,6 +101,11 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
     Helper::RAMLog("[WRITE] [@0x%04X]", address);
     bool success = false;
     switch (address) {
+        case 0x2000 ... 0x3FFF: {
+            romBankNo = value & 0b11111;
+            success = true;
+            break;
+        }
         case 0x8000 ... 0x9FFF: {
             int internalAddress = address - 0x8000;
             Helper::RAMLog(" [VRAM @%d]", internalAddress);
@@ -98,8 +123,19 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
         case 0xD000 ... 0xDFFF : {
             int intenalAddress = address - 0xD000;
             Helper::RAMLog(" [WRAM1%d]", intenalAddress);
-            workRam[1][intenalAddress] = value;
+            workRam[wramBankNo][intenalAddress] = value;
             success = true;
+            break;
+        }
+        case 0xFE00 ... 0xFE9F: {
+            int internalAddress = address - 0xFE00;
+            Helper::RAMLog(" [OAM@%d]", internalAddress);
+            VideoRegisters::OAMRam[internalAddress] = value;
+            success = true;
+            break;
+        }
+        case 0xFEA0 ... 0xFEFF: {
+            success = false;
             break;
         }
         case 0xFF01: {
@@ -120,6 +156,11 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             success = true;
             break;
         }
+        case 0xFF10: {
+            Helper::RAMLog(" [Channel1 Sweep]");
+            success = SoundGenerator::Channel1Sweep(value);
+            break;
+        }
         case 0xFF11: {
             Helper::RAMLog(" [Channel1 Wave Pattern]");
             success = SoundGenerator::Channel1WavePattern(value);
@@ -138,6 +179,31 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
         case 0xFF14: {
             Helper::RAMLog(" [Channel1 Freq-hi]");
             success = SoundGenerator::Channel1FreqHi(value);
+            break;
+        }
+        case 0xFF17: {
+            Helper::RAMLog(" [Chanel2 Volume Envelope]");
+            success = SoundGenerator::Channel2VolumeEnvelope(value);
+            break;
+        }
+        case 0xFF19: {
+            Helper::RAMLog(" [Channel2 Freq-hi]");
+            success = SoundGenerator::Channel2FreqHi(value);
+            break;
+        }
+        case 0xFF1A: {
+            Helper::RAMLog(" [Channel3 On/Off]");
+            success = SoundGenerator::Channel3OnOff(value);
+            break;
+        }
+        case 0xFF21: {
+            Helper::RAMLog(" [Channel4 Volume Envelope]");
+            success = SoundGenerator::Channel4VolumeEnvelope(value);
+            break;
+        }
+        case 0xFF23: {
+            Helper::RAMLog(" [Channel4 Counter/Consecutive Select]");
+            success = SoundGenerator::Channel4CounterSelect(value);
             break;
         }
         case 0xFF25: {
@@ -185,12 +251,26 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             success = VideoRegisters::OBJPalette1Data(value);
             break;
         }
+        case 0xFF4A: {
+            Helper::RAMLog(" [Window Y Pos]");
+            success = VideoRegisters::WindowPosY(value);
+            break;
+        }
+        case 0xFF4B: {
+            Helper::RAMLog(" [Window X Pos]");
+            success = VideoRegisters::WindowPosX(value);
+            break;
+        }
         case 0xFF50: {
             Helper::RAMLog(" [BOOT ROM OFF]");
             activeBootPage = &loadedRom;
             success = true;
             puts("Successfully reached end of boot rom");
             //exit(0);
+            break;
+        }
+        case 0xFF7F: {
+            success = false;
             break;
         }
         case 0xFF80 ... 0xFFFE: {

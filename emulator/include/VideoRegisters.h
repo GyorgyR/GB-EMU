@@ -27,8 +27,14 @@ private:
     static uint8 LCDControlReg;
     static uint8 LCDYCoordReg;
     static uint8 LCDStatReg;
+    static uint8 WindowPosYReg;
+    static uint8 WindowPosXReg;
 
 public:
+    //Variables
+    static uint8 OAMRam[];
+
+    //Methods
     static uint8 BGPaletteData();
     static bool  BGPaletteData(uint8 value);
     static RGBA &GetBGColour(int colour);
@@ -58,6 +64,14 @@ public:
     static uint8 LCDStat();
     static bool  LCDStat(uint8 value);
     static void  LCDStatMode(uint8 value);
+
+    static uint8 WindowPosY();
+
+    static bool WindowPosY(uint8 value);
+
+    static uint8 WindowPosX();
+
+    static bool WindowPosX(uint8 value);
 };
 
 

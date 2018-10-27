@@ -19,6 +19,8 @@ private:
     static uint8 vram[];
     static uint8 stack[];
     static uint8 workRam[8][4096];
+    static uint8 romBankNo;
+    static uint8 wramBankNo;
 
     RAM();
     ~RAM();

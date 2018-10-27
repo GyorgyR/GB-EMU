@@ -17,6 +17,9 @@ uint8 VideoRegisters::ScrollPosXReg = 0;
 uint8 VideoRegisters::LCDControlReg = 0;
 uint8 VideoRegisters::LCDYCoordReg = 0;
 uint8 VideoRegisters::LCDStatReg = 0;
+uint8 VideoRegisters::WindowPosYReg = 0;
+uint8 VideoRegisters::WindowPosXReg = 0;
+uint8 VideoRegisters::OAMRam[160];
 
 VideoRegisters::VideoRegisters()
 {
@@ -33,7 +36,7 @@ uint8 VideoRegisters::BGPaletteData()
     return BGPaletteDataReg;
 }
 
-bool VideoRegisters::BGPaletteData(uint8_t value)
+bool VideoRegisters::BGPaletteData(uint8 value)
 {
     BGPaletteDataReg = value;
     for (int pos = 0; pos < 4; ++pos) {
@@ -48,7 +51,7 @@ uint8 VideoRegisters::ScrollPosY()
     return ScrollPosYReg;
 }
 
-bool VideoRegisters::ScrollPosY(uint8_t value)
+bool VideoRegisters::ScrollPosY(uint8 value)
 {
     ScrollPosYReg = value;
     return true;
@@ -59,7 +62,7 @@ uint8 VideoRegisters::LCDControl()
     return LCDControlReg;
 }
 
-bool VideoRegisters::LCDControl(uint8_t value)
+bool VideoRegisters::LCDControl(uint8 value)
 {
     LCDControlReg = value;
     return true;
@@ -151,4 +154,26 @@ RGBA &VideoRegisters::GetObjColour1(int colour) {
 void VideoRegisters::LCDStatMode(uint8 value) {
     LCDStatReg &= 0b00;
     LCDStatReg |= value & 0b11;
+}
+
+uint8 VideoRegisters::WindowPosY()
+{
+    return WindowPosYReg;
+}
+
+bool VideoRegisters::WindowPosY(uint8 value)
+{
+    WindowPosYReg = value;
+    return true;
+}
+
+uint8 VideoRegisters::WindowPosX()
+{
+    return WindowPosXReg;
+}
+
+bool VideoRegisters::WindowPosX(uint8 value)
+{
+    WindowPosXReg = value;
+    return true;
 }
