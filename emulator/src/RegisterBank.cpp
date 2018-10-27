@@ -135,3 +135,13 @@ uint8 RegisterBank::InterruptEnable() {
 void RegisterBank::InterruptEnable(uint8 value) {
     interruptEnable = value;
 }
+
+void RegisterBank::SetBitInIF(int bit)
+{
+    Helper::SetBit(&interruptFlag, bit);
+}
+
+void RegisterBank::ClearBitInIF(int bit)
+{
+    Helper::ClearBit(&interruptFlag, bit);
+}

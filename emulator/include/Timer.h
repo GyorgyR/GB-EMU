@@ -31,7 +31,7 @@ public:
     //Getters and setters
     static uint8 Divider();
 
-    static bool Divider();
+    static bool Divider(uint8);
 
     static uint8 TimerCounter();
 

@@ -10,6 +10,7 @@
 #include "../include/Helper.h"
 #include "../include/Types.h"
 #include "../include/RegisterBank.h"
+#include "../include/Timer.h"
 
 ROM *RAM::loadedRom = nullptr;
 ROM *RAM::bootRom = nullptr;
@@ -148,6 +149,11 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
             Helper::RAMLog(" [Serial Control");
             printf("Serial set control: 0x%02X\n", value);
             success = false;
+            break;
+        }
+        case 0xFF06: {
+            Helper::RAMLog(" [Timer Modulo]");
+            success = Timer::TimerModulo(value);
             break;
         }
         case 0xFF0F: {

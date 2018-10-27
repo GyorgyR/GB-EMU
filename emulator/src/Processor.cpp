@@ -8,12 +8,12 @@
 #define INSTPERSEC 4194304
 #define FPS 60
 
-#include "Processor.h"
 #include "../include/Processor.h"
 #include "../include/RegisterBank.h"
 #include "../include/Helper.h"
 #include "../include/PPU.h"
 #include "../include/Types.h"
+#include "../include/Timer.h"
 
 FILE *debugStream = stdout;
 
@@ -51,6 +51,7 @@ inline int baseSub(uint8 value)
     return 4;
 }
 
+/*
 inline int baseSub(uint8 *dest, uint8 value)
 {
     RegisterBank::SetH((RegisterBank::A & 0b111) > (value & 0b111));
@@ -63,6 +64,7 @@ inline int baseSub(uint8 *dest, uint8 value)
 
     return 4;
 }
+ */
 
 inline int baseDec(uint8 *reg)
 {
@@ -1354,9 +1356,8 @@ inline int op0xBD()
 
 inline int op0xBE()
 {
-    uint8 result = RegisterBank::A;
     uint8 value = RAM::ReadByteAt(RegisterBank::HL());
-    baseSub(&result, value);
+    baseSub(value);
     Helper::CPULog("CP\t[0x%04X]\n", RegisterBank::HL());
     return 8;
 }
@@ -2109,6 +2110,7 @@ void Processor::StartCPULoop()
 
         //PPU push pixels
         PPU::Update(status);
+        Timer::Update(status);
 
         //Handle Interrupts
         if (
@@ -2116,29 +2118,25 @@ void Processor::StartCPULoop()
                 RegisterBank::InterruptEnable() &&
                 RegisterBank::InterruptFlag()
                 ) {
-
             for (int i = 0; i < 5; ++i) {
                 if (
                         Helper::IsBitSet(RegisterBank::InterruptEnable(), i) &&
                         Helper::IsBitSet(RegisterBank::InterruptFlag(), i)
                         ) {
-
                     //Reset IF
-                    uint8 resetFlags = RegisterBank::InterruptFlag();
-                    Helper::ClearBit(&resetFlags, i);
-                    RegisterBank::InterruptFlag(resetFlags);
+                    RegisterBank::ClearBitInIF(i);
 
                     //Turn off interrupts
                     RegisterBank::SetInterruptEnabled(false);
 
                     //Push PC
-                    pair <uint8, uint8> pcBytes = Helper::DivideIntoTwoBytes(RegisterBank::PC);
-                    RAM::WriteByteAt(RegisterBank::SP--, pcBytes.first);
-                    RAM::WriteByteAt(RegisterBank::SP--, pcBytes.second);
+                    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::PC);
+                    RAM::WriteByteAt(RegisterBank::SP--, (RegisterBank::PC) >> 8);
 
                     RegisterBank::PC = 0x40 + i * 0x8;
 
-                    PPU::Update(12);
+                    PPU::Update(12); //TODO not sure if this is 12 or 8
+                    Timer::Update(12);
                     break; //TODO: not use break?
                 }
             }

@@ -28,7 +28,7 @@ uint8 Timer::Divider()
     return dividerReg;
 }
 
-bool Timer::Divider()
+bool Timer::Divider(uint8)
 {
     dividerReg = 0;
     return true;

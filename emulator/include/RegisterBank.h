@@ -57,6 +57,10 @@ public:
 
     static uint8 InterruptFlag();
     static void  InterruptFlag(uint8 value);
+
+    static void SetBitInIF(int bit);
+
+    static void ClearBitInIF(int bit);
     static uint8 InterruptEnable();
     static void  InterruptEnable(uint8 value);
 };
