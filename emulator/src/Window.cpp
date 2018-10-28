@@ -12,7 +12,7 @@
 #include "../include/Window.h"
 #include "../include/Configuration.h"
 #include "../include/RGBA.h"
-#include "../include/RAM.h"
+#include "../include/MMU.h"
 #include "../include/Types.h"
 
 uint32 frameCount = 0;

@@ -8,7 +8,7 @@
 #include <cstdint>
 
 #include "ROM.h"
-#include "RAM.h"
+#include "MMU.h"
 
 class Processor {
 private:

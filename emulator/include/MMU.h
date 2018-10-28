@@ -10,7 +10,7 @@
 #include "ROM.h"
 #include "Types.h"
 
-class RAM
+class MMU
 {
 private:
     static ROM *loadedRom;
@@ -22,8 +22,8 @@ private:
     static uint8 romBankNo;
     static uint8 wramBankNo;
 
-    RAM();
-    ~RAM();
+    MMU();
+    ~MMU();
 
 public:
     static void InitRam(ROM *rom);

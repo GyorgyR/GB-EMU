@@ -9,7 +9,7 @@
 
 #include "../include/PPU.h"
 #include "../include/VideoRegisters.h"
-#include "../include/RAM.h"
+#include "../include/MMU.h"
 #include "../include/Types.h"
 #include "../include/Helper.h"
 #include "../include/Configuration.h"
@@ -110,20 +110,20 @@ void PPU::FifoFetch()
     Helper::PPULog("FETCH\n");
     switch (fifoFetchState) {
         case 0: { //tile map fetch
-            lastTileNo = RAM::ReadByteAt(fetcherLastAddr++);
+            lastTileNo = MMU::ReadByteAt(fetcherLastAddr++);
             Helper::PPULog("  Fetched tile map: %d\n", lastTileNo);
             ++fifoFetchState;
             return;
         }
         case 1: { //byte 1 fetch
-            uint8 byte1 = RAM::ReadByteAt(currentTileRowBaseAddr());
+            uint8 byte1 = MMU::ReadByteAt(currentTileRowBaseAddr());
             Helper::PPULog("  Fetched byte1: 0x%02X\n", byte1);
             lastByte1 = byte1;
             ++fifoFetchState;
             return;
         }
         case 2: { //byte 2 fetch, decode and store to fifo
-            uint8 byte2 = RAM::ReadByteAt(currentTileRowBaseAddr() + 1);
+            uint8 byte2 = MMU::ReadByteAt(currentTileRowBaseAddr() + 1);
             Helper::PPULog("  Fetched byte2: 0x%02X\n", byte2);
 
             for (int i = 0; i < 8; ++i) {

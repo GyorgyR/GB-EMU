@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
     Helper::Log("%s", "Open bootstrap ROM");
     ROM bootstrap_rom(bootstrap_rom_path);
-    RAM::InitBootRom(&bootstrap_rom);
+    MMU::InitBootRom(&bootstrap_rom);
 
     Helper::Log("Open Window");
     Window window;
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
     Helper::Log("Open game ROM");
     ROM rom(argv[1]);
-    RAM::InitRam(&rom);
+    MMU::InitRam(&rom);
 
     Helper::Log("Set up ram module");
     Processor cpu;
@@ -92,8 +92,8 @@ int main(int argc, char *argv[])
 
         }
         else if (command == "start") {
-            RAM::InitRam(&bootstrap_rom);
-            RAM::SetDebugStream(fopen("ram-run.log", "w+"));
+            MMU::InitRam(&bootstrap_rom);
+            MMU::SetDebugStream(fopen("ram-run.log", "w+"));
             Processor cpu;
             cpu.StartCPULoop();
         }

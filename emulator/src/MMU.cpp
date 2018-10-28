@@ -4,7 +4,7 @@
 
 #include <cstdlib>
 
-#include "../include/RAM.h"
+#include "../include/MMU.h"
 #include "../include/SoundGenerator.h"
 #include "../include/VideoRegisters.h"
 #include "../include/Helper.h"
@@ -13,24 +13,24 @@
 #include "../include/Timer.h"
 #include "../include/Joypad.h"
 
-ROM *RAM::loadedRom = nullptr;
-ROM *RAM::bootRom = nullptr;
-ROM **RAM::activeBootPage = &bootRom;
-uint8 RAM::vram[8192];
-uint8 RAM::stack[0x7F];
-uint8 RAM::workRam[8][4096];
-uint8 RAM::romBankNo = 0;
-uint8 RAM::wramBankNo = 1;
+ROM *MMU::loadedRom = nullptr;
+ROM *MMU::bootRom = nullptr;
+ROM **MMU::activeBootPage = &bootRom;
+uint8 MMU::vram[8192];
+uint8 MMU::stack[0x7F];
+uint8 MMU::workRam[8][4096];
+uint8 MMU::romBankNo = 0;
+uint8 MMU::wramBankNo = 1;
 
-RAM::RAM()
+MMU::MMU()
 {
 }
 
-RAM::~RAM()
+MMU::~MMU()
 {
 }
 
-uint8 RAM::ReadByteAt(uint16 address)
+uint8 MMU::ReadByteAt(uint16 address)
 {
     uint8 retVal = -1;
     Helper::RAMLog("[READ ] [@0x%04X]", address);
@@ -103,7 +103,7 @@ uint8 RAM::ReadByteAt(uint16 address)
     return retVal;
 }
 
-bool RAM::WriteByteAt(uint16 address, uint8 value)
+bool MMU::WriteByteAt(uint16 address, uint8 value)
 {
     Helper::RAMLog("[WRITE] [@0x%04X]", address);
     bool success = false;
@@ -311,17 +311,17 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
     return success;
 }
 
-void RAM::InitRam(ROM *rom)
+void MMU::InitRam(ROM *rom)
 {
     loadedRom = rom;
 }
 
-void RAM::InitBootRom(ROM *boot)
+void MMU::InitBootRom(ROM *boot)
 {
     bootRom = boot;
 }
 
-void RAM::DumpVRAM()
+void MMU::DumpVRAM()
 {
     for (int i = 0x8000; i < 0xA000; ++i) {
         Helper::Log("0x%04X: 0x%02X", i, vram[i - 0x8000]);

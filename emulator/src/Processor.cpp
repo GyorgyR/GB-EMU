@@ -27,8 +27,8 @@ Processor::Processor()
 
 inline uint16 getNextTwoBytes()
 {
-    uint8 first = RAM::ReadByteAt(++RegisterBank::PC);
-    uint8 second = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 first = MMU::ReadByteAt(++RegisterBank::PC);
+    uint8 second = MMU::ReadByteAt(++RegisterBank::PC);
     return Helper::ConcatTwoBytes(second, first);
 }
 
@@ -100,8 +100,8 @@ inline int op0x00()
 
 inline int op0x01()
 {
-    uint8 firstByte = RAM::ReadByteAt(++RegisterBank::PC);
-    uint8 secondByte = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 firstByte = MMU::ReadByteAt(++RegisterBank::PC);
+    uint8 secondByte = MMU::ReadByteAt(++RegisterBank::PC);
     uint16 value = Helper::ConcatTwoBytes(firstByte, secondByte);
     RegisterBank::BC(value);
     Helper::CPULog("LD\tBC, 0x%04X\n", value);
@@ -140,7 +140,7 @@ inline int op0x05()
 
 inline int op0x06()
 {
-    RegisterBank::B = RAM::ReadByteAt(++RegisterBank::PC);
+    RegisterBank::B = MMU::ReadByteAt(++RegisterBank::PC);
     Helper::CPULog("LD\tB, 0x%02X\n", RegisterBank::B);
     return 8;
 }
@@ -197,7 +197,7 @@ inline int op0x0D()
 
 inline int op0x0E()
 {
-    RegisterBank::C = RAM::ReadByteAt(++RegisterBank::PC);
+    RegisterBank::C = MMU::ReadByteAt(++RegisterBank::PC);
     Helper::CPULog("LD\tC, 0x%02X\n", RegisterBank::C);
     return 8;
 }
@@ -248,7 +248,7 @@ inline int op0x15()
 
 inline int op0x16()
 {
-    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
     Helper::CPULog("LD\tD, 0x%02X\n", value);
     return baseLoadReg(&RegisterBank::D, value) + 4;
 }
@@ -271,7 +271,7 @@ inline int op0x17()
 
 inline int op0x18()
 {
-    int8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    int8_t value = MMU::ReadByteAt(++RegisterBank::PC);
     RegisterBank::PC += value;
     Helper::CPULog("JR\t%d\n", value);
     return 12;
@@ -285,7 +285,7 @@ inline int op0x19()
 
 inline int op0x1A()
 {
-    RegisterBank::A = RAM::ReadByteAt(RegisterBank::DE());
+    RegisterBank::A = MMU::ReadByteAt(RegisterBank::DE());
     Helper::CPULog("LD\tA, [DE]\n");
     return 8;
 }
@@ -310,7 +310,7 @@ inline int op0x1D()
 
 inline int op0x1E()
 {
-    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
     RegisterBank::E = value;
     Helper::CPULog("LD\tE, 0x%02X\n", value);
     return 8;
@@ -325,7 +325,7 @@ inline int op0x1F()
 inline int op0x20()
 {
     int cycles = 8;
-    int8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    int8_t value = MMU::ReadByteAt(++RegisterBank::PC);
     if (!RegisterBank::IsZSet()) {
         RegisterBank::PC += value;
         cycles += 4;
@@ -343,7 +343,7 @@ inline int op0x21()
 
 inline int op0x22()
 {
-    RAM::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
+    MMU::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
     RegisterBank::HL(RegisterBank::HL() + 1);
     Helper::CPULog("LD\t[HL++], A\n");
     return 8;
@@ -377,7 +377,7 @@ inline int op0x25()
 
 inline int op0x26()
 {
-    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
     baseLoadReg(&RegisterBank::H, value);
     Helper::CPULog("LD\tH, 0x%02X\n", value);
     return 8;
@@ -392,7 +392,7 @@ inline int op0x27()
 inline int op0x28()
 {
     int cycles = 8;
-    int8_t value = RAM::ReadByteAt(++RegisterBank::PC);
+    int8_t value = MMU::ReadByteAt(++RegisterBank::PC);
     if (RegisterBank::IsZSet())
     {
         RegisterBank::PC += value;
@@ -410,7 +410,7 @@ inline int op0x29()
 
 inline int op0x2A()
 {
-    RegisterBank::A = RAM::ReadByteAt(RegisterBank::HL());
+    RegisterBank::A = MMU::ReadByteAt(RegisterBank::HL());
     RegisterBank::HL(RegisterBank::HL() + 1);
     Helper::CPULog("LD\tA, [HL++]\n");
     return 8;
@@ -436,7 +436,7 @@ inline int op0x2D()
 
 inline int op0x2E()
 {
-    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
     RegisterBank::L = value;
     Helper::CPULog("LD\tL, 0x%02X\n", value);
     return 8;
@@ -463,7 +463,7 @@ inline int op0x31()
 
 inline int op0x32()
 {
-    RAM::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
+    MMU::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
     RegisterBank::HL(RegisterBank::HL() - 1);
     Helper::CPULog("LD\t[HL--](0x%04X), A\n", RegisterBank::HL());
     return 8;
@@ -489,7 +489,7 @@ inline int op0x35()
 
 inline int op0x36()
 {
-    uint8 value = RAM::ReadByteAt(RegisterBank::HL());
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
     Helper::CPULog("LD\t[0x%04X], 0x%02X\n", RegisterBank::HL(), value);
     return 12;
 }
@@ -546,7 +546,7 @@ inline int op0x3D()
 
 inline int op0x3E()
 {
-    RegisterBank::A = RAM::ReadByteAt(++RegisterBank::PC);
+    RegisterBank::A = MMU::ReadByteAt(++RegisterBank::PC);
     Helper::CPULog("LD\tA, 0x%02X\n", RegisterBank::A);
     return 8;
 }
@@ -984,7 +984,7 @@ inline int op0x85()
 
 inline int op0x86()
 {
-    uint8 value = RAM::ReadByteAt(RegisterBank::HL());
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
     baseAdd(&RegisterBank::A, value);
     Helper::CPULog("ADD\tA, [0x%04X] (0x%02X, 0x%02X)\n", RegisterBank::HL(), RegisterBank::A, value);
     return 8;
@@ -1356,7 +1356,7 @@ inline int op0xBD()
 
 inline int op0xBE()
 {
-    uint8 value = RAM::ReadByteAt(RegisterBank::HL());
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
     baseSub(value);
     Helper::CPULog("CP\t[0x%04X]\n", RegisterBank::HL());
     return 8;
@@ -1376,8 +1376,8 @@ inline int op0xC0()
 
 inline int op0xC1()
 {
-    RegisterBank::C = RAM::ReadByteAt(++RegisterBank::SP);
-    RegisterBank::B = RAM::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::C = MMU::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::B = MMU::ReadByteAt(++RegisterBank::SP);
     Helper::CPULog("POP\tBC(0x%04X)\n", RegisterBank::BC());
     return 12;
 }
@@ -1404,15 +1404,15 @@ inline int op0xC4()
 
 inline int op0xC5()
 {
-    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::B);
-    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::C);
+    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::B);
+    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::C);
     Helper::CPULog("PUSH\tBC(0x%04X)\n", RegisterBank::BC());
     return 16;
 }
 
 inline int op0xC6()
 {
-    uint8 value = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
     baseAdd(&RegisterBank::A, value);
     Helper::CPULog("ADD\tA, 0x%02X\n", value);
     return 8;
@@ -1432,8 +1432,8 @@ inline int op0xC8()
 
 inline int op0xC9()
 {
-    uint16 address = RAM::ReadByteAt(++RegisterBank::SP) << 8;
-    address += RAM::ReadByteAt(++RegisterBank::SP);
+    uint16 address = MMU::ReadByteAt(++RegisterBank::SP) << 8;
+    address += MMU::ReadByteAt(++RegisterBank::SP);
     RegisterBank::PC = address - 1; //offset the one that gets added.
     Helper::CPULog("RET\t(0x%04X)\n", address);
     return 16;
@@ -1475,7 +1475,7 @@ inline int cbOp0x7C()
 
 inline int op0xCB()
 {
-    uint8 cb_op = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 cb_op = MMU::ReadByteAt(++RegisterBank::PC);
     switch (cb_op) {
         case 0x11: return cbOp0x11();
         case 0x7C: return cbOp0x7C();
@@ -1495,8 +1495,8 @@ inline int op0xCD()
 {
     uint16 funcAddr = getNextTwoBytes();
 
-    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::PC + 1);
-    RAM::WriteByteAt(RegisterBank::SP--, (RegisterBank::PC + 1) >> 8);
+    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::PC + 1);
+    MMU::WriteByteAt(RegisterBank::SP--, (RegisterBank::PC + 1) >> 8);
 
     RegisterBank::PC = funcAddr - 1; //offset the increment that's gonna happen
     Helper::CPULog("CALL\t0x%04X\n", funcAddr);
@@ -1523,8 +1523,8 @@ inline int op0xD0()
 
 inline int op0xD1()
 {
-    RegisterBank::E = RAM::ReadByteAt(++RegisterBank::SP);
-    RegisterBank::D = RAM::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::E = MMU::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::D = MMU::ReadByteAt(++RegisterBank::SP);
     Helper::CPULog("POP\tDE(0x%04X)\n", RegisterBank::DE());
     return 12;
 }
@@ -1549,8 +1549,8 @@ inline int op0xD4()
 
 inline int op0xD5()
 {
-    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::D);
-    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::E);
+    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::D);
+    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::E);
     Helper::CPULog("PUSH\tDE(0x%04X)\n", RegisterBank::DE());
     return 16;
 }
@@ -1617,23 +1617,23 @@ inline int op0xDF()
 
 inline int op0xE0()
 {
-    uint16 immediate = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
-    RAM::WriteByteAt(immediate, RegisterBank::A);
+    uint16 immediate = MMU::ReadByteAt(++RegisterBank::PC) + 0xFF00;
+    MMU::WriteByteAt(immediate, RegisterBank::A);
     Helper::CPULog("LDH\t[0x%02X], A\n", immediate);
     return 12;
 }
 
 inline int op0xE1()
 {
-    RegisterBank::H = RAM::ReadByteAt(++RegisterBank::SP);
-    RegisterBank::L = RAM::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::H = MMU::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::L = MMU::ReadByteAt(++RegisterBank::SP);
     Helper::CPULog("POP\tHL(0x%04X)\n", RegisterBank::HL());
     return 12;
 }
 
 inline int op0xE2()
 {
-    RAM::WriteByteAt(0xFF00 + RegisterBank::C, RegisterBank::A);
+    MMU::WriteByteAt(0xFF00 + RegisterBank::C, RegisterBank::A);
     Helper::CPULog("LD\t[C], A\n");
     return 8;
 }
@@ -1652,8 +1652,8 @@ inline int op0xE4()
 
 inline int op0xE5()
 {
-    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::L);
-    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::H);
+    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::L);
+    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::H);
     Helper::CPULog("PUSH\tHL(0x%04X)\n", RegisterBank::HL());
     return 16;
 }
@@ -1685,7 +1685,7 @@ inline int op0xE9()
 inline int op0xEA()
 {
     uint16 address = getNextTwoBytes();
-    RAM::WriteByteAt(address, RegisterBank::A);
+    MMU::WriteByteAt(address, RegisterBank::A);
 
     Helper::CPULog("LD\t[0x%04X], A\n", address);
     return 16;
@@ -1723,16 +1723,16 @@ inline int op0xEF()
 
 inline int op0xF0()
 {
-    uint16 address = RAM::ReadByteAt(++RegisterBank::PC) + 0xFF00;
-    RegisterBank::A = RAM::ReadByteAt(address);
+    uint16 address = MMU::ReadByteAt(++RegisterBank::PC) + 0xFF00;
+    RegisterBank::A = MMU::ReadByteAt(address);
     Helper::CPULog("LD\tA, [0x%04X]\n", address);
     return 12;
 }
 
 inline int op0xF1()
 {
-    RegisterBank::A = RAM::ReadByteAt(++RegisterBank::SP);
-    RegisterBank::F = RAM::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::A = MMU::ReadByteAt(++RegisterBank::SP);
+    RegisterBank::F = MMU::ReadByteAt(++RegisterBank::SP);
     Helper::CPULog("POP\tAF(0x%04X)\n", RegisterBank::AF());
     return 12;
 }
@@ -1758,8 +1758,8 @@ inline int op0xF4()
 
 inline int op0xF5()
 {
-    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::F);
-    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::A);
+    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::F);
+    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::A);
     Helper::CPULog("PUSH\tAF(0x%04X)\n", RegisterBank::AF());
     return 16;
 }
@@ -1815,7 +1815,7 @@ inline int op0xFD()
 
 inline int op0xFE()
 {
-    uint8 immediate = RAM::ReadByteAt(++RegisterBank::PC);
+    uint8 immediate = MMU::ReadByteAt(++RegisterBank::PC);
 
     RegisterBank::SetZ(RegisterBank::A == immediate);
     RegisterBank::SetN(true);
@@ -1834,7 +1834,7 @@ inline int op0xFF()
 
 int Processor::decodeInstr(uint16 address)
 {
-    uint8 op_code = RAM::ReadByteAt(address);
+    uint8 op_code = MMU::ReadByteAt(address);
     Helper::CPULog("0x%04X: ", address);
     switch(op_code) {
         case 0x00: return op0x00();
@@ -2130,8 +2130,8 @@ void Processor::StartCPULoop()
                     RegisterBank::SetInterruptEnabled(false);
 
                     //Push PC
-                    RAM::WriteByteAt(RegisterBank::SP--, RegisterBank::PC);
-                    RAM::WriteByteAt(RegisterBank::SP--, (RegisterBank::PC) >> 8);
+                    MMU::WriteByteAt(RegisterBank::SP--, RegisterBank::PC);
+                    MMU::WriteByteAt(RegisterBank::SP--, (RegisterBank::PC) >> 8);
 
                     RegisterBank::PC = 0x40 + i * 0x8;
 
