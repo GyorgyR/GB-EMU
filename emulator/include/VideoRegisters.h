@@ -33,6 +33,7 @@ private:
 public:
     //Variables
     static uint8 OAMRam[];
+    static bool IsWindowEnabled;
 
     //Methods
     static uint8 BGPaletteData();

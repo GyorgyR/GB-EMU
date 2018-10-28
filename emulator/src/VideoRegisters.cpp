@@ -20,6 +20,7 @@ uint8 VideoRegisters::LCDStatReg = 0;
 uint8 VideoRegisters::WindowPosYReg = 0;
 uint8 VideoRegisters::WindowPosXReg = 0;
 uint8 VideoRegisters::OAMRam[160];
+bool VideoRegisters::IsWindowEnabled = false;
 
 VideoRegisters::VideoRegisters()
 {
@@ -64,6 +65,7 @@ uint8 VideoRegisters::LCDControl()
 
 bool VideoRegisters::LCDControl(uint8 value)
 {
+    IsWindowEnabled = Helper::IsBitSet(value, 5);
     LCDControlReg = value;
     return true;
 }
@@ -99,6 +101,7 @@ uint8 VideoRegisters::ScrollPosX()
 bool VideoRegisters::ScrollPosX(uint8 value)
 {
     ScrollPosXReg = value;
+    Helper::Log("Current X Scroll: %d", value);
     return true;
 }
 

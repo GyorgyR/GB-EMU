@@ -24,6 +24,8 @@ uint8 PPU::lastByte1 = 0;
 int PPU::decodedBytes[8];
 std::queue<int> PPU::fifo;
 Window *PPU::window = nullptr;
+uint16 PPU::fetcherLastAddr = 0;
+int PPU::discardedPixels = 0;
 
 PPU::PPU() {}
 
@@ -36,6 +38,7 @@ void PPU::Update(int cycles)
         if (++currentLineCycle > CLOCKSPERLINE) {
             ++currentLine;
             currentLineCycle = 0;
+            discardedPixels = 0;
             PPUState = 0;
             VideoRegisters::LCDStatMode(2);
 
@@ -49,6 +52,11 @@ void PPU::Update(int cycles)
                 VideoRegisters::LCDStatMode(2);
             }
             VideoRegisters::LCDYCoordinate(currentLine);
+
+            fetcherLastAddr =
+                    VideoRegisters::BGTileMapBaseAddr() +
+                    ((currentLine + VideoRegisters::ScrollPosY()) / 8) * 32
+                    ;
         }
 
         switch (PPUState) {
@@ -60,7 +68,17 @@ void PPU::Update(int cycles)
                 break;
             }
             case 1: { //Pixel Draw
-
+                //Check for a window
+                if (VideoRegisters::IsWindowEnabled) {
+                    if (
+                            currentLine >= VideoRegisters::WindowPosY() &&
+                            currentPixel >= VideoRegisters::WindowPosX() - 7
+                            ) {
+                        //fifo = std::queue<int>();
+                        Helper::Log("Turn on window");
+                        exit(1);
+                    }
+                }
                 if (currentLineCycle % 2 == 1) FifoFetch();
                 if (fifo.size() > 8) FifoPush();
                 if (currentPixel == window->width) {
@@ -92,15 +110,7 @@ void PPU::FifoFetch()
     Helper::PPULog("FETCH\n");
     switch (fifoFetchState) {
         case 0: { //tile map fetch
-            int tileMapLine = (currentLine + VideoRegisters::ScrollPosY()) / 8;
-            int tileMapCol = (currentPixel + VideoRegisters::ScrollPosX() + 16) / 8;
-
-            uint16 tileMapAddress =
-                    VideoRegisters::BGTileMapBaseAddr() +
-                    (tileMapLine * 32) +
-                    tileMapCol;
-
-            lastTileNo = RAM::ReadByteAt(tileMapAddress);
+            lastTileNo = RAM::ReadByteAt(fetcherLastAddr++);
             Helper::PPULog("  Fetched tile map: %d\n", lastTileNo);
             ++fifoFetchState;
             return;
@@ -168,7 +178,8 @@ void PPU::FifoPush()
     int colour = fifo.front();
     fifo.pop();
 
-    window->DrawPixel(currentPixel++, currentLine, VideoRegisters::GetBGColour(colour));
+    if (discardedPixels < VideoRegisters::ScrollPosX()) ++discardedPixels;
+    else window->DrawPixel(currentPixel++, currentLine, VideoRegisters::GetBGColour(colour));
 }
 
 void PPU::SetWindow(Window *currWindow)

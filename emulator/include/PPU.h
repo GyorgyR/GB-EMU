@@ -29,6 +29,8 @@ private:
     static int decodedBytes[];
     static std::queue<int> fifo;
     static Window *window;
+    static int discardedPixels;
+    static uint16 fetcherLastAddr;
 
     //functions
     static void FifoFetch();
