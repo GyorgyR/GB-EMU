@@ -11,6 +11,7 @@
 #include "../include/Types.h"
 #include "../include/RegisterBank.h"
 #include "../include/Timer.h"
+#include "../include/Joypad.h"
 
 ROM *RAM::loadedRom = nullptr;
 ROM *RAM::bootRom = nullptr;
@@ -66,6 +67,11 @@ uint8 RAM::ReadByteAt(uint16 address)
             int intenalAddress = address - 0xD000;
             Helper::RAMLog(" [WRAM1%d]", intenalAddress);
             retVal = workRam[wramBankNo][intenalAddress];
+            break;
+        }
+        case 0xFF00: {
+            Helper::RAMLog(" [Joypad Register]");
+            retVal = Joypad::ReadRegister();
             break;
         }
         case 0xFF24: {
@@ -137,6 +143,11 @@ bool RAM::WriteByteAt(uint16 address, uint8 value)
         }
         case 0xFEA0 ... 0xFEFF: {
             success = false;
+            break;
+        }
+        case 0xFF00: {
+            Helper::RAMLog(" [Joypad Register]");
+            success = Joypad::WriteToRegister(value);
             break;
         }
         case 0xFF01: {
