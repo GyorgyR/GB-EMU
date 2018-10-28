@@ -25,8 +25,8 @@ int main()
     }
     window.UpdateScreen();
 
-    for (int i = 0; i < window.height; i += 1) {
-        for (int j = 0; j < window.width; j += 2) {
+    for (unsigned int i = 0; i < window.height; i += 1) {
+        for (unsigned int j = 0; j < window.width; j += 2) {
             window.DrawPixel(j + (i % 2), i, blue);
         }
     }
@@ -38,5 +38,5 @@ int main()
     }
     window.UpdateScreen();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
