@@ -95,6 +95,11 @@ uint8 MMU::ReadByteAt(uint16 address)
             retVal = stack[internalAddr];
             break;
         }
+        case 0xFFFF: {
+            Helper::RAMLog(" [Interrupt Enable]");
+            retVal = RegisterBank::InterruptEnable();
+            break;
+        }
         default:
             printf(" (Unimplemented read range: 0x%04X)\n", address);
             exit(1);
@@ -167,6 +172,11 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
             success = Timer::TimerModulo(value);
             break;
         }
+        case 0xFF07: {
+            Helper::RAMLog(" [Timer Control]");
+            success = Timer::TimerControl(value);
+            break;
+        }
         case 0xFF0F: {
             Helper::RAMLog(" [Interrupt Flag]");
             RegisterBank::InterruptFlag(value);
@@ -221,6 +231,11 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
         case 0xFF23: {
             Helper::RAMLog(" [Channel4 Counter/Consecutive Select]");
             success = SoundGenerator::Channel4CounterSelect(value);
+            break;
+        }
+        case 0xFF24: {
+            Helper::RAMLog(" [Channel Control]");
+            success = SoundGenerator::ChannelOnOffVolume(value);
             break;
         }
         case 0xFF25: {
@@ -299,7 +314,7 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
         }
         case 0xFFFF: {
             Helper::RAMLog(" [Interrupt Enable]");
-            RegisterBank::InterruptFlag(value);
+            RegisterBank::InterruptEnable(value);
             success = true;
             break;
         }

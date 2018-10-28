@@ -43,70 +43,41 @@ private:
 
 public:
     static uint8 Channel1Sweep();
-
     static bool Channel1Sweep(uint8 value);
-
     static uint8 Channel1WavePattern();
-
     static bool Channel1WavePattern(uint8 value);
-
     static uint8 Channel1FreqLo();
-
     static bool Channel1FreqLo(uint8 value);
-
     static uint8 Channel1FreqHi();
-
     static bool Channel1FreqHi(uint8 value);
-
     static uint8 Channel1VolumeEnvelope();
-
     static bool Channel1VolumeEnvelope(uint8 value);
 
-
     static uint8 Channel2VolumeEnvelope();
-
     static bool Channel2VolumeEnvelope(uint8 value);
-
     static uint8 Channel2FreqLo();
-
     static bool Channel2FreqLo(uint8 value);
-
     static uint8 Channel2FreqHi();
-
     static bool Channel2FreqHi(uint8 value);
-
     static uint8 Channel3OnOff();
-
     static bool Channel3OnOff(uint8 value);
-
     static uint8 Channel3FreqLo();
-
     static bool Channel3FreqLo(uint8 value);
-
     static uint8 Channel3FreqHi();
-
     static bool Channel3FreqHi(uint8 value);
 
-
     static uint8 Channel4VolumeEnvelope();
-
     static bool Channel4VolumeEnvelope(uint8 value);
-
     static uint8 Channel4CounterSelect();
-
     static bool Channel4CounterSelect(uint8 value);
 
-
     static uint8 SoundOutTerminal();
-
     static bool SoundOutTerminal(uint8 value);
 
     static uint8 SoundOnOff();
-
     static bool SoundOnOff(uint8 value);
 
     static uint8 ChannelOnOffVolume();
-
     static bool ChannelOnOffVolume(uint8 value);
 };
 
