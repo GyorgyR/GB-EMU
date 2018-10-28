@@ -67,6 +67,12 @@ void Window::DrawPixel(uint8_t x, uint8_t y, RGBA colour)
 
 void Window::UpdateScreen()
 {
+    SDL_Event event;
+    if (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT)
+            exit(0);
+    }
+
     SDL_RenderPresent(renderer);
     #ifdef FPS_COUNTER
     uint64 timeNow = SDL_GetPerformanceCounter();
