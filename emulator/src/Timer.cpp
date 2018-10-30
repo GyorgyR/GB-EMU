@@ -7,6 +7,7 @@
 #include "../include/Timer.h"
 #include "../include/Helper.h"
 #include "../include/RegisterBank.h"
+#include "../include/EventMiddleware.h"
 
 uint8 Timer::dividerReg = 0;
 uint8 Timer::timerCounterReg = 0;
@@ -64,6 +65,8 @@ uint8 Timer::TimerControl()
 bool Timer::TimerControl(uint8 value)
 {
     isRunning = value & 0b100;
+    if (isRunning) EventMiddleware::SubscribeToCpuCyclesPassed(Timer::Update);
+    else EventMiddleware::UnsubscribeFromCpuCyclesPassed(Timer::Update);
 
     switch (value & 0b11) {
         case 0b00: cyclesBeforeIncrement = CLOCKSPEED / 4096;

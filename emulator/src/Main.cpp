@@ -9,6 +9,7 @@
 #include "../include/Helper.h"
 #include "../include/Window.h"
 #include "../include/PPU.h"
+#include "../include/EventMiddleware.h"
 
 using std::cout;
 using std::endl;
@@ -40,6 +41,8 @@ int main(int argc, char *argv[])
     Helper::Log("Open game ROM");
     ROM rom(argv[1]);
     MMU::InitRam(&rom);
+
+    EventMiddleware::SubscribeToCpuCyclesPassed(PPU::Update);
 
     Helper::Log("Set up ram module");
     Processor cpu;

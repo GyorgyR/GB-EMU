@@ -13,6 +13,7 @@
 #include "../include/Types.h"
 #include "../include/Helper.h"
 #include "../include/Configuration.h"
+#include "../include/EventMiddleware.h"
 
 unsigned int PPU::currentLine = 0;
 unsigned int PPU::currentLineCycle = 0;

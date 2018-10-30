@@ -14,6 +14,7 @@
 #include "../include/PPU.h"
 #include "../include/Types.h"
 #include "../include/Timer.h"
+#include "../include/EventMiddleware.h"
 
 FILE *debugStream = stdout;
 
@@ -2192,9 +2193,8 @@ void Processor::StartCPULoop()
         status = decodeInstr(RegisterBank::PC);
         RegisterBank::PC++;
 
-        //PPU push pixels
-        PPU::Update(status);
-        Timer::Update(status);
+        //Notify other components of the cycles passed
+        EventMiddleware::PublishCpuCyclesPassed(status);
 
         //Handle Interrupts
         if (
