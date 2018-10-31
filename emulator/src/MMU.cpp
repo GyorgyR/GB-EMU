@@ -19,7 +19,7 @@ ROM **MMU::activeBootPage = &bootRom;
 uint8 MMU::vram[8192];
 uint8 MMU::stack[0x7F];
 uint8 MMU::workRam[8][4096];
-uint8 MMU::romBankNo = 0;
+uint8 MMU::romBankNo = 1;
 uint8 MMU::wramBankNo = 1;
 
 MMU::MMU()
