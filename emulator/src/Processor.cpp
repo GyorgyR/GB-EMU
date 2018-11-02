@@ -68,6 +68,12 @@ inline int baseSub(uint8 value)
     return 4;
 }
 
+inline int baseSbc(uint8 value)
+{
+    if (RegisterBank::IsCSet()) ++value;
+    return baseSub(value);
+}
+
 inline int baseDec(uint8 *reg)
 {
     RegisterBank::SetH(((*reg) & 0b000) > 0);
@@ -92,6 +98,13 @@ inline int baseAdd(uint8 value)
     RegisterBank::SetC(result > UINT8_MAX);
 
     return 4;
+}
+
+inline int baseAdc(uint8 value)
+{
+    if (RegisterBank::IsCSet()) ++value;
+
+    return baseAdd(value);
 }
 
 inline int baseAdd(uint16 value)
@@ -1114,50 +1127,51 @@ inline int op0x87()
 
 inline int op0x88()
 {
-    printf("Op not implemented: 0x88\n");
-    return -1;
+    Helper::CPULog("ADC\tA, B\n");
+    return baseAdc(RegisterBank::B);
 }
 
 inline int op0x89()
 {
-    printf("Op not implemented: 0x89\n");
-    return -1;
+    Helper::CPULog("ADC\tA, C\n");
+    return baseAdc(RegisterBank::C);
 }
 
 inline int op0x8A()
 {
-    printf("Op not implemented: 0x8A\n");
-    return -1;
+    Helper::CPULog("ADC\tA, D\n");
+    return baseAdc(RegisterBank::D);
 }
 
 inline int op0x8B()
 {
-    printf("Op not implemented: 0x8B\n");
-    return -1;
+    Helper::CPULog("ADC\tA, E\n");
+    return baseAdc(RegisterBank::E);
 }
 
 inline int op0x8C()
 {
-    printf("Op not implemented: 0x8C\n");
-    return -1;
+    Helper::CPULog("ADC\tA, H\n");
+    return baseAdc(RegisterBank::H);
 }
 
 inline int op0x8D()
 {
-    printf("Op not implemented: 0x8D\n");
-    return -1;
+    Helper::CPULog("ADC\tA, L\n");
+    return baseAdc(RegisterBank::L);
 }
 
 inline int op0x8E()
 {
-    printf("Op not implemented: 0x8E\n");
-    return -1;
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    Helper::CPULog("ADC\tA, [HL]\n");
+    return baseAdc(value) + 4;
 }
 
 inline int op0x8F()
 {
-    printf("Op not implemented: 0x8F\n");
-    return -1;
+    Helper::CPULog("ADC\tA, A\n");
+    return baseAdc(RegisterBank::A);
 }
 
 inline int op0x90()
@@ -1211,50 +1225,51 @@ inline int op0x97()
 
 inline int op0x98()
 {
-    printf("Op not implemented: 0x98\n");
-    return -1;
+    Helper::CPULog("SBC\tA, B\n");
+    return baseSbc(RegisterBank::B);
 }
 
 inline int op0x99()
 {
-    printf("Op not implemented: 0x99\n");
-    return -1;
+    Helper::CPULog("SBC\tA, C\n");
+    return baseSbc(RegisterBank::C);
 }
 
 inline int op0x9A()
 {
-    printf("Op not implemented: 0x9A\n");
-    return -1;
+    Helper::CPULog("SBC\tA, D\n");
+    return baseSbc(RegisterBank::D);
 }
 
 inline int op0x9B()
 {
-    printf("Op not implemented: 0x9B\n");
-    return -1;
+    Helper::CPULog("SBC\tA, E\n");
+    return baseSbc(RegisterBank::E);
 }
 
 inline int op0x9C()
 {
-    printf("Op not implemented: 0x9C\n");
-    return -1;
+    Helper::CPULog("SBC\tA, H\n");
+    return baseSbc(RegisterBank::H);
 }
 
 inline int op0x9D()
 {
-    printf("Op not implemented: 0x9D\n");
-    return -1;
+    Helper::CPULog("SBC\tA, L\n");
+    return baseSbc(RegisterBank::L);
 }
 
 inline int op0x9E()
 {
-    printf("Op not implemented: 0x9E\n");
-    return -1;
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    Helper::CPULog("SBC\tA, [HL]\n");
+    return baseSbc(value) + 4;
 }
 
 inline int op0x9F()
 {
-    printf("Op not implemented: 0x9F\n");
-    return -1;
+    Helper::CPULog("SBC\tA, A\n");
+    return baseSbc(RegisterBank::A);
 }
 
 inline int op0xA0()
@@ -1862,8 +1877,9 @@ inline int op0xCD()
 
 inline int op0xCE()
 {
-    printf("Op not implemented: 0xCE\n");
-    return -1;
+    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
+    Helper::CPULog("ADC\tA, 0x%02X\n", value);
+    return baseAdc(value) + 4;
 }
 
 inline int op0xCF()
@@ -1991,8 +2007,9 @@ inline int op0xDD()
 
 inline int op0xDE()
 {
-    printf("Op not implemented: 0xDE\n");
-    return -1;
+    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
+    Helper::CPULog("SBC\tA, 0x%02X\n", value);
+    return baseSbc(value) + 4;
 }
 
 inline int op0xDF()
@@ -2152,8 +2169,9 @@ inline int op0xF5()
 
 inline int op0xF6()
 {
-    printf("Op not implemented: 0xF6\n");
-    return -1;
+    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
+    Helper::CPULog("OR\t0x%02X\n", value);
+    return baseOr(value);
 }
 
 inline int op0xF7()
@@ -2483,7 +2501,11 @@ int Processor::decodeInstr(uint16 address)
 
 void printRegisters()
 {
-    Helper::CPULog("\e[A\t\t\t\t\t| AF: 0x%04X\n", RegisterBank::AF());
+    Helper::CPULog(
+            "\e[A\t\t\t\t\t\t\t| AF: 0x%04X, BC: 0x%04X\n",
+            RegisterBank::AF(),
+            RegisterBank::BC()
+            );
 }
 
 void Processor::StartCPULoop()
