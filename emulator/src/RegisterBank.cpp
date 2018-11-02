@@ -6,15 +6,15 @@
 #include "../include/RegisterBank.h"
 #include "../include/Helper.h"
 
-uint8 RegisterBank::A = 0;
+uint8 RegisterBank::A = 0x11;
 uint8 RegisterBank::B = 0;
 uint8 RegisterBank::C = 0;
-uint8 RegisterBank::D = 0;
-uint8 RegisterBank::E = 0;
-uint8 RegisterBank::F = 0;
+uint8 RegisterBank::D = 0xFF;
+uint8 RegisterBank::E = 0x56;
+uint8 RegisterBank::F = 0x80;
 uint8 RegisterBank::H = 0;
 uint8 RegisterBank::L = 0;
-uint16 RegisterBank::SP = 0;
+uint16 RegisterBank::SP = 0xFFFE;
 
 uint16 RegisterBank::PC = 0;
 
