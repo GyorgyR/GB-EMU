@@ -57,8 +57,8 @@ inline int baseLoadReg(uint8 *destination, uint8 value)
 
 inline int baseSub(uint8 value)
 {
-    RegisterBank::SetH((RegisterBank::A & 0b111) > (value & 0b111));
-    RegisterBank::SetC(RegisterBank::A > value);
+    RegisterBank::SetH((RegisterBank::A & 0b1111) < (value & 0b1111));
+    RegisterBank::SetC(RegisterBank::A < value);
 
     RegisterBank::A -= value;
 
@@ -87,14 +87,14 @@ inline int baseDec(uint8 *reg)
 
 inline int baseAdd(uint8 value)
 {
-    uint8 halfBitmask = 0b111;
+    uint8 halfBitmask = 0b1111;
     uint16 result = RegisterBank::A + value;
     uint8 halfResult = (RegisterBank::A & halfBitmask) + (value & halfBitmask);
     RegisterBank::A = result;
 
     RegisterBank::SetZ((uint8)result == 0);
     RegisterBank::SetN(false);
-    RegisterBank::SetH(halfResult > halfBitmask + 1);
+    RegisterBank::SetH(halfResult > halfBitmask);
     RegisterBank::SetC(result > UINT8_MAX);
 
     return 4;
@@ -371,7 +371,7 @@ inline int op0x17()
 
 inline int op0x18()
 {
-    int8_t value = MMU::ReadByteAt(++RegisterBank::PC);
+    int8 value = MMU::ReadByteAt(++RegisterBank::PC);
     RegisterBank::PC += value;
     Helper::CPULog("JR\t%d\n", value);
     return 12;
@@ -434,7 +434,7 @@ inline int op0x1F()
 inline int op0x20()
 {
     int cycles = 8;
-    int8_t value = MMU::ReadByteAt(++RegisterBank::PC);
+    int8 value = MMU::ReadByteAt(++RegisterBank::PC);
     if (!RegisterBank::IsZSet()) {
         RegisterBank::PC += value;
         cycles += 4;
@@ -494,7 +494,7 @@ inline int op0x27()
 inline int op0x28()
 {
     int cycles = 8;
-    int8_t value = MMU::ReadByteAt(++RegisterBank::PC);
+    int8 value = MMU::ReadByteAt(++RegisterBank::PC);
     if (RegisterBank::IsZSet())
     {
         RegisterBank::PC += value;
@@ -558,7 +558,7 @@ inline int op0x2F()
 inline int op0x30()
 {
     int cycles = 8;
-    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
+    int8 value = MMU::ReadByteAt(++RegisterBank::PC);
 
     if (!RegisterBank::IsCSet()) {
         RegisterBank::PC += value;
@@ -579,7 +579,7 @@ inline int op0x32()
 {
     MMU::WriteByteAt(RegisterBank::HL(), RegisterBank::A);
     RegisterBank::HL(RegisterBank::HL() - 1);
-    Helper::CPULog("LD\t[HL--](0x%04X), A\n", RegisterBank::HL());
+    Helper::CPULog("LD\t[HL--], A\n");
     return 8;
 }
 
@@ -625,7 +625,7 @@ inline int op0x37()
 inline int op0x38()
 {
     int cycles = 8;
-    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
+    int8 value = MMU::ReadByteAt(++RegisterBank::PC);
 
     if (RegisterBank::IsCSet()) {
         RegisterBank::PC += value;
@@ -1490,8 +1490,14 @@ inline int op0xC1()
 
 inline int op0xC2()
 {
-    printf("Op not implemented: 0xC2\n");
-    return -1;
+    int cycles = 12;
+    uint16 address = getNextTwoBytes();
+    if (!RegisterBank::IsZSet()) {
+        RegisterBank::PC = address - 1;
+        cycles += 4;
+    }
+    Helper::CPULog("JP\tNZ, 0x%04X\n", address);
+    return cycles;
 }
 
 inline int op0xC3()
@@ -1533,8 +1539,8 @@ inline int op0xC6()
 
 inline int op0xC7()
 {
-    printf("Op not implemented: 0xC7\n");
-    return -1;
+    Helper::CPULog("RST\t0x00\n");
+    return baseRST(0x00);
 }
 
 inline int op0xC8()
@@ -1560,8 +1566,40 @@ inline int op0xC9()
 
 inline int op0xCA()
 {
-    printf("Op not implemented: 0xCA\n");
-    return -1;
+    int cycles = 12;
+    uint16 address = getNextTwoBytes();
+    if (RegisterBank::IsZSet()) {
+        RegisterBank::PC = address - 1;
+        cycles += 4;
+    }
+    Helper::CPULog("JP\tZ, 0x%04X\n", address);
+    return cycles;
+}
+
+inline int cbBaseRLC(uint8 *op)
+{
+    bool is7BitSet = Helper::IsBitSet(*op, 7);
+    *op <<= 1;
+    if (is7BitSet) Helper::SetBit(op, 0);
+
+    RegisterBank::SetZ(*op == 0);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(false);
+    RegisterBank::SetC(is7BitSet);
+    return 8;
+}
+
+inline int cbBaseRRC(uint8 *op)
+{
+    bool is0BitSet = Helper::IsBitSet(*op, 0);
+    *op >>= 1;
+    if (is0BitSet) Helper::SetBit(op, 7);
+
+    RegisterBank::SetZ(*op == 0);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(false);
+    RegisterBank::SetC(is0BitSet);
+    return 8;
 }
 
 inline int cbBaseSRL(uint8 *op)
@@ -1603,6 +1641,108 @@ inline int cbBaseRL(uint8 *op)
     RegisterBank::SetC(wasBit7Set);
 
     return 8;
+}
+
+inline int cbOp0x00()
+{
+    Helper::CPULog("RLC\tB\n");
+    return cbBaseRLC(&RegisterBank::B);
+}
+
+inline int cbOp0x01()
+{
+    Helper::CPULog("RLC\tC\n");
+    return cbBaseRLC(&RegisterBank::C);
+}
+
+inline int cbOp0x02()
+{
+    Helper::CPULog("RLC\tD\n");
+    return cbBaseRLC(&RegisterBank::D);
+}
+
+inline int cbOp0x03()
+{
+    Helper::CPULog("RLC\tE\n");
+    return cbBaseRLC(&RegisterBank::E);
+}
+
+inline int cbOp0x04()
+{
+    Helper::CPULog("RLC\tH\n");
+    return cbBaseRLC(&RegisterBank::H);
+}
+
+inline int cbOp0x05()
+{
+    Helper::CPULog("RLC\tL\n");
+    return cbBaseRLC(&RegisterBank::L);
+}
+
+inline int cbOp0x06()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRLC(&value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RLC\t[HL]\n");
+    return 16;
+}
+
+inline int cbOp0x07()
+{
+    Helper::CPULog("RLC\tA\n");
+    return cbBaseRLC(&RegisterBank::A);
+}
+
+inline int cbOp0x08()
+{
+    Helper::CPULog("RRC\tB\n");
+    return cbBaseRRC(&RegisterBank::B);
+}
+
+inline int cbOp0x09()
+{
+    Helper::CPULog("RRC\tC\n");
+    return cbBaseRRC(&RegisterBank::C);
+}
+
+inline int cbOp0x0A()
+{
+    Helper::CPULog("RRC\tD\n");
+    return cbBaseRRC(&RegisterBank::D);
+}
+
+inline int cbOp0x0B()
+{
+    Helper::CPULog("RRC\tE\n");
+    return cbBaseRRC(&RegisterBank::E);
+}
+
+inline int cbOp0x0C()
+{
+    Helper::CPULog("RRC\tH\n");
+    return cbBaseRRC(&RegisterBank::H);
+}
+
+inline int cbOp0x0D()
+{
+    Helper::CPULog("RRC\tL\n");
+    return cbBaseRRC(&RegisterBank::L);
+}
+
+inline int cbOp0x0E()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRRC(&value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RRC\t[HL]\n");
+    return 16;
+}
+
+inline int cbOp0x0F()
+{
+    Helper::CPULog("RRC\tA\n");
+    return cbBaseRRC(&RegisterBank::A);
 }
 
 inline int cbOp0x10()
@@ -1811,6 +1951,22 @@ inline int op0xCB()
 {
     uint8 cb_op = MMU::ReadByteAt(++RegisterBank::PC);
     switch (cb_op) {
+        case 0x00: return cbOp0x00();
+        case 0x01: return cbOp0x01();
+        case 0x02: return cbOp0x02();
+        case 0x03: return cbOp0x03();
+        case 0x04: return cbOp0x04();
+        case 0x05: return cbOp0x05();
+        case 0x06: return cbOp0x06();
+        case 0x07: return cbOp0x07();
+        case 0x08: return cbOp0x08();
+        case 0x09: return cbOp0x09();
+        case 0x0A: return cbOp0x0A();
+        case 0x0B: return cbOp0x0B();
+        case 0x0C: return cbOp0x0C();
+        case 0x0D: return cbOp0x0D();
+        case 0x0E: return cbOp0x0E();
+        case 0x0F: return cbOp0x0F();
         case 0x10: return cbOp0x10();
         case 0x11: return cbOp0x11();
         case 0x12: return cbOp0x12();
@@ -1884,8 +2040,8 @@ inline int op0xCE()
 
 inline int op0xCF()
 {
-    printf("Op not implemented: 0xCF\n");
-    return -1;
+    Helper::CPULog("RST\t0x08\n");
+    return baseRST(0x08);
 }
 
 inline int op0xD0()
@@ -1910,8 +2066,14 @@ inline int op0xD1()
 
 inline int op0xD2()
 {
-    printf("Op not implemented: 0xD2\n");
-    return -1;
+    int cycles = 12;
+    uint16 address = getNextTwoBytes();
+    if (!RegisterBank::IsCSet()) {
+        RegisterBank::PC = address - 1;
+        cycles += 4;
+    }
+    Helper::CPULog("JP\tNC, 0x%04X\n", address);
+    return cycles;
 }
 
 inline int op0xD3()
@@ -1950,8 +2112,8 @@ inline int op0xD6()
 
 inline int op0xD7()
 {
-    printf("Op not implemented: 0xD7\n");
-    return -1;
+    Helper::CPULog("RST\t0x10\n");
+    return baseRST(0x10);
 }
 
 inline int op0xD8()
@@ -1975,8 +2137,14 @@ inline int op0xD9()
 
 inline int op0xDA()
 {
-    printf("Op not implemented: 0xDA\n");
-    return -1;
+    int cycles = 12;
+    uint16 address = getNextTwoBytes();
+    if (RegisterBank::IsCSet()) {
+        RegisterBank::PC = address - 1;
+        cycles += 4;
+    }
+    Helper::CPULog("JP\tC, 0x%04X\n", address);
+    return cycles;
 }
 
 inline int op0xDB()
@@ -2014,8 +2182,8 @@ inline int op0xDE()
 
 inline int op0xDF()
 {
-    printf("Op not implemented: 0xDF\n");
-    return -1;
+    Helper::CPULog("RST\t0x18\n");
+    return baseRST(0x18);
 }
 
 inline int op0xE0()
@@ -2069,8 +2237,8 @@ inline int op0xE6()
 
 inline int op0xE7()
 {
-    printf("Op not implemented: 0xE7\n");
-    return -1;
+    Helper::CPULog("RST\t0x20\n");
+    return baseRST(0x20);
 }
 
 inline int op0xE8()
@@ -2136,7 +2304,9 @@ inline int op0xF0()
 
 inline int op0xF1()
 {
+    uint8 fWas = RegisterBank::F;
     RegisterBank::AF(basePop());
+    RegisterBank::F = fWas;
     Helper::CPULog("POP\tAF(0x%04X)\n", RegisterBank::AF());
     return 12;
 }
@@ -2176,20 +2346,31 @@ inline int op0xF6()
 
 inline int op0xF7()
 {
-    printf("Op not implemented: 0xF7\n");
-    return -1;
+    Helper::CPULog("RST\t0x30\n");
+    return baseRST(0x30);
 }
 
 inline int op0xF8()
 {
-    printf("Op not implemented: 0xF8\n");
-    return -1;
+    int8 value = MMU::ReadByteAt(++RegisterBank::PC);
+    uint32 result = RegisterBank::SP + value;
+    uint16 halfResult = (RegisterBank::SP & 0b11111111) + value;
+    RegisterBank::HL(result);
+
+    RegisterBank::SetZ(false);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(halfResult > UINT8_MAX);
+    RegisterBank::SetC(result > UINT16_MAX);
+
+    Helper::CPULog("LD\tHL, SP+%d", value);
+    return 12;
 }
 
 inline int op0xF9()
 {
-    printf("Op not implemented: 0xF9\n");
-    return -1;
+    RegisterBank::SP = RegisterBank::HL();
+    Helper::CPULog("LD\tSP, HL\n");
+    return 8;
 }
 
 inline int op0xFA()
@@ -2228,8 +2409,8 @@ inline int op0xFE()
 
 inline int op0xFF()
 {
-    printf("Op not implemented: 0xFF\n");
-    return -1;
+    Helper::CPULog("RST\t0x38\n");
+    return baseRST(0x38);
 }
 
 int Processor::decodeInstr(uint16 address)
@@ -2502,9 +2683,12 @@ int Processor::decodeInstr(uint16 address)
 void printRegisters()
 {
     Helper::CPULog(
-            "\e[A\t\t\t\t\t\t\t| AF: 0x%04X, BC: 0x%04X\n",
+            "\e[A\t\t\t\t\t\t\t| AF: 0x%04X, BC: 0x%04X, DE: 0x%04X, HL: 0x%04X, SP: 0x%04X\n",
             RegisterBank::AF(),
-            RegisterBank::BC()
+            RegisterBank::BC(),
+            RegisterBank::DE(),
+            RegisterBank::HL(),
+            RegisterBank::SP
             );
 }
 
