@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
     EventMiddleware::SubscribeToCpuCyclesPassed(PPU::Update);
 
     Helper::Log("Set up ram module");
+    //RegisterBank::PC = 0x100; MMU::DisableBootrom();
     Processor cpu;
     cpu.StartCPULoop();
 

@@ -86,6 +86,11 @@ uint8 MMU::ReadByteAt(uint16 address)
             retVal = VideoRegisters::ScrollPosY();
             break;
         }
+        case 0xFF40: {
+            Helper::RAMLog(" [LCDControl]");
+            retVal = VideoRegisters::LCDControl();
+            break;
+        }
         case 0xFF44: {
             Helper::RAMLog(" [LCDY]");
             retVal = VideoRegisters::LCDYCoordinate();
@@ -348,6 +353,11 @@ void MMU::DumpVRAM()
     for (int i = 0x8000; i < 0xA000; ++i) {
         Helper::Log("0x%04X: 0x%02X", i, vram[i - 0x8000]);
     }
+}
+
+void MMU::DisableBootrom()
+{
+    activeBootPage = &loadedRom;
 }
 
 
