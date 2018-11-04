@@ -4,26 +4,26 @@
 
 #include "../include/SoundGenerator.h"
 
-uint8 SoundGenerator::soundOnOffReg = 0;
-uint8 SoundGenerator::soundOutTerminalReg = 0;
+uint8 SoundGenerator::soundOnOffReg = 0xF1;
+uint8 SoundGenerator::soundOutTerminalReg = 0xF3;
 uint8 SoundGenerator::channelOnOffVolumeReg = 0x77;
 
-uint8 SoundGenerator::channel1SweepReg = 0;
-uint8 SoundGenerator::channel1WaveReg = 0;
-uint8 SoundGenerator::channel1VolumeEnvelope = 0;
+uint8 SoundGenerator::channel1SweepReg = 0x80;
+uint8 SoundGenerator::channel1WaveReg = 0xBF;
+uint8 SoundGenerator::channel1VolumeEnvelope = 0xF3;
 uint8 SoundGenerator::channel1FreqLoReg = 0;
-uint8 SoundGenerator::channel1FreqHiReg = 0;
+uint8 SoundGenerator::channel1FreqHiReg = 0xBF;
 
 uint8 SoundGenerator::channel2VolumeEnvelope = 0;
 uint8 SoundGenerator::channel2FreqLoReg = 0;
 uint8 SoundGenerator::channel2FreqHiReg = 0;
 
-uint8 SoundGenerator::channel3OnOffReg = 0;
+uint8 SoundGenerator::channel3OnOffReg = 0x7F;
 uint8 SoundGenerator::channel3FreqLoReg = 0;
 uint8 SoundGenerator::channel3FreqHiReg = 0;
 
 uint8 SoundGenerator::channel4VolumeEnvelope = 0;
-uint8 SoundGenerator::channel4CounterSelectReg = 0;
+uint8 SoundGenerator::channel4CounterSelectReg = 0xBF;
 
 SoundGenerator::SoundGenerator()
 {

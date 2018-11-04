@@ -6,15 +6,15 @@
 #include "../include/Helper.h"
 #include "../include/Configuration.h"
 
-uint8 VideoRegisters::BGPaletteDataReg = 0;
+uint8 VideoRegisters::BGPaletteDataReg = 0xFC;
 uint8 VideoRegisters::BGPaletteArray[4];
-uint8 VideoRegisters::OBJPalette0Reg = 0;
+uint8 VideoRegisters::OBJPalette0Reg = 0xFF;
 uint8 VideoRegisters::OBJPalette0Array[4];
-uint8 VideoRegisters::OBJPalette1Reg = 0;
+uint8 VideoRegisters::OBJPalette1Reg = 0xFF;
 uint8 VideoRegisters::OBJPalette1Array[4];
 uint8 VideoRegisters::ScrollPosYReg = 0;
 uint8 VideoRegisters::ScrollPosXReg = 0;
-uint8 VideoRegisters::LCDControlReg = 0;
+uint8 VideoRegisters::LCDControlReg = 0x91;
 uint8 VideoRegisters::LCDYCoordReg = 0;
 uint8 VideoRegisters::LCDStatReg = 0;
 uint8 VideoRegisters::WindowPosYReg = 0;
