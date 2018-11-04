@@ -10,6 +10,7 @@
 #include "../include/Window.h"
 #include "../include/PPU.h"
 #include "../include/EventMiddleware.h"
+#include "../include/MMU.h"
 
 using std::cout;
 using std::endl;

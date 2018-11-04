@@ -3,7 +3,7 @@
 //
 
 #undef DEBUG
-#define REGISTERS
+#undef REGISTERS
 
 #define INSTPERSEC 4194304
 #define FPS 60
@@ -15,10 +15,12 @@
 #include "../include/Types.h"
 #include "../include/Timer.h"
 #include "../include/EventMiddleware.h"
+#include "../include/MMU.h"
 
 #include <iostream>
 
 FILE *debugStream = stdout;
+bool isHalted;
 
 Processor::~Processor()
 {
@@ -26,6 +28,7 @@ Processor::~Processor()
 
 Processor::Processor()
 {
+    isHalted = false;
 }
 
 inline uint16 getNextTwoBytes()
@@ -271,8 +274,9 @@ inline int op0x09()
 
 inline int op0x0A()
 {
-    printf("Op not implemented: 0x0A\n");
-    return -1;
+    RegisterBank::A = MMU::ReadByteAt(RegisterBank::BC());
+    Helper::CPULog("LD\tA, [BC]\n");
+    return 8;
 }
 
 inline int op0x0B()
@@ -392,8 +396,9 @@ inline int op0x1A()
 
 inline int op0x1B()
 {
-    printf("Op not implemented: 0x1B\n");
-    return -1;
+    RegisterBank::DE(RegisterBank::DE() - 1);
+    Helper::CPULog("DEC\tDE\n");
+    return 8;
 }
 
 inline int op0x1C()
@@ -487,8 +492,27 @@ inline int op0x26()
 
 inline int op0x27()
 {
-    printf("Op not implemented: 0x27\n");
-    return -1;
+    uint8 result = RegisterBank::A;
+    uint8 adjustBy = RegisterBank::IsCSet() ? 0x60 : 0;
+
+    if (RegisterBank::IsHSet()) adjustBy |= 0x06;
+
+    if (!RegisterBank::IsNSet()) {
+        if ((result & 0xF) > 0x09) adjustBy |= 0x06;
+        if (result > 0x99) adjustBy |= 0x60;
+        result += adjustBy;
+    }
+    else {
+        result -= adjustBy;
+    }
+    RegisterBank::A = result;
+
+    RegisterBank::SetZ(result == 0);
+    RegisterBank::SetH(false);
+    RegisterBank::SetC((adjustBy & 0x60) != 0);
+
+    Helper::CPULog("DAA\n");
+    return 4;
 }
 
 inline int op0x28()
@@ -520,8 +544,9 @@ inline int op0x2A()
 
 inline int op0x2B()
 {
-    printf("Op not implemented: 0x2B\n");
-    return -1;
+    RegisterBank::HL(RegisterBank::HL() - 1);
+    Helper::CPULog("DEC\tHL\n");
+    return 8;
 }
 
 inline int op0x2C()
@@ -611,8 +636,9 @@ inline int op0x35()
 
 inline int op0x36()
 {
-    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
-    Helper::CPULog("LD\t[0x%04X], 0x%02X\n", RegisterBank::HL(), value);
+    uint8 value = MMU::ReadByteAt(++RegisterBank::PC);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("LD\t[HL], 0x%02X\n", value);
     return 12;
 }
 
@@ -643,14 +669,17 @@ inline int op0x39()
 
 inline int op0x3A()
 {
-    printf("Op not implemented: 0x3A\n");
-    return -1;
+    RegisterBank::A = MMU::ReadByteAt(RegisterBank::HL());
+    RegisterBank::HL(RegisterBank::HL() - 1);
+    Helper::CPULog("LD\tA, [HL--]\n");
+    return 8;
 }
 
 inline int op0x3B()
 {
-    printf("Op not implemented: 0x3B\n");
-    return -1;
+    --RegisterBank::SP;
+    Helper::CPULog("DEC\tSP\n");
+    return 8;
 }
 
 inline int op0x3C()
@@ -1016,8 +1045,9 @@ inline int op0x75()
 
 inline int op0x76()
 {
-    printf("Op not implemented: 0x76\n");
-    return -1;
+    isHalted = true;
+    Helper::CPULog("HALT\n");
+    return 4;
 }
 
 inline int op0x77()
@@ -1558,9 +1588,8 @@ inline int op0xC8()
 
 inline int op0xC9()
 {
-    RegisterBank::PC = basePop();
-    Helper::CPULog("RET\t(0x%04X)\n", RegisterBank::PC);
-    --RegisterBank::PC; //offset the one that gets added.
+    RegisterBank::PC = basePop() - 1;
+    Helper::CPULog("RET\t(0x%04X)\n", RegisterBank::PC + 1);
     return 16;
 }
 
@@ -3718,8 +3747,10 @@ inline int op0xD8()
 
 inline int op0xD9()
 {
-    printf("Op not implemented: 0xD9\n");
-    return -1;
+    RegisterBank::PC = basePop() - 1;
+    RegisterBank::SetInterruptEnabled(true);
+    Helper::CPULog("RETI\n");
+    return 16;
 }
 
 inline int op0xDA()
@@ -3777,7 +3808,7 @@ inline int op0xE0()
 {
     uint16 immediate = MMU::ReadByteAt(++RegisterBank::PC) + 0xFF00;
     MMU::WriteByteAt(immediate, RegisterBank::A);
-    Helper::CPULog("LDH\t[0x%02X], A\n", immediate);
+    Helper::CPULog("LD\t[0x%04X], A\n", immediate);
     return 12;
 }
 
@@ -4003,7 +4034,7 @@ inline int op0xFF()
 int Processor::decodeInstr(uint16 address)
 {
     uint8 op_code = MMU::ReadByteAt(address);
-    Helper::CPULog("0x%04X: ", address);
+    Helper::CPULog("0x%04X: 0x%02X\t", address, op_code);
     switch(op_code) {
         case 0x00: return op0x00();
         case 0x01: return op0x01();
@@ -4284,10 +4315,15 @@ void Processor::StartCPULoop()
     Helper::Log("Start CPU loop");
     int status = 1;
     while (status > 0) {
-        //Fetch and Decode
-        status = decodeInstr(RegisterBank::PC);
-        RegisterBank::PC++;
+        if (!isHalted) {
+            //Fetch and Decode
+            status = decodeInstr(RegisterBank::PC);
+            RegisterBank::PC++;
 
+            #ifdef REGISTERS
+            printRegisters();
+            #endif
+        }
 
         //Handle Interrupts
         if (
@@ -4311,18 +4347,19 @@ void Processor::StartCPULoop()
 
                     RegisterBank::PC = 0x40 + i * 0x8;
 
+                    isHalted = false;
+
                     status += 12; //TODO not sure if this is 12 or 8
                     break; //TODO: not use break?
                 }
             }
         }
 
+        /*if (RegisterBank::PC == 0x40) {
+            MMU::DumpVRAM();
+        }*/
 
         //Notify other components of the cycles passed
         EventMiddleware::PublishCpuCyclesPassed(status);
-
-        #ifdef REGISTERS
-        printRegisters();
-        #endif
     }
 }

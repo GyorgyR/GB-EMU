@@ -5,14 +5,12 @@
 #ifndef GB_DISASSEMBLER_PROCESSOR_H
 #define GB_DISASSEMBLER_PROCESSOR_H
 
-#include <cstdint>
-
-#include "ROM.h"
-#include "MMU.h"
+#include "Types.h"
 
 class Processor {
 private:
-    int decodeInstr(uint16_t address);
+    int decodeInstr(uint16 address);
+
 public:
     Processor();
     ~Processor();
