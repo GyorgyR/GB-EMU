@@ -3,6 +3,7 @@
 //
 
 #include <cstdlib>
+#include <cstdio>
 
 #include "../include/MMU.h"
 #include "../include/SoundGenerator.h"
@@ -12,6 +13,7 @@
 #include "../include/RegisterBank.h"
 #include "../include/Timer.h"
 #include "../include/Joypad.h"
+#include "../include/DMA.h"
 
 ROM *MMU::loadedRom = nullptr;
 ROM *MMU::bootRom = nullptr;
@@ -266,6 +268,11 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
         case 0xFF43: {
             Helper::RAMLog(" [ScrollPosX]");
             success = VideoRegisters::ScrollPosX(value);
+            break;
+        }
+        case 0xFF46: {
+            Helper::RAMLog(" [DMA@0x%04X]", value * 0x100);
+            success = DMA::Start(value);
             break;
         }
         case 0xFF47: {

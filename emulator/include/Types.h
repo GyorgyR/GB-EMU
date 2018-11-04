@@ -17,4 +17,6 @@ typedef int16_t int16;
 typedef int32_t int32;
 typedef int64_t int64;
 
+typedef unsigned int uint;
+
 #endif //GB_EMULATOR_TYPES_H
