@@ -71,6 +71,18 @@ uint8 MMU::ReadByteAt(uint16 address)
             retVal = workRam[wramBankNo][intenalAddress];
             break;
         }
+        case 0xE000 ... 0xEFFF : {
+            int internalAddress = address - 0xE000;
+            Helper::RAMLog(" [(ECHO)WRAM0@d]", internalAddress);
+            retVal = workRam[0][internalAddress];
+            break;
+        }
+        case 0xF000 ... 0xFDFF: {
+            int intenalAddress = address - 0xF000;
+            Helper::RAMLog(" [(ECHO)WRAM1%d]", intenalAddress);
+            retVal = workRam[wramBankNo][intenalAddress];
+            break;
+        }
         case 0xFF00: {
             Helper::RAMLog(" [Joypad Register]");
             retVal = Joypad::ReadRegister();
@@ -79,6 +91,11 @@ uint8 MMU::ReadByteAt(uint16 address)
         case 0xFF24: {
             Helper::RAMLog(" [Channel ctrl/on-off]");
             retVal = SoundGenerator::ChannelOnOffVolume();
+            break;
+        }
+        case 0xFF41: {
+            Helper::RAMLog(" [LCDStat]");
+            retVal = VideoRegisters::LCDStat();
             break;
         }
         case 0xFF42: {
@@ -164,13 +181,13 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
         }
         case 0xFF01: {
             Helper::RAMLog(" [Serial Data]");
-            printf("Serial send data: 0x%02X\n", value);
+            //printf("Serial send data: 0x%02X\n", value);
             success = false;
             break;
         }
         case 0xFF02: {
             Helper::RAMLog(" [Serial Control");
-            printf("Serial set control: 0x%02X\n", value);
+            //printf("Serial set control: 0x%02X\n", value);
             success = false;
             break;
         }
@@ -331,8 +348,8 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
             break;
         }
         default:
-            printf(" (Unimplemented write range: 0x%04X)\n", address);
-            exit(1);
+            printf(" (Unimplemented write range: 0x%04X) Do you want to exit?: ", address);
+            if (getchar() == 'y') exit (1);
     }
     Helper::RAMLog(" [VALUE 0x%02X]\n", value);
     return success;
@@ -350,9 +367,13 @@ void MMU::InitBootRom(ROM *boot)
 
 void MMU::DumpVRAM()
 {
-    for (int i = 0x8000; i < 0xA000; ++i) {
-        Helper::Log("0x%04X: 0x%02X", i, vram[i - 0x8000]);
+    FILE *out = fopen("logs/VRAM.dump", "w+");
+    for (int i = 0x8000; i < 0x9FFF; ++i) {
+        fprintf(out, "0x%02X  ", vram[i - 0x8000]);
+        if (i % 16 == 15) fprintf(out, "\n0x%04X: ", i + 1);
     }
+
+    fclose(out);
 }
 
 void MMU::DisableBootrom()
