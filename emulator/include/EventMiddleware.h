@@ -15,6 +15,7 @@ private:
     ~EventMiddleware();
 
     static std::list<void (*)(int)> cpuCyclesSubscribers;
+    static std::list<void (*)(int)> subscribersToDelete;
 public:
     static void PublishCpuCyclesPassed(int cycles);
     static void SubscribeToCpuCyclesPassed(void function(int));
