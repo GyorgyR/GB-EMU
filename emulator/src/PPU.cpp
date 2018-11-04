@@ -14,6 +14,7 @@
 #include "../include/Helper.h"
 #include "../include/Configuration.h"
 #include "../include/EventMiddleware.h"
+#include "../include/RegisterBank.h"
 
 unsigned int PPU::currentLine = 0;
 unsigned int PPU::currentLineCycle = 0;
@@ -47,6 +48,7 @@ void PPU::Update(int cycles)
                 window->UpdateScreen();
                 PPUState = 3;
                 VideoRegisters::LCDStatMode(1);
+                RegisterBank::SetBitInIF(0);
             } else if (currentLine > LINES) {
                 currentLine = 0;
                 PPUState = 0;
@@ -117,14 +119,16 @@ void PPU::FifoFetch()
             return;
         }
         case 1: { //byte 1 fetch
-            uint8 byte1 = MMU::ReadByteAt(currentTileRowBaseAddr());
+            uint16 address = currentTileRowBaseAddr();
+            uint8 byte1 = MMU::ReadByteAt(address);
             Helper::PPULog("  Fetched byte1: 0x%02X\n", byte1);
             lastByte1 = byte1;
             ++fifoFetchState;
             return;
         }
         case 2: { //byte 2 fetch, decode and store to fifo
-            uint8 byte2 = MMU::ReadByteAt(currentTileRowBaseAddr() + 1);
+            uint16 address = currentTileRowBaseAddr() + 1;
+            uint8 byte2 = MMU::ReadByteAt(address);
             Helper::PPULog("  Fetched byte2: 0x%02X\n", byte2);
 
             for (int i = 0; i < 8; ++i) {
@@ -163,10 +167,14 @@ void PPU::FifoFetch()
 
 uint16 PPU::currentTileRowBaseAddr()
 {
-    //Get base address of tile data
+    //Get base address
     uint16 baseAddr = VideoRegisters::BGTileDataBaseAddr();
-    //Add the number of the tile times length of tiles in bytes, get base of tile
-    baseAddr += lastTileNo * TILEDATALENGTH;
+    if (baseAddr == 0x8000 || lastTileNo >= 0x80) baseAddr = 0x8000;
+    else baseAddr = 0x9000;
+
+    //Calculate tile address
+    baseAddr += lastTileNo << 4;
+
     //Add the current row (in the tile) times 2 to the tile base to get row base
     baseAddr += ((currentLine + VideoRegisters::ScrollPosY()) % 8) * 2;
     return baseAddr;
