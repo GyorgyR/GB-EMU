@@ -3,7 +3,7 @@
 //
 
 #undef DEBUG
-#undef REGISTERS
+#define REGISTERS
 
 #define INSTPERSEC 4194304
 #define FPS 60
@@ -1632,14 +1632,64 @@ inline int cbBaseRR(uint8 *op)
 inline int cbBaseRL(uint8 *op)
 {
     bool wasBit7Set = Helper::IsBitSet(*op, 7);
-    RegisterBank::C <<= 1;
+    *op <<= 1;
     if (RegisterBank::IsCSet()) Helper::SetBit(op, 0);
 
-    RegisterBank::SetZ(!RegisterBank::C);
+    RegisterBank::SetZ(*op == 0);
     RegisterBank::SetN(false);
     RegisterBank::SetH(false);
     RegisterBank::SetC(wasBit7Set);
 
+    return 8;
+}
+
+inline int cbBaseSLA(uint8 *op)
+{
+    bool wasBit7Set = Helper::IsBitSet(*op, 7);
+    *op <<= 1;
+
+    RegisterBank::SetZ(*op == 0);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(false);
+    RegisterBank::SetC(wasBit7Set);
+    return 8;
+}
+
+inline int cbBaseSRA(uint8 *op)
+{
+    bool wasBit7Set = Helper::IsBitSet(*op, 7);
+    bool wasBit0Set = Helper::IsBitSet(*op, 0);
+    *op >>= 1;
+
+    //Make sure MSB is the same as it was
+    if (wasBit7Set) Helper::SetBit(op, 7);
+    else Helper::ClearBit(op, 7);
+
+    RegisterBank::SetZ(*op == 0);
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(false);
+    RegisterBank::SetC(wasBit0Set);
+    return 8;
+}
+
+inline int cbBaseBit(int pos, uint8 op)
+{
+    RegisterBank::SetZ(!Helper::IsBitSet(op, pos));
+    RegisterBank::SetN(false);
+    RegisterBank::SetH(true);
+
+    return 8;
+}
+
+inline int cbBaseRes(int pos, uint8 *op)
+{
+    Helper::ClearBit(op, pos);
+    return 8;
+}
+
+inline int cbBaseSet(int pos, uint8 *op)
+{
+    Helper::SetBit(op, pos);
     return 8;
 }
 
@@ -1848,36 +1898,144 @@ inline int cbOp0x1F()
     return cbBaseRR(&RegisterBank::A);
 }
 
+inline int cbOp0x20()
+{
+    Helper::CPULog("SLA\tB\n");
+    return cbBaseSLA(&RegisterBank::B);
+}
+
+inline int cbOp0x21()
+{
+    Helper::CPULog("SLA\tC\n");
+    return cbBaseSLA(&RegisterBank::C);
+}
+
+inline int cbOp0x22()
+{
+    Helper::CPULog("SLA\tD\n");
+    return cbBaseSLA(&RegisterBank::D);
+}
+
+inline int cbOp0x23()
+{
+    Helper::CPULog("SLA\tE\n");
+    return cbBaseSLA(&RegisterBank::E);
+}
+
+inline int cbOp0x24()
+{
+    Helper::CPULog("SLA\tH\n");
+    return cbBaseSLA(&RegisterBank::H);
+}
+
+inline int cbOp0x25()
+{
+    Helper::CPULog("SLA\tL\n");
+    return cbBaseSLA(&RegisterBank::L);
+}
+
+inline int cbOp0x26()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSLA(&value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("SLA\t[HL]\n");
+    return 16;
+}
+
+inline int cbOp0x27()
+{
+    Helper::CPULog("SLA\tA\n");
+    return cbBaseSLA(&RegisterBank::A);
+}
+
+inline int cbOp0x28()
+{
+    Helper::CPULog("SRA\tB\n");
+    return cbBaseSRA(&RegisterBank::B);
+}
+
+inline int cbOp0x29()
+{
+    Helper::CPULog("SRA\tC\n");
+    return cbBaseSRA(&RegisterBank::C);
+}
+
+inline int cbOp0x2A()
+{
+    Helper::CPULog("SRA\tD\n");
+    return cbBaseSRA(&RegisterBank::D);
+}
+
+inline int cbOp0x2B()
+{
+    Helper::CPULog("SRA\tE\n");
+    return cbBaseSRA(&RegisterBank::E);
+}
+
+inline int cbOp0x2C()
+{
+    Helper::CPULog("SRA\tH\n");
+    return cbBaseSRA(&RegisterBank::H);
+}
+
+inline int cbOp0x2D()
+{
+    Helper::CPULog("SRA\tL\n");
+    return cbBaseSRA(&RegisterBank::L);
+}
+
+inline int cbOp0x2E()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSRA(&value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("SRA\t[HL]\n");
+    return 16;
+}
+
+inline int cbOp0x2F()
+{
+    Helper::CPULog("SRA\tA\n");
+    return cbBaseSRA(&RegisterBank::A);
+}
+
 inline int cbOp0x30()
 {
     Helper::CPULog("SWAP\tB\n");
     return baseSwap(&RegisterBank::B);
 }
+
 inline int cbOp0x31()
 {
     Helper::CPULog("SWAP\tC\n");
     return baseSwap(&RegisterBank::C);
 }
+
 inline int cbOp0x32()
 {
     Helper::CPULog("SWAP\tD\n");
     return baseSwap(&RegisterBank::D);
 }
+
 inline int cbOp0x33()
 {
     Helper::CPULog("SWAP\tE\n");
     return baseSwap(&RegisterBank::E);
 }
+
 inline int cbOp0x34()
 {
     Helper::CPULog("SWAP\tH\n");
     return baseSwap(&RegisterBank::H);
 }
+
 inline int cbOp0x35()
 {
     Helper::CPULog("SWAP\tL\n");
     return baseSwap(&RegisterBank::L);
 }
+
 inline int cbOp0x36()
 {
     uint8 value = MMU::ReadByteAt(RegisterBank::HL());
@@ -1886,6 +2044,7 @@ inline int cbOp0x36()
     Helper::CPULog("SWAP\t[HL]\n");
     return 16;
 }
+
 inline int cbOp0x37()
 {
     Helper::CPULog("SWAP\tA\n");
@@ -1897,31 +2056,37 @@ inline int cbOp0x38()
     Helper::CPULog("SRL\tB\n");
     return cbBaseSRL(&RegisterBank::B);
 }
+
 inline int cbOp0x39()
 {
     Helper::CPULog("SRL\tC\n");
     return cbBaseSRL(&RegisterBank::C);
 }
+
 inline int cbOp0x3A()
 {
     Helper::CPULog("SRL\tD\n");
     return cbBaseSRL(&RegisterBank::D);
 }
+
 inline int cbOp0x3B()
 {
     Helper::CPULog("SRL\tE\n");
     return cbBaseSRL(&RegisterBank::E);
 }
+
 inline int cbOp0x3C()
 {
     Helper::CPULog("SRL\tH\n");
     return cbBaseSRL(&RegisterBank::H);
 }
+
 inline int cbOp0x3D()
 {
     Helper::CPULog("SRL\tL\n");
     return cbBaseSRL(&RegisterBank::L);
 }
+
 inline int cbOp0x3E()
 {
     uint8 value = MMU::ReadByteAt(RegisterBank::HL());
@@ -1931,20 +2096,1235 @@ inline int cbOp0x3E()
     Helper::CPULog("SRL\t[HL]\n");
     return 16;
 }
+
 inline int cbOp0x3F()
 {
     Helper::CPULog("SRL\tA\n");
     return cbBaseSRL(&RegisterBank::A);
 }
 
+inline int cbOp0x40()
+{
+    Helper::CPULog("BIT\t0, B\n");
+    return cbBaseBit(0, RegisterBank::B);
+}
+
+inline int cbOp0x41()
+{
+    Helper::CPULog("BIT\t0, C\n");
+    return cbBaseBit(0, RegisterBank::C);
+}
+
+inline int cbOp0x42()
+{
+    Helper::CPULog("BIT\t0, D\n");
+    return cbBaseBit(0, RegisterBank::D);
+}
+
+inline int cbOp0x43()
+{
+    Helper::CPULog("BIT\t0, E\n");
+    return cbBaseBit(0, RegisterBank::E);
+}
+
+inline int cbOp0x44()
+{
+    Helper::CPULog("BIT\t0, H\n");
+    return cbBaseBit(0, RegisterBank::H);
+}
+
+inline int cbOp0x45()
+{
+    Helper::CPULog("BIT\t0, L\n");
+    return cbBaseBit(0, RegisterBank::L);
+}
+
+inline int cbOp0x46()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+
+    Helper::CPULog("BIT\t0, [HL]\n");
+    return cbBaseBit(0, value) + 8; //TODO not sure if this is 8, doc says so but I think it should be 4.
+}
+
+inline int cbOp0x47()
+{
+    Helper::CPULog("BIT\t0, A\n");
+    return cbBaseBit(0, RegisterBank::A);
+}
+
+inline int cbOp0x48()
+{
+    Helper::CPULog("BIT\t1, B\n");
+    return cbBaseBit(1, RegisterBank::B);
+}
+
+inline int cbOp0x49()
+{
+    Helper::CPULog("BIT\t1, C\n");
+    return cbBaseBit(1, RegisterBank::C);
+}
+
+inline int cbOp0x4A()
+{
+    Helper::CPULog("BIT\t1, D\n");
+    return cbBaseBit(1, RegisterBank::D);
+}
+
+inline int cbOp0x4B()
+{
+    Helper::CPULog("BIT\t1, E\n");
+    return cbBaseBit(1, RegisterBank::E);
+}
+
+inline int cbOp0x4C()
+{
+    Helper::CPULog("BIT\t1, H\n");
+    return cbBaseBit(1, RegisterBank::H);
+}
+
+inline int cbOp0x4D()
+{
+    Helper::CPULog("BIT\t1, L\n");
+    return cbBaseBit(1, RegisterBank::L);
+}
+
+inline int cbOp0x4E()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+
+    Helper::CPULog("BIT\t1, [HL]\n");
+    return cbBaseBit(1, value) + 8; //TODO not sure if this is 8, doc says so but I think it should be 4.
+}
+
+inline int cbOp0x4F()
+{
+    Helper::CPULog("BIT\t1, A\n");
+    return cbBaseBit(1, RegisterBank::A);
+}
+
+inline int cbOp0x50()
+{
+    Helper::CPULog("BIT\t2, B\n");
+    return cbBaseBit(2, RegisterBank::B);
+}
+
+inline int cbOp0x51()
+{
+    Helper::CPULog("BIT\t2, C\n");
+    return cbBaseBit(2, RegisterBank::C);
+}
+
+inline int cbOp0x52()
+{
+    Helper::CPULog("BIT\t2, D\n");
+    return cbBaseBit(2, RegisterBank::D);
+}
+
+inline int cbOp0x53()
+{
+    Helper::CPULog("BIT\t2, E\n");
+    return cbBaseBit(2, RegisterBank::E);
+}
+
+inline int cbOp0x54()
+{
+    Helper::CPULog("BIT\t2, H\n");
+    return cbBaseBit(2, RegisterBank::H);
+}
+
+inline int cbOp0x55()
+{
+    Helper::CPULog("BIT\t2, L\n");
+    return cbBaseBit(2, RegisterBank::L);
+}
+
+inline int cbOp0x56()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+
+    Helper::CPULog("BIT\t2, [HL]\n");
+    return cbBaseBit(2, value) + 8; //TODO not sure if this is 8, doc says so but I think it should be 4.
+}
+
+inline int cbOp0x57()
+{
+    Helper::CPULog("BIT\t2, A\n");
+    return cbBaseBit(2, RegisterBank::A);
+}
+
+inline int cbOp0x58()
+{
+    Helper::CPULog("BIT\t3, B\n");
+    return cbBaseBit(3, RegisterBank::B);
+}
+
+inline int cbOp0x59()
+{
+    Helper::CPULog("BIT\t3, C\n");
+    return cbBaseBit(3, RegisterBank::C);
+}
+
+inline int cbOp0x5A()
+{
+    Helper::CPULog("BIT\t3, D\n");
+    return cbBaseBit(3, RegisterBank::D);
+}
+
+inline int cbOp0x5B()
+{
+    Helper::CPULog("BIT\t3, E\n");
+    return cbBaseBit(3, RegisterBank::E);
+}
+
+inline int cbOp0x5C()
+{
+    Helper::CPULog("BIT\t3, H\n");
+    return cbBaseBit(3, RegisterBank::H);
+}
+
+inline int cbOp0x5D()
+{
+    Helper::CPULog("BIT\t3, L\n");
+    return cbBaseBit(3, RegisterBank::L);
+}
+
+inline int cbOp0x5E()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+
+    Helper::CPULog("BIT\t3, [HL]\n");
+    return cbBaseBit(3, value) + 8; //TODO not sure if this is 8, doc says so but I think it should be 4.
+}
+
+inline int cbOp0x5F()
+{
+    Helper::CPULog("BIT\t3, A\n");
+    return cbBaseBit(3, RegisterBank::A);
+}
+
+inline int cbOp0x60()
+{
+    Helper::CPULog("BIT\t4, B\n");
+    return cbBaseBit(4, RegisterBank::B);
+}
+
+inline int cbOp0x61()
+{
+    Helper::CPULog("BIT\t4, C\n");
+    return cbBaseBit(4, RegisterBank::C);
+}
+
+inline int cbOp0x62()
+{
+    Helper::CPULog("BIT\t4, D\n");
+    return cbBaseBit(4, RegisterBank::D);
+}
+
+inline int cbOp0x63()
+{
+    Helper::CPULog("BIT\t4, E\n");
+    return cbBaseBit(4, RegisterBank::E);
+}
+
+inline int cbOp0x64()
+{
+    Helper::CPULog("BIT\t4, H\n");
+    return cbBaseBit(4, RegisterBank::H);
+}
+
+inline int cbOp0x65()
+{
+    Helper::CPULog("BIT\t4, L\n");
+    return cbBaseBit(4, RegisterBank::L);
+}
+
+inline int cbOp0x66()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+
+    Helper::CPULog("BIT\t4, [HL]\n");
+    return cbBaseBit(4, value) + 8; //TODO not sure if this is 8, doc says so but I think it should be 4.
+}
+
+inline int cbOp0x67()
+{
+    Helper::CPULog("BIT\t4, A\n");
+    return cbBaseBit(4, RegisterBank::A);
+}
+
+inline int cbOp0x68()
+{
+    Helper::CPULog("BIT\t5, B\n");
+    return cbBaseBit(5, RegisterBank::B);
+}
+
+inline int cbOp0x69()
+{
+    Helper::CPULog("BIT\t5, C\n");
+    return cbBaseBit(5, RegisterBank::C);
+}
+
+inline int cbOp0x6A()
+{
+    Helper::CPULog("BIT\t5, D\n");
+    return cbBaseBit(5, RegisterBank::D);
+}
+
+inline int cbOp0x6B()
+{
+    Helper::CPULog("BIT\t5, E\n");
+    return cbBaseBit(5, RegisterBank::E);
+}
+
+inline int cbOp0x6C()
+{
+    Helper::CPULog("BIT\t5, H\n");
+    return cbBaseBit(5, RegisterBank::H);
+}
+
+inline int cbOp0x6D()
+{
+    Helper::CPULog("BIT\t5, L\n");
+    return cbBaseBit(5, RegisterBank::L);
+}
+
+inline int cbOp0x6E()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+
+    Helper::CPULog("BIT\t5, [HL]\n");
+    return cbBaseBit(5, value) + 8; //TODO not sure if this is 8, doc says so but I think it should be 4.
+}
+
+inline int cbOp0x6F()
+{
+    Helper::CPULog("BIT\t5, A\n");
+    return cbBaseBit(5, RegisterBank::A);
+}
+
+inline int cbOp0x70()
+{
+    Helper::CPULog("BIT\t0, B\n");
+    return cbBaseBit(0, RegisterBank::B);
+}
+
+inline int cbOp0x71()
+{
+    Helper::CPULog("BIT\t6, C\n");
+    return cbBaseBit(6, RegisterBank::C);
+}
+
+inline int cbOp0x72()
+{
+    Helper::CPULog("BIT\t6, D\n");
+    return cbBaseBit(6, RegisterBank::D);
+}
+
+inline int cbOp0x73()
+{
+    Helper::CPULog("BIT\t6, E\n");
+    return cbBaseBit(6, RegisterBank::E);
+}
+
+inline int cbOp0x74()
+{
+    Helper::CPULog("BIT\t6, H\n");
+    return cbBaseBit(6, RegisterBank::H);
+}
+
+inline int cbOp0x75()
+{
+    Helper::CPULog("BIT\t6, L\n");
+    return cbBaseBit(6, RegisterBank::L);
+}
+
+inline int cbOp0x76()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+
+    Helper::CPULog("BIT\t6, [HL]\n");
+    return cbBaseBit(6, value) + 8; //TODO not sure if this is 8, doc says so but I think it should be 4.
+}
+
+inline int cbOp0x77()
+{
+    Helper::CPULog("BIT\t6, A\n");
+    return cbBaseBit(6, RegisterBank::A);
+}
+
+inline int cbOp0x78()
+{
+    Helper::CPULog("BIT\t7, B\n");
+    return cbBaseBit(7, RegisterBank::B);
+}
+
+inline int cbOp0x79()
+{
+    Helper::CPULog("BIT\t7, C\n");
+    return cbBaseBit(7, RegisterBank::C);
+}
+
+inline int cbOp0x7A()
+{
+    Helper::CPULog("BIT\t7, D\n");
+    return cbBaseBit(7, RegisterBank::D);
+}
+
+inline int cbOp0x7B()
+{
+    Helper::CPULog("BIT\t7, E\n");
+    return cbBaseBit(7, RegisterBank::E);
+}
+
 inline int cbOp0x7C()
 {
-    RegisterBank::SetZ(!Helper::IsBitSet(RegisterBank::H, 7));
-    RegisterBank::SetN(false);
-    RegisterBank::SetH(true);
     Helper::CPULog("BIT\t7, H\n");
+    return cbBaseBit(7, RegisterBank::H);
+}
 
-    return 8;
+inline int cbOp0x7D()
+{
+    Helper::CPULog("BIT\t7, L\n");
+    return cbBaseBit(7, RegisterBank::L);
+}
+
+inline int cbOp0x7E()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+
+    Helper::CPULog("BIT\t7, [HL]\n");
+    return cbBaseBit(7, value) + 8; //TODO not sure if this is 8, doc says so but I think it should be 4.
+}
+
+inline int cbOp0x7F()
+{
+    Helper::CPULog("BIT\t7, A\n");
+    return cbBaseBit(7, RegisterBank::A);
+}
+
+inline int cbOp0x80()
+{
+    Helper::CPULog("RES\t0, B\n");
+    return cbBaseRes(0, &RegisterBank::B);
+}
+
+inline int cbOp0x81()
+{
+    Helper::CPULog("RES\t0, C\n");
+    return cbBaseRes(0, &RegisterBank::C);
+}
+
+inline int cbOp0x82()
+{
+    Helper::CPULog("RES\t0, D\n");
+    return cbBaseRes(0, &RegisterBank::D);
+}
+
+inline int cbOp0x83()
+{
+    Helper::CPULog("RES\t0, E\n");
+    return cbBaseRes(0, &RegisterBank::E);
+}
+
+inline int cbOp0x84()
+{
+    Helper::CPULog("RES\t0, H\n");
+    return cbBaseRes(0, &RegisterBank::H);
+}
+
+inline int cbOp0x85()
+{
+    Helper::CPULog("RES\t0, L\n");
+    return cbBaseRes(0, &RegisterBank::L);
+}
+
+inline int cbOp0x86()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRes(0, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RES\t0, [HL]\n");
+    return 16;
+}
+
+inline int cbOp0x87()
+{
+    Helper::CPULog("RES\t0, A\n");
+    return cbBaseRes(0, &RegisterBank::A);
+}
+
+inline int cbOp0x88()
+{
+    Helper::CPULog("RES\t1, B\n");
+    return cbBaseRes(1, &RegisterBank::B);
+}
+
+inline int cbOp0x89()
+{
+    Helper::CPULog("RES\t1, C\n");
+    return cbBaseRes(1, &RegisterBank::C);
+}
+
+inline int cbOp0x8A()
+{
+    Helper::CPULog("RES\t1, D\n");
+    return cbBaseRes(1, &RegisterBank::D);
+}
+
+inline int cbOp0x8B()
+{
+    Helper::CPULog("RES\t1, E\n");
+    return cbBaseRes(1, &RegisterBank::E);
+}
+
+inline int cbOp0x8C()
+{
+    Helper::CPULog("RES\t1, H\n");
+    return cbBaseRes(1, &RegisterBank::H);
+}
+
+inline int cbOp0x8D()
+{
+    Helper::CPULog("RES\t1, L\n");
+    return cbBaseRes(1, &RegisterBank::L);
+}
+
+inline int cbOp0x8E()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRes(1, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RES\t1, [HL]\n");
+    return 16;
+}
+
+inline int cbOp0x8F()
+{
+    Helper::CPULog("RES\t1, A\n");
+    return cbBaseRes(1, &RegisterBank::A);
+}
+
+inline int cbOp0x90()
+{
+    Helper::CPULog("RES\t0, B\n");
+    return cbBaseRes(2, &RegisterBank::B);
+}
+
+inline int cbOp0x91()
+{
+    Helper::CPULog("RES\t0, C\n");
+    return cbBaseRes(2, &RegisterBank::C);
+}
+
+inline int cbOp0x92()
+{
+    Helper::CPULog("RES\t0, D\n");
+    return cbBaseRes(2, &RegisterBank::D);
+}
+
+inline int cbOp0x93()
+{
+    Helper::CPULog("RES\t0, E\n");
+    return cbBaseRes(2, &RegisterBank::E);
+}
+
+inline int cbOp0x94()
+{
+    Helper::CPULog("RES\t0, H\n");
+    return cbBaseRes(2, &RegisterBank::H);
+}
+
+inline int cbOp0x95()
+{
+    Helper::CPULog("RES\t0, L\n");
+    return cbBaseRes(2, &RegisterBank::L);
+}
+
+inline int cbOp0x96()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRes(2, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RES\t2, [HL]\n");
+    return 16;
+}
+
+inline int cbOp0x97()
+{
+    Helper::CPULog("RES\t2, A\n");
+    return cbBaseRes(2, &RegisterBank::A);
+}
+
+inline int cbOp0x98()
+{
+    Helper::CPULog("RES\t3, B\n");
+    return cbBaseRes(3, &RegisterBank::B);
+}
+
+inline int cbOp0x99()
+{
+    Helper::CPULog("RES\t3, C\n");
+    return cbBaseRes(3, &RegisterBank::C);
+}
+
+inline int cbOp0x9A()
+{
+    Helper::CPULog("RES\t3, D\n");
+    return cbBaseRes(3, &RegisterBank::D);
+}
+
+inline int cbOp0x9B()
+{
+    Helper::CPULog("RES\t3, E\n");
+    return cbBaseRes(3, &RegisterBank::E);
+}
+
+inline int cbOp0x9C()
+{
+    Helper::CPULog("RES\t3, H\n");
+    return cbBaseRes(3, &RegisterBank::H);
+}
+
+inline int cbOp0x9D()
+{
+    Helper::CPULog("RES\t3, L\n");
+    return cbBaseRes(3, &RegisterBank::L);
+}
+
+inline int cbOp0x9E()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRes(3, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RES\t3, [HL]\n");
+    return 16;
+}
+
+inline int cbOp0x9F()
+{
+    Helper::CPULog("RES\t3, A\n");
+    return cbBaseRes(3, &RegisterBank::A);
+}
+
+inline int cbOp0xA0()
+{
+    Helper::CPULog("RES\t4, B\n");
+    return cbBaseRes(4, &RegisterBank::B);
+}
+
+inline int cbOp0xA1()
+{
+    Helper::CPULog("RES\t4, C\n");
+    return cbBaseRes(4, &RegisterBank::C);
+}
+
+inline int cbOp0xA2()
+{
+    Helper::CPULog("RES\t4, D\n");
+    return cbBaseRes(4, &RegisterBank::D);
+}
+
+inline int cbOp0xA3()
+{
+    Helper::CPULog("RES\t4, E\n");
+    return cbBaseRes(4, &RegisterBank::E);
+}
+
+inline int cbOp0xA4()
+{
+    Helper::CPULog("RES\t4, H\n");
+    return cbBaseRes(4, &RegisterBank::H);
+}
+
+inline int cbOp0xA5()
+{
+    Helper::CPULog("RES\t4, L\n");
+    return cbBaseRes(4, &RegisterBank::L);
+}
+
+inline int cbOp0xA6()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRes(4, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RES\t4, [HL]\n");
+    return 16;
+}
+
+inline int cbOp0xA7()
+{
+    Helper::CPULog("RES\t4, A\n");
+    return cbBaseRes(0, &RegisterBank::A);
+}
+
+inline int cbOp0xA8()
+{
+    Helper::CPULog("RES\t5, B\n");
+    return cbBaseRes(5, &RegisterBank::B);
+}
+
+inline int cbOp0xA9()
+{
+    Helper::CPULog("RES\t5, C\n");
+    return cbBaseRes(5, &RegisterBank::C);
+}
+
+inline int cbOp0xAA()
+{
+    Helper::CPULog("RES\t5, D\n");
+    return cbBaseRes(5, &RegisterBank::D);
+}
+
+inline int cbOp0xAB()
+{
+    Helper::CPULog("RES\t5, E\n");
+    return cbBaseRes(5, &RegisterBank::E);
+}
+
+inline int cbOp0xAC()
+{
+    Helper::CPULog("RES\t5, H\n");
+    return cbBaseRes(5, &RegisterBank::H);
+}
+
+inline int cbOp0xAD()
+{
+    Helper::CPULog("RES\t5, L\n");
+    return cbBaseRes(5, &RegisterBank::L);
+}
+
+inline int cbOp0xAE()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRes(5, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RES\t5, [HL]\n");
+    return 16;
+}
+
+inline int cbOp0xAF()
+{
+    Helper::CPULog("RES\t5, A\n");
+    return cbBaseRes(5, &RegisterBank::A);
+}
+
+inline int cbOp0xB0()
+{
+    Helper::CPULog("RES\t6, B\n");
+    return cbBaseRes(6, &RegisterBank::B);
+}
+
+inline int cbOp0xB1()
+{
+    Helper::CPULog("RES\t6, C\n");
+    return cbBaseRes(6, &RegisterBank::C);
+}
+
+inline int cbOp0xB2()
+{
+    Helper::CPULog("RES\t6, D\n");
+    return cbBaseRes(6, &RegisterBank::D);
+}
+
+inline int cbOp0xB3()
+{
+    Helper::CPULog("RES\t6, E\n");
+    return cbBaseRes(6, &RegisterBank::E);
+}
+
+inline int cbOp0xB4()
+{
+    Helper::CPULog("RES\t6, H\n");
+    return cbBaseRes(6, &RegisterBank::H);
+}
+
+inline int cbOp0xB5()
+{
+    Helper::CPULog("RES\t6, L\n");
+    return cbBaseRes(6, &RegisterBank::L);
+}
+
+inline int cbOp0xB6()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRes(6, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RES\t6, [HL]\n");
+    return 16;
+}
+
+inline int cbOp0xB7()
+{
+    Helper::CPULog("RES\t6, A\n");
+    return cbBaseRes(6, &RegisterBank::A);
+}
+
+inline int cbOp0xB8()
+{
+    Helper::CPULog("RES\t7, B\n");
+    return cbBaseRes(7, &RegisterBank::B);
+}
+
+inline int cbOp0xB9()
+{
+    Helper::CPULog("RES\t7, C\n");
+    return cbBaseRes(7, &RegisterBank::C);
+}
+
+inline int cbOp0xBA()
+{
+    Helper::CPULog("RES\t7, D\n");
+    return cbBaseRes(7, &RegisterBank::D);
+}
+
+inline int cbOp0xBB()
+{
+    Helper::CPULog("RES\t7, E\n");
+    return cbBaseRes(7, &RegisterBank::E);
+}
+
+inline int cbOp0xBC()
+{
+    Helper::CPULog("RES\t7, H\n");
+    return cbBaseRes(7, &RegisterBank::H);
+}
+
+inline int cbOp0xBD()
+{
+    Helper::CPULog("RES\t7, L\n");
+    return cbBaseRes(7, &RegisterBank::L);
+}
+
+inline int cbOp0xBE()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseRes(7, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+    Helper::CPULog("RES\t7, [HL]\n");
+    return 16;
+}
+
+inline int cbOp0xBF()
+{
+    Helper::CPULog("RES\t7, A\n");
+    return cbBaseRes(7, &RegisterBank::A);
+}
+
+inline int cbOp0xC0()
+{
+    Helper::CPULog("SET\t0, B\n");
+    return  cbBaseSet(0, &RegisterBank::B);
+}
+
+inline int cbOp0xC1()
+{
+    Helper::CPULog("SET\t0, C\n");
+    return  cbBaseSet(0, &RegisterBank::C);
+}
+
+inline int cbOp0xC2()
+{
+    Helper::CPULog("SET\t0, D\n");
+    return  cbBaseSet(0, &RegisterBank::D);
+}
+
+inline int cbOp0xC3()
+{
+    Helper::CPULog("SET\t0, E\n");
+    return  cbBaseSet(0, &RegisterBank::E);
+}
+
+inline int cbOp0xC4()
+{
+    Helper::CPULog("SET\t0, H\n");
+    return  cbBaseSet(0, &RegisterBank::H);
+}
+
+inline int cbOp0xC5()
+{
+    Helper::CPULog("SET\t0, L\n");
+    return  cbBaseSet(0, &RegisterBank::L);
+}
+
+inline int cbOp0xC6()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSet(0, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+
+    Helper::CPULog("SET\t0, [HL]\n");
+    return  16;
+}
+
+inline int cbOp0xC7()
+{
+    Helper::CPULog("SET\t0, A\n");
+    return  cbBaseSet(0, &RegisterBank::A);
+}
+
+inline int cbOp0xC8()
+{
+    Helper::CPULog("SET\t1, B\n");
+    return  cbBaseSet(1, &RegisterBank::B);
+}
+
+inline int cbOp0xC9()
+{
+    Helper::CPULog("SET\t1, C\n");
+    return  cbBaseSet(1, &RegisterBank::C);
+}
+
+inline int cbOp0xCA()
+{
+    Helper::CPULog("SET\t1, D\n");
+    return  cbBaseSet(1, &RegisterBank::D);
+}
+
+inline int cbOp0xCB()
+{
+    Helper::CPULog("SET\t1, E\n");
+    return  cbBaseSet(1, &RegisterBank::E);
+}
+
+inline int cbOp0xCC()
+{
+    Helper::CPULog("SET\t1, H\n");
+    return  cbBaseSet(1, &RegisterBank::H);
+}
+
+inline int cbOp0xCD()
+{
+    Helper::CPULog("SET\t1, L\n");
+    return  cbBaseSet(1, &RegisterBank::L);
+}
+
+inline int cbOp0xCE()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSet(1, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+
+    Helper::CPULog("SET\t1, [HL]\n");
+    return  16;
+}
+
+inline int cbOp0xCF()
+{
+    Helper::CPULog("SET\t1, A\n");
+    return  cbBaseSet(1, &RegisterBank::A);
+}
+
+inline int cbOp0xD0()
+{
+    Helper::CPULog("SET\t2, B\n");
+    return  cbBaseSet(2, &RegisterBank::B);
+}
+
+inline int cbOp0xD1()
+{
+    Helper::CPULog("SET\t2, C\n");
+    return  cbBaseSet(2, &RegisterBank::C);
+}
+
+inline int cbOp0xD2()
+{
+    Helper::CPULog("SET\t2, D\n");
+    return  cbBaseSet(2, &RegisterBank::D);
+}
+
+inline int cbOp0xD3()
+{
+    Helper::CPULog("SET\t2, E\n");
+    return  cbBaseSet(2, &RegisterBank::E);
+}
+
+inline int cbOp0xD4()
+{
+    Helper::CPULog("SET\t2, H\n");
+    return  cbBaseSet(2, &RegisterBank::H);
+}
+
+inline int cbOp0xD5()
+{
+    Helper::CPULog("SET\t2, L\n");
+    return  cbBaseSet(2, &RegisterBank::L);
+}
+
+inline int cbOp0xD6()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSet(2, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+
+    Helper::CPULog("SET\t2, [HL]\n");
+    return  16;
+}
+
+inline int cbOp0xD7()
+{
+    Helper::CPULog("SET\t2, A\n");
+    return  cbBaseSet(2, &RegisterBank::A);
+}
+
+inline int cbOp0xD8()
+{
+    Helper::CPULog("SET\t3, B\n");
+    return  cbBaseSet(3, &RegisterBank::B);
+}
+
+inline int cbOp0xD9()
+{
+    Helper::CPULog("SET\t3, C\n");
+    return  cbBaseSet(3, &RegisterBank::C);
+}
+
+inline int cbOp0xDA()
+{
+    Helper::CPULog("SET\t3, D\n");
+    return  cbBaseSet(3, &RegisterBank::D);
+}
+
+inline int cbOp0xDB()
+{
+    Helper::CPULog("SET\t3, E\n");
+    return  cbBaseSet(3, &RegisterBank::E);
+}
+
+inline int cbOp0xDC()
+{
+    Helper::CPULog("SET\t3, H\n");
+    return  cbBaseSet(3, &RegisterBank::H);
+}
+
+inline int cbOp0xDD()
+{
+    Helper::CPULog("SET\t3, L\n");
+    return  cbBaseSet(3, &RegisterBank::L);
+}
+
+inline int cbOp0xDE()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSet(3, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+
+    Helper::CPULog("SET\t3, [HL]\n");
+    return  16;
+}
+
+inline int cbOp0xDF()
+{
+    Helper::CPULog("SET\t3, A\n");
+    return  cbBaseSet(3, &RegisterBank::A);
+}
+
+inline int cbOp0xE0()
+{
+    Helper::CPULog("SET\t4, B\n");
+    return  cbBaseSet(4, &RegisterBank::B);
+}
+
+inline int cbOp0xE1()
+{
+    Helper::CPULog("SET\t4, C\n");
+    return  cbBaseSet(4, &RegisterBank::C);
+}
+
+inline int cbOp0xE2()
+{
+    Helper::CPULog("SET\t4, D\n");
+    return  cbBaseSet(4, &RegisterBank::D);
+}
+
+inline int cbOp0xE3()
+{
+    Helper::CPULog("SET\t4, E\n");
+    return  cbBaseSet(4, &RegisterBank::E);
+}
+
+inline int cbOp0xE4()
+{
+    Helper::CPULog("SET\t4, H\n");
+    return  cbBaseSet(4, &RegisterBank::H);
+}
+
+inline int cbOp0xE5()
+{
+    Helper::CPULog("SET\t4, L\n");
+    return  cbBaseSet(4, &RegisterBank::L);
+}
+
+inline int cbOp0xE6()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSet(4, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+
+    Helper::CPULog("SET\t4, [HL]\n");
+    return  16;
+}
+
+inline int cbOp0xE7()
+{
+    Helper::CPULog("SET\t4, A\n");
+    return  cbBaseSet(4, &RegisterBank::A);
+}
+
+inline int cbOp0xE8()
+{
+    Helper::CPULog("SET\t5, B\n");
+    return  cbBaseSet(5, &RegisterBank::B);
+}
+
+inline int cbOp0xE9()
+{
+    Helper::CPULog("SET\t5, C\n");
+    return  cbBaseSet(5, &RegisterBank::C);
+}
+
+inline int cbOp0xEA()
+{
+    Helper::CPULog("SET\t5, D\n");
+    return  cbBaseSet(5, &RegisterBank::D);
+}
+
+inline int cbOp0xEB()
+{
+    Helper::CPULog("SET\t5, E\n");
+    return  cbBaseSet(5, &RegisterBank::E);
+}
+
+inline int cbOp0xEC()
+{
+    Helper::CPULog("SET\t5, H\n");
+    return  cbBaseSet(5, &RegisterBank::H);
+}
+
+inline int cbOp0xED()
+{
+    Helper::CPULog("SET\t5, L\n");
+    return  cbBaseSet(5, &RegisterBank::L);
+}
+
+inline int cbOp0xEE()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSet(5, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+
+    Helper::CPULog("SET\t5, [HL]\n");
+    return  16;
+}
+
+inline int cbOp0xEF()
+{
+    Helper::CPULog("SET\t5, A\n");
+    return  cbBaseSet(5, &RegisterBank::A);
+}
+
+inline int cbOp0xF0()
+{
+    Helper::CPULog("SET\t6, B\n");
+    return  cbBaseSet(6, &RegisterBank::B);
+}
+
+inline int cbOp0xF1()
+{
+    Helper::CPULog("SET\t6, C\n");
+    return  cbBaseSet(6, &RegisterBank::C);
+}
+
+inline int cbOp0xF2()
+{
+    Helper::CPULog("SET\t6, D\n");
+    return  cbBaseSet(6, &RegisterBank::D);
+}
+
+inline int cbOp0xF3()
+{
+    Helper::CPULog("SET\t6, E\n");
+    return  cbBaseSet(6, &RegisterBank::E);
+}
+
+inline int cbOp0xF4()
+{
+    Helper::CPULog("SET\t6, H\n");
+    return  cbBaseSet(6, &RegisterBank::H);
+}
+
+inline int cbOp0xF5()
+{
+    Helper::CPULog("SET\t6, L\n");
+    return  cbBaseSet(6, &RegisterBank::L);
+}
+
+inline int cbOp0xF6()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSet(6, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+
+    Helper::CPULog("SET\t6, [HL]\n");
+    return  16;
+}
+
+inline int cbOp0xF7()
+{
+    Helper::CPULog("SET\t6, A\n");
+    return  cbBaseSet(6, &RegisterBank::A);
+}
+
+inline int cbOp0xF8()
+{
+    Helper::CPULog("SET\t7, B\n");
+    return  cbBaseSet(7, &RegisterBank::B);
+}
+
+inline int cbOp0xF9()
+{
+    Helper::CPULog("SET\t7, C\n");
+    return  cbBaseSet(7, &RegisterBank::C);
+}
+
+inline int cbOp0xFA()
+{
+    Helper::CPULog("SET\t7, D\n");
+    return  cbBaseSet(7, &RegisterBank::D);
+}
+
+inline int cbOp0xFB()
+{
+    Helper::CPULog("SET\t7, E\n");
+    return  cbBaseSet(7, &RegisterBank::E);
+}
+
+inline int cbOp0xFC()
+{
+    Helper::CPULog("SET\t7, H\n");
+    return  cbBaseSet(7, &RegisterBank::H);
+}
+
+inline int cbOp0xFD()
+{
+    Helper::CPULog("SET\t7, L\n");
+    return  cbBaseSet(7, &RegisterBank::L);
+}
+
+inline int cbOp0xFE()
+{
+    uint8 value = MMU::ReadByteAt(RegisterBank::HL());
+    cbBaseSet(7, &value);
+    MMU::WriteByteAt(RegisterBank::HL(), value);
+
+    Helper::CPULog("SET\t7, [HL]\n");
+    return  16;
+}
+
+inline int cbOp0xFF()
+{
+    Helper::CPULog("SET\t7, A\n");
+    return  cbBaseSet(7, &RegisterBank::A);
 }
 
 inline int op0xCB()
@@ -1983,6 +3363,22 @@ inline int op0xCB()
         case 0x1D: return cbOp0x1D();
         case 0x1E: return cbOp0x1E();
         case 0x1F: return cbOp0x1F();
+        case 0x20: return cbOp0x20();
+        case 0x21: return cbOp0x21();
+        case 0x22: return cbOp0x22();
+        case 0x23: return cbOp0x23();
+        case 0x24: return cbOp0x24();
+        case 0x25: return cbOp0x25();
+        case 0x26: return cbOp0x26();
+        case 0x27: return cbOp0x27();
+        case 0x28: return cbOp0x28();
+        case 0x29: return cbOp0x29();
+        case 0x2A: return cbOp0x2A();
+        case 0x2B: return cbOp0x2B();
+        case 0x2C: return cbOp0x2C();
+        case 0x2D: return cbOp0x2D();
+        case 0x2E: return cbOp0x2E();
+        case 0x2F: return cbOp0x2F();
         case 0x30: return cbOp0x30();
         case 0x31: return cbOp0x31();
         case 0x32: return cbOp0x32();
@@ -1999,7 +3395,198 @@ inline int op0xCB()
         case 0x3D: return cbOp0x3D();
         case 0x3E: return cbOp0x3E();
         case 0x3F: return cbOp0x3F();
+        case 0x40: return cbOp0x40();
+        case 0x41: return cbOp0x41();
+        case 0x42: return cbOp0x42();
+        case 0x43: return cbOp0x43();
+        case 0x44: return cbOp0x44();
+        case 0x45: return cbOp0x45();
+        case 0x46: return cbOp0x46();
+        case 0x47: return cbOp0x47();
+        case 0x48: return cbOp0x48();
+        case 0x49: return cbOp0x49();
+        case 0x4A: return cbOp0x4A();
+        case 0x4B: return cbOp0x4B();
+        case 0x4C: return cbOp0x4C();
+        case 0x4D: return cbOp0x4D();
+        case 0x4E: return cbOp0x4E();
+        case 0x4F: return cbOp0x4F();
+        case 0x50: return cbOp0x50();
+        case 0x51: return cbOp0x51();
+        case 0x52: return cbOp0x52();
+        case 0x53: return cbOp0x53();
+        case 0x54: return cbOp0x54();
+        case 0x55: return cbOp0x55();
+        case 0x56: return cbOp0x56();
+        case 0x57: return cbOp0x57();
+        case 0x58: return cbOp0x58();
+        case 0x59: return cbOp0x59();
+        case 0x5A: return cbOp0x5A();
+        case 0x5B: return cbOp0x5B();
+        case 0x5C: return cbOp0x5C();
+        case 0x5D: return cbOp0x5D();
+        case 0x5E: return cbOp0x5E();
+        case 0x5F: return cbOp0x5F();
+        case 0x60: return cbOp0x60();
+        case 0x61: return cbOp0x61();
+        case 0x62: return cbOp0x62();
+        case 0x63: return cbOp0x63();
+        case 0x64: return cbOp0x64();
+        case 0x65: return cbOp0x65();
+        case 0x66: return cbOp0x66();
+        case 0x67: return cbOp0x67();
+        case 0x68: return cbOp0x68();
+        case 0x69: return cbOp0x69();
+        case 0x6A: return cbOp0x6A();
+        case 0x6B: return cbOp0x6B();
+        case 0x6C: return cbOp0x6C();
+        case 0x6D: return cbOp0x6D();
+        case 0x6E: return cbOp0x6E();
+        case 0x6F: return cbOp0x6F();
+        case 0x70: return cbOp0x70();
+        case 0x71: return cbOp0x71();
+        case 0x72: return cbOp0x72();
+        case 0x73: return cbOp0x73();
+        case 0x74: return cbOp0x74();
+        case 0x75: return cbOp0x75();
+        case 0x76: return cbOp0x76();
+        case 0x77: return cbOp0x77();
+        case 0x78: return cbOp0x78();
+        case 0x79: return cbOp0x79();
+        case 0x7A: return cbOp0x7A();
+        case 0x7B: return cbOp0x7B();
         case 0x7C: return cbOp0x7C();
+        case 0x7D: return cbOp0x7D();
+        case 0x7E: return cbOp0x7E();
+        case 0x7F: return cbOp0x7F();
+        case 0x80: return cbOp0x80();
+        case 0x81: return cbOp0x81();
+        case 0x82: return cbOp0x82();
+        case 0x83: return cbOp0x83();
+        case 0x84: return cbOp0x84();
+        case 0x85: return cbOp0x85();
+        case 0x86: return cbOp0x86();
+        case 0x87: return cbOp0x87();
+        case 0x88: return cbOp0x88();
+        case 0x89: return cbOp0x89();
+        case 0x8A: return cbOp0x8A();
+        case 0x8B: return cbOp0x8B();
+        case 0x8C: return cbOp0x8C();
+        case 0x8D: return cbOp0x8D();
+        case 0x8E: return cbOp0x8E();
+        case 0x8F: return cbOp0x8F();
+        case 0x90: return cbOp0x90();
+        case 0x91: return cbOp0x91();
+        case 0x92: return cbOp0x92();
+        case 0x93: return cbOp0x93();
+        case 0x94: return cbOp0x94();
+        case 0x95: return cbOp0x95();
+        case 0x96: return cbOp0x96();
+        case 0x97: return cbOp0x97();
+        case 0x98: return cbOp0x98();
+        case 0x99: return cbOp0x99();
+        case 0x9A: return cbOp0x9A();
+        case 0x9B: return cbOp0x9B();
+        case 0x9C: return cbOp0x9C();
+        case 0x9D: return cbOp0x9D();
+        case 0x9E: return cbOp0x9E();
+        case 0x9F: return cbOp0x9F();
+        case 0xA0: return cbOp0xA0();
+        case 0xA1: return cbOp0xA1();
+        case 0xA2: return cbOp0xA2();
+        case 0xA3: return cbOp0xA3();
+        case 0xA4: return cbOp0xA4();
+        case 0xA5: return cbOp0xA5();
+        case 0xA6: return cbOp0xA6();
+        case 0xA7: return cbOp0xA7();
+        case 0xA8: return cbOp0xA8();
+        case 0xA9: return cbOp0xA9();
+        case 0xAA: return cbOp0xAA();
+        case 0xAB: return cbOp0xAB();
+        case 0xAC: return cbOp0xAC();
+        case 0xAD: return cbOp0xAD();
+        case 0xAE: return cbOp0xAE();
+        case 0xAF: return cbOp0xAF();
+        case 0xB0: return cbOp0xB0();
+        case 0xB1: return cbOp0xB1();
+        case 0xB2: return cbOp0xB2();
+        case 0xB3: return cbOp0xB3();
+        case 0xB4: return cbOp0xB4();
+        case 0xB5: return cbOp0xB5();
+        case 0xB6: return cbOp0xB6();
+        case 0xB7: return cbOp0xB7();
+        case 0xB8: return cbOp0xB8();
+        case 0xB9: return cbOp0xB9();
+        case 0xBA: return cbOp0xBA();
+        case 0xBB: return cbOp0xBB();
+        case 0xBC: return cbOp0xBC();
+        case 0xBD: return cbOp0xBD();
+        case 0xBE: return cbOp0xBE();
+        case 0xBF: return cbOp0xBF();
+        case 0xC0: return cbOp0xC0();
+        case 0xC1: return cbOp0xC1();
+        case 0xC2: return cbOp0xC2();
+        case 0xC3: return cbOp0xC3();
+        case 0xC4: return cbOp0xC4();
+        case 0xC5: return cbOp0xC5();
+        case 0xC6: return cbOp0xC6();
+        case 0xC7: return cbOp0xC7();
+        case 0xC8: return cbOp0xC8();
+        case 0xC9: return cbOp0xC9();
+        case 0xCA: return cbOp0xCA();
+        case 0xCB: return cbOp0xCB();
+        case 0xCC: return cbOp0xCC();
+        case 0xCD: return cbOp0xCD();
+        case 0xCE: return cbOp0xCE();
+        case 0xCF: return cbOp0xCF();
+        case 0xD0: return cbOp0xD0();
+        case 0xD1: return cbOp0xD1();
+        case 0xD2: return cbOp0xD2();
+        case 0xD3: return cbOp0xD3();
+        case 0xD4: return cbOp0xD4();
+        case 0xD5: return cbOp0xD5();
+        case 0xD6: return cbOp0xD6();
+        case 0xD7: return cbOp0xD7();
+        case 0xD8: return cbOp0xD8();
+        case 0xD9: return cbOp0xD9();
+        case 0xDA: return cbOp0xDA();
+        case 0xDB: return cbOp0xDB();
+        case 0xDC: return cbOp0xDC();
+        case 0xDD: return cbOp0xDD();
+        case 0xDE: return cbOp0xDE();
+        case 0xDF: return cbOp0xDF();
+        case 0xE0: return cbOp0xE0();
+        case 0xE1: return cbOp0xE1();
+        case 0xE2: return cbOp0xE2();
+        case 0xE3: return cbOp0xE3();
+        case 0xE4: return cbOp0xE4();
+        case 0xE5: return cbOp0xE5();
+        case 0xE6: return cbOp0xE6();
+        case 0xE7: return cbOp0xE7();
+        case 0xE8: return cbOp0xE8();
+        case 0xE9: return cbOp0xE9();
+        case 0xEA: return cbOp0xEA();
+        case 0xEB: return cbOp0xEB();
+        case 0xEC: return cbOp0xEC();
+        case 0xED: return cbOp0xED();
+        case 0xEE: return cbOp0xEE();
+        case 0xEF: return cbOp0xEF();
+        case 0xF0: return cbOp0xF0();
+        case 0xF1: return cbOp0xF1();
+        case 0xF2: return cbOp0xF2();
+        case 0xF3: return cbOp0xF3();
+        case 0xF4: return cbOp0xF4();
+        case 0xF5: return cbOp0xF5();
+        case 0xF6: return cbOp0xF6();
+        case 0xF7: return cbOp0xF7();
+        case 0xF8: return cbOp0xF8();
+        case 0xF9: return cbOp0xF9();
+        case 0xFA: return cbOp0xFA();
+        case 0xFB: return cbOp0xFB();
+        case 0xFC: return cbOp0xFC();
+        case 0xFD: return cbOp0xFD();
+        case 0xFE: return cbOp0xFE();
+        case 0xFF: return cbOp0xFF();
         default:printf("NOT IMPLEMENTED CB Prefix(0x%02X)\n", cb_op);
             break;
     }
