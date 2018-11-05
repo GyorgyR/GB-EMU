@@ -82,9 +82,12 @@ void Window::UpdateScreen()
     ++frameCount;
 
     if (seconds == 1) {
-        std::cout << "\e[A";
-        std::cout << "\r" << frameCount << "\n";
-        std::flush(std::cout);
+        std::string title =
+                Configuration::WindowTitle +
+                " - FPS: " +
+                std::to_string(frameCount);
+
+        SDL_SetWindowTitle(window, title.c_str());
         frameCount = 0;
         startTime = timeNow;
     }
