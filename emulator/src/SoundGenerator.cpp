@@ -4,25 +4,36 @@
 
 #include "../include/SoundGenerator.h"
 
+//Misc
 uint8 SoundGenerator::soundOnOffReg = 0xF1;
 uint8 SoundGenerator::soundOutTerminalReg = 0xF3;
 uint8 SoundGenerator::channelOnOffVolumeReg = 0x77;
 
+//Channel 1
 uint8 SoundGenerator::channel1SweepReg = 0x80;
-uint8 SoundGenerator::channel1WaveReg = 0xBF;
+uint8 SoundGenerator::channel1SoundLengthReg = 0xBF;
 uint8 SoundGenerator::channel1VolumeEnvelope = 0xF3;
 uint8 SoundGenerator::channel1FreqLoReg = 0;
 uint8 SoundGenerator::channel1FreqHiReg = 0xBF;
 
+//Channel 2
+uint8 SoundGenerator::channel2SoundLengthReg = 0;
 uint8 SoundGenerator::channel2VolumeEnvelope = 0;
 uint8 SoundGenerator::channel2FreqLoReg = 0;
 uint8 SoundGenerator::channel2FreqHiReg = 0;
 
+//Channel 3
 uint8 SoundGenerator::channel3OnOffReg = 0x7F;
+uint8 SoundGenerator::channel3SoundLengthReg = 0;
+uint8 SoundGenerator::channel3SelectOutLevel = 0;
 uint8 SoundGenerator::channel3FreqLoReg = 0;
 uint8 SoundGenerator::channel3FreqHiReg = 0;
+uint8 SoundGenerator::channel3WaveRAM[16];
 
+//Channel 4
+uint8 SoundGenerator::channel4SoundLengthReg = 0;
 uint8 SoundGenerator::channel4VolumeEnvelope = 0;
+uint8 SoundGenerator::channel4PolyCounterReg = 0;
 uint8 SoundGenerator::channel4CounterSelectReg = 0xBF;
 
 SoundGenerator::SoundGenerator()
@@ -46,14 +57,14 @@ bool SoundGenerator::SoundOnOff(uint8 value)
     return true;
 }
 
-uint8 SoundGenerator::Channel1WavePattern()
+uint8 SoundGenerator::Channel1SoundLength()
 {
-    return channel1WaveReg;
+    return channel1SoundLengthReg;
 }
 
-bool SoundGenerator::Channel1WavePattern(uint8 value)
+bool SoundGenerator::Channel1SoundLength(uint8 value)
 {
-    channel1WaveReg = value;
+    channel1SoundLengthReg = value;
     return true;
 }
 
@@ -208,5 +219,60 @@ uint8 SoundGenerator::Channel3OnOff()
 bool SoundGenerator::Channel3OnOff(uint8 value)
 {
     channel3OnOffReg = value;
+    return true;
+}
+
+uint8 SoundGenerator::Channel2SoundLength()
+{
+    return channel2SoundLengthReg;
+}
+
+bool SoundGenerator::Channel2SoundLength(uint8 value)
+{
+    channel2SoundLengthReg = value;
+    return true;
+}
+
+uint8 SoundGenerator::Channel3SoundLength()
+{
+    return channel3SoundLengthReg;
+}
+
+bool SoundGenerator::Channel3SoundLength(uint8 value)
+{
+    channel3SoundLengthReg = value;
+    return true;
+}
+
+uint8 SoundGenerator::Channel3OutLevel()
+{
+    return channel3SelectOutLevel;
+}
+
+bool SoundGenerator::Channel3OutLevel(uint8 value)
+{
+    channel3SelectOutLevel = value;
+    return true;
+}
+
+uint8 SoundGenerator::Channel4SoundLength()
+{
+    return channel4SoundLengthReg;
+}
+
+bool SoundGenerator::Channel4SoundLength(uint8 value)
+{
+    channel4SoundLengthReg = value;
+    return true;
+}
+
+uint8 SoundGenerator::Channel4PolyCounter()
+{
+    return channel4PolyCounterReg;
+}
+
+bool SoundGenerator::Channel4PolyCounter(uint8 value)
+{
+    channel4PolyCounterReg = value;
     return true;
 }

@@ -214,7 +214,7 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
         }
         case 0xFF11: {
             Helper::RAMLog(" [Channel1 Wave Pattern]");
-            success = SoundGenerator::Channel1WavePattern(value);
+            success = SoundGenerator::Channel1SoundLength(value);
             break;
         }
         case 0xFF12: {
@@ -232,9 +232,19 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
             success = SoundGenerator::Channel1FreqHi(value);
             break;
         }
+        case 0xFF16: {
+            Helper::RAMLog(" [Channel2 SoundLength]");
+            success = SoundGenerator::Channel2SoundLength(value);
+            break;
+        }
         case 0xFF17: {
             Helper::RAMLog(" [Chanel2 Volume Envelope]");
             success = SoundGenerator::Channel2VolumeEnvelope(value);
+            break;
+        }
+        case 0xFF18: {
+            Helper::RAMLog(" [Channel2 Freq-lo]");
+            success = SoundGenerator::Channel2FreqLo(value);
             break;
         }
         case 0xFF19: {
@@ -247,9 +257,39 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
             success = SoundGenerator::Channel3OnOff(value);
             break;
         }
+        case 0xFF1B: {
+            Helper::RAMLog(" [Channel3 SoundLength]");
+            success = SoundGenerator::Channel3SoundLength(value);
+            break;
+        }
+        case 0xFF1C: {
+            Helper::RAMLog(" [Channel3 OutLevel]");
+            success = SoundGenerator::Channel3OutLevel(value);
+            break;
+        }
+        case 0xFF1D: {
+            Helper::RAMLog(" [Channel3 Freq-lo]");
+            success = SoundGenerator::Channel3FreqLo(value);
+            break;
+        }
+        case 0xFF1E: {
+            Helper::RAMLog(" [Channel3 Freq-hi]");
+            success = SoundGenerator::Channel3FreqHi(value);
+            break;
+        }
+        case 0xFF20: {
+            Helper::RAMLog(" [Channel4 Sound Length]");
+            success = SoundGenerator::Channel4SoundLength(value);
+            break;
+        }
         case 0xFF21: {
             Helper::RAMLog(" [Channel4 Volume Envelope]");
             success = SoundGenerator::Channel4VolumeEnvelope(value);
+            break;
+        }
+        case 0xFF22: {
+            Helper::RAMLog(" [Channel4 Poly Counter]");
+            success = SoundGenerator::Channel4PolyCounter(value);
             break;
         }
         case 0xFF23: {
@@ -270,6 +310,13 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
         case 0xFF26: {
             Helper::RAMLog(" [Sound on/off]");
             success = SoundGenerator::SoundOnOff(value);
+            break;
+        }
+        case 0xFF30 ... 0xFF3F: {
+            int internalAddr = address - 0xFF30;
+            Helper::RAMLog(" [Wave Pattern RAM@%d]", internalAddr);
+            SoundGenerator::channel3WaveRAM[internalAddr] = value;
+            success = true;
             break;
         }
         case 0xFF40: {
@@ -348,8 +395,9 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
             break;
         }
         default:
-            printf(" (Unimplemented write range: 0x%04X) Do you want to exit?: ", address);
+            printf("Unimplemented write range: 0x%04X! Do you want to exit?: ", address);
             if (getchar() == 'y') exit (1);
+            else getchar();
     }
     Helper::RAMLog(" [VALUE 0x%02X]\n", value);
     return success;
