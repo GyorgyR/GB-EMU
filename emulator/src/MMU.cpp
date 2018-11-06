@@ -166,7 +166,7 @@ bool MMU::WriteByteAt(uint16 address, uint8 value)
         case 0xFE00 ... 0xFE9F: {
             int internalAddress = address - 0xFE00;
             Helper::RAMLog(" [OAM@%d]", internalAddress);
-            VideoRegisters::OAMRam[internalAddress] = value;
+            VideoRegisters::OAMRam(internalAddress, value);
             success = true;
             break;
         }

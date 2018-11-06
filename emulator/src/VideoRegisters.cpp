@@ -19,8 +19,9 @@ uint8 VideoRegisters::LCDYCoordReg = 0;
 uint8 VideoRegisters::LCDStatReg = 0;
 uint8 VideoRegisters::WindowPosYReg = 0;
 uint8 VideoRegisters::WindowPosXReg = 0;
-uint8 VideoRegisters::OAMRam[160];
+uint8 VideoRegisters::OAMRamArray[160];
 bool VideoRegisters::IsWindowEnabled = false;
+OAMEntry VideoRegisters::OAMEntyArray[40];
 
 VideoRegisters::VideoRegisters()
 {
@@ -101,7 +102,6 @@ uint8 VideoRegisters::ScrollPosX()
 bool VideoRegisters::ScrollPosX(uint8 value)
 {
     ScrollPosXReg = value;
-    Helper::Log("Current X Scroll: %d", value);
     return true;
 }
 
@@ -178,5 +178,41 @@ uint8 VideoRegisters::WindowPosX()
 bool VideoRegisters::WindowPosX(uint8 value)
 {
     WindowPosXReg = value;
+    return true;
+}
+
+uint8 VideoRegisters::OAMRam(uint8 address)
+{
+    return OAMRamArray[address];
+}
+
+bool VideoRegisters::OAMRam(uint8 address, uint8 value)
+{
+    OAMRamArray[address] = value;
+
+    int OAMEntryNo = address / 4;
+    int OAMEntryByteNo = address % 4;
+
+    switch (OAMEntryByteNo) {
+        case 0:
+            OAMEntyArray[OAMEntryNo].PosY = value;
+            break;
+        case 1:
+            OAMEntyArray[OAMEntryNo].PosX = value;
+            break;
+        case 2:
+            OAMEntyArray[OAMEntryNo].SpriteNo = value;
+            break;
+        case 3:
+            OAMEntyArray[OAMEntryNo].Priority = Helper::IsBitSet(value, 7);
+            OAMEntyArray[OAMEntryNo].FlipY = Helper::IsBitSet(value, 6);
+            OAMEntyArray[OAMEntryNo].FlipX = Helper::IsBitSet(value, 5);
+            OAMEntyArray[OAMEntryNo].PaletteSelect = Helper::IsBitSet(value, 4);
+            break;
+        default:
+            Helper::Log("BUG - wrong entry byte number: %d", OAMEntryByteNo);
+            exit(1);
+    }
+
     return true;
 }

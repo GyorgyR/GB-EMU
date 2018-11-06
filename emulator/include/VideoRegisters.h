@@ -9,6 +9,17 @@
 #include "Types.h"
 #include "RGBA.h"
 
+struct OAMEntry
+{
+    uint8 PosY;
+    uint8 PosX;
+    uint8 SpriteNo;
+    bool  Priority;
+    bool  FlipY;
+    bool  FlipX;
+    bool  PaletteSelect;
+};
+
 class VideoRegisters
 {
 private:
@@ -29,11 +40,12 @@ private:
     static uint8 LCDStatReg;
     static uint8 WindowPosYReg;
     static uint8 WindowPosXReg;
+    static uint8 OAMRamArray[];
 
 public:
     //Variables
-    static uint8 OAMRam[];
     static bool IsWindowEnabled;
+    static OAMEntry OAMEntyArray[];
 
     //Methods
     static uint8 BGPaletteData();
@@ -49,16 +61,17 @@ public:
     static RGBA &GetObjColour1(int colour);
 
     static uint8 ScrollPosY();
-    static bool ScrollPosY(uint8 value);
+    static bool  ScrollPosY(uint8 value);
 
     static uint8 ScrollPosX();
-    static bool ScrollPosX(uint8 value);
+    static bool  ScrollPosX(uint8 value);
 
     static uint8 LCDYCoordinate();
-    static bool LCDYCoordinate(uint8 value);
+    static bool  LCDYCoordinate(uint8 value);
 
     static uint8 LCDControl();
-    static bool LCDControl(uint8 value);
+    static bool  LCDControl(uint8 value);
+
     static uint16 BGTileMapBaseAddr();
     static uint16 BGTileDataBaseAddr();
 
@@ -67,12 +80,13 @@ public:
     static void  LCDStatMode(uint8 value);
 
     static uint8 WindowPosY();
-
-    static bool WindowPosY(uint8 value);
+    static bool  WindowPosY(uint8 value);
 
     static uint8 WindowPosX();
+    static bool  WindowPosX(uint8 value);
 
-    static bool WindowPosX(uint8 value);
+    static uint8 OAMRam(uint8 address);
+    static bool  OAMRam(uint8 address, uint8 value);
 };
 
 

@@ -5,7 +5,6 @@
 #define OAMSEARCHCYCLES 80
 #define CLOCKSPERLINE OAMSEARCHCYCLES+172+204
 #define LINES 153
-#define TILEDATALENGTH 16
 
 #include "../include/PPU.h"
 #include "../include/VideoRegisters.h"
@@ -28,6 +27,9 @@ std::queue<int> PPU::fifo;
 Window *PPU::window = nullptr;
 uint16 PPU::fetcherLastAddr = 0;
 int PPU::discardedPixels = 0;
+OAMEntry *OAMEntrysThisLine[10];
+int OAMEntriesFound = 0;
+bool wasLastEntryXZero = true;
 
 PPU::PPU() {}
 
@@ -41,6 +43,7 @@ void PPU::Update(int cycles)
             ++currentLine;
             currentLineCycle = 0;
             discardedPixels = 0;
+            OAMEntriesFound = 0;
             PPUState = 0;
             VideoRegisters::LCDStatMode(2);
 
@@ -64,7 +67,20 @@ void PPU::Update(int cycles)
 
         switch (PPUState) {
             case 0: { //OAMSEARCH
-                if (currentLineCycle == OAMSEARCHCYCLES) {
+                int currentEntryNo = currentLineCycle / 2;
+                if (currentLineCycle % 2 == 0) {
+                    wasLastEntryXZero = VideoRegisters::OAMEntyArray[currentEntryNo].PosX == 0;
+                }
+                else if (!wasLastEntryXZero) {
+                    uint8 posY = VideoRegisters::OAMEntyArray[currentEntryNo].PosY;
+                    if (currentLine + 16 >= posY && currentLine + 16 < posY + 8) {
+                        OAMEntrysThisLine[OAMEntriesFound++] = &VideoRegisters::OAMEntyArray[currentEntryNo];
+                        Helper::Log("Found OBJ: 0x%02X", VideoRegisters::OAMEntyArray[currentEntryNo].SpriteNo);
+                        exit(0);
+                    }
+                }
+
+                if (currentLineCycle == OAMSEARCHCYCLES - 1) {
                     PPUState = 1;
                     VideoRegisters::LCDStatMode(3);
                 }
