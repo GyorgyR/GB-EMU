@@ -10,6 +10,13 @@
 #include "Window.h"
 #include "Types.h"
 
+enum TileTypes {BG, OBJ, WINDOW};
+
+struct FifoElement {
+    uint8 colour;
+    TileTypes source;
+};
+
 class PPU
 {
 private:
@@ -27,7 +34,7 @@ private:
     static int lastTileNo;
     static uint8 lastByte1;
     static int decodedBytes[];
-    static std::queue<int> fifo;
+    static std::queue<FifoElement> fifo;
     static Window *window;
     static int discardedPixels;
     static uint16 fetcherLastAddr;
@@ -36,6 +43,7 @@ private:
     static void FifoFetch();
     static void FifoPush();
     static inline uint16 currentTileRowBaseAddr();
+    static inline void PopulateFifo();
 
 public:
     static void SetWindow(Window *currWindow);

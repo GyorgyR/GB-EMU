@@ -216,3 +216,9 @@ bool VideoRegisters::OAMRam(uint8 address, uint8 value)
 
     return true;
 }
+
+int VideoRegisters::TileHeight()
+{
+    if (Helper::IsBitSet(LCDControlReg, 2)) return 16;
+    else return 8;
+}

@@ -71,6 +71,7 @@ public:
 
     static uint8 LCDControl();
     static bool  LCDControl(uint8 value);
+    static int   TileHeight();
 
     static uint16 BGTileMapBaseAddr();
     static uint16 BGTileDataBaseAddr();
@@ -87,6 +88,7 @@ public:
 
     static uint8 OAMRam(uint8 address);
     static bool  OAMRam(uint8 address, uint8 value);
+
 };
 
 
