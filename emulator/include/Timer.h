@@ -26,6 +26,7 @@ private:
     static bool isRunning;
     static int cyclesBeforeIncrement;
     static int cyclesPassed;
+    static int divCyclesPassed;
 
 public:
     //Getters and setters

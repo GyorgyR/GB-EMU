@@ -88,6 +88,11 @@ uint8 MMU::ReadByteAt(uint16 address)
             retVal = Joypad::ReadRegister();
             break;
         }
+        case 0xFF04: {
+            Helper::RAMLog(" [Divider Register]");
+            retVal = Timer::Divider();
+            break;
+        }
         case 0xFF24: {
             Helper::RAMLog(" [Channel ctrl/on-off]");
             retVal = SoundGenerator::ChannelOnOffVolume();

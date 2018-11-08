@@ -17,6 +17,7 @@ uint8 Timer::timerControlReg = 0;
 bool Timer::isRunning = false;
 int  Timer::cyclesBeforeIncrement = 0;
 int  Timer::cyclesPassed = 0;
+int  Timer::divCyclesPassed = 0;
 
 const int CLOCKSPEED = 4194304;
 
@@ -101,5 +102,12 @@ void Timer::Update(int cycles)
             //Request interrupt
             RegisterBank::SetBitInIF(2);
         }
+    }
+
+    divCyclesPassed += cycles;
+
+    if (divCyclesPassed >= CLOCKSPEED / 16384) {
+        divCyclesPassed -= CLOCKSPEED / 16384;
+        ++dividerReg;
     }
 }

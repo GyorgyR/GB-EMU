@@ -79,7 +79,7 @@ void PPU::Update(int cycles)
                     }
                     else if (!wasLastEntryXZero) {
                         uint8 posY = VideoRegisters::OAMEntyArray[currentEntryNo].PosY;
-                        if (currentLine + 16 >= posY && currentLine + 16 < posY + VideoRegisters::TileHeight()) {
+                        if ((currentLine + 16) >= posY && (currentLine + 16) < (posY + VideoRegisters::TileHeight())) {
                             OAMEntrysThisLine[OAMEntriesFound++] = &VideoRegisters::OAMEntyArray[currentEntryNo];
                             if (ColToTriggerOn < 0) ColToTriggerOn = VideoRegisters::OAMEntyArray[currentEntryNo].PosX - 8;
                         }
